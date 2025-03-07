@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Data.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Presentation.Data
+namespace Data.Context;
+
+public class ApplicationDbContext : IdentityDbContext<UserEntity>
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : base(options)
     {
     }
 }
