@@ -2,21 +2,16 @@ using Data.Context;
 using Data.Entities;
 using Data.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = Environment.GetEnvironmentVariable("mssqlConnectionString");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
-
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
 builder.Services.AddDefaultIdentity<UserEntity>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
-
 builder.Services.AddControllersWithViews();
-
 builder.Services.AddAuthentication()
     .AddGoogleOpenIdConnect(options =>
     {
