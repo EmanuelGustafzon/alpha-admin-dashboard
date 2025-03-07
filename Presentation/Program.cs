@@ -1,17 +1,18 @@
+using Data.Context;
+using Data.Entities;
 using Data.Repositories;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Presentation.Data;
+using Microsoft.AspNetCore.Identity;
+
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 var connectionString = Environment.GetEnvironmentVariable("mssqlConnectionString");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+
+builder.Services.AddDefaultIdentity<UserEntity>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
@@ -24,7 +25,7 @@ builder.Services.AddAuthentication()
         options.CallbackPath = "/signin-google";
     });
 
-builder.Services.AddScoped<UserRepository, UserRepository>();
+builder.Services.AddScoped<UserRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -42,6 +43,7 @@ else
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

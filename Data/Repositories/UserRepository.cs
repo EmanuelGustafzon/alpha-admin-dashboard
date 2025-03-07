@@ -1,8 +1,9 @@
 ﻿
 
+using Data.Context;
+using Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Presentation.Data;
 
 namespace Data.Repositories;
 
@@ -14,7 +15,7 @@ public class UserRepository
     {
         _context = context;
     }
-    public async Task<List<IdentityUser>> Get()
+    public async Task<List<UserEntity>> Get()
     {
         try
         {
@@ -23,7 +24,7 @@ public class UserRepository
         catch (Exception ex)
         {
             Console.WriteLine($"Error fetching users: {ex.Message}");
-            return new List<IdentityUser>();
+            return new List<UserEntity>();
         }
     }
 
