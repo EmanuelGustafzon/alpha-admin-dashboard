@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Presentation</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Presentation.styles.css" asp-append-version="true" />
+</head>
+<body data-theme="light">
+    <main>
+        <div class="layout">
+            <div class="logo-container side-border">
+                <img src="images/logo.svg" />
+                <h1 class="logo-text">alpha</h1>
+            </div>
+            <div class="bottom-border">
+                <div class="top-bar">
+                    <button class="burger-menu">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div class="search">
+                        <i class="bi bi-search"></i>
+                        <input class="search-field" type="text" placeholder="search anything...">
+                    </div>
+                    <div>
+                        <button class="bell btn-clean ">
+                            <div class="new-notification"></div>
+                            <i class="bi bi-bell-fill"></i>
+                        </button>
+                        @await Html.PartialAsync("PartialViews/_Settings")
+                        <button class="btn-clean ">
+                            <i class="bi bi-person-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="side-border side-bar">
+                <button class="btn nav-buttons nav-btn-active">
+                    <i class="bi bi-briefcase-fill"></i>
+                    Projects
+                </button>
+            </div>
+            <div class="projets">
+                @RenderBody()
+            </div>
+        </div>
+    </main>
+</body>
+</html>
