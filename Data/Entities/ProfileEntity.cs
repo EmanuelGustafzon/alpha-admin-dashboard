@@ -1,16 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 
 namespace Data.Entities;
 
+[Table("Profiles")]
 public class ProfileEntity
 {
-    [Key]
-    public string UserId { get; set; } = null!;
+    public int Id { get; set; }
 
-    [ForeignKey("UserId")]
+    public string UserId { get; set; } = null!;
     public UserEntity User { get; set; } = null!;
-    public byte[]? Image { get; set; }
+    public string? ImageUrl { get; set; }
 
     [Column(TypeName = "varchar(200)")]
     public string Firstname { get; set; } = null!;

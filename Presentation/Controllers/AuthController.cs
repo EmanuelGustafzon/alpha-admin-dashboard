@@ -39,6 +39,11 @@ public class AuthController(UserManager<UserEntity> userManager, SignInManager<U
         {
             Email = form.Email,
             UserName = form.Email,
+            
+        };
+        var profile = new ProfileEntity
+        {
+            User = user,
             Firstname = form.Firstname,
             Lastname = form.Lastname
         };
@@ -151,10 +156,14 @@ public class AuthController(UserManager<UserEntity> userManager, SignInManager<U
         var info = await _signInManager.GetExternalLoginInfoAsync();
         var user = new UserEntity
         {
-            Firstname = form.Firstname, 
-            Lastname = form.Lastname,
             Email = info?.Principal.FindFirstValue(ClaimTypes.Email),
             UserName = info?.Principal.FindFirstValue(ClaimTypes.Email),
+        };
+        var profile = new ProfileEntity
+        {
+            User = user,
+            Firstname = form.Firstname,
+            Lastname = form.Lastname
         };
         var result = await _userManager.CreateAsync(user);
         return RedirectToAction("Index", "Home");

@@ -13,17 +13,18 @@ public class ApplicationDbContext : IdentityDbContext<UserEntity>
     {
     }
 
-    //public DbSet<ProfileEntity> Profiles { get; set; } = null!;
+    public DbSet<ProfileEntity> Profiles { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        //modelBuilder.Entity<UserEntity>()
-        //.HasOne(u => u.Profile)
-        //.WithOne(p => p.User)
-        //.HasForeignKey<ProfileEntity>(p => p.UserId)
-        //.OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<UserEntity>()
+        .HasOne(u => u.Profile)
+        .WithOne(p => p.User)
+        .HasForeignKey<ProfileEntity>(p => p.UserId)
+        .IsRequired()
+        .OnDelete(DeleteBehavior.Cascade);
     }
 
 }
