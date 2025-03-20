@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Data.Entities;
 
 public class UserEntity : IdentityUser
 {
-    public string Firstname { get; set; } = null!;
-    public string Lastname { get; set; } = null!;
+    public ProfileEntity? Profile { get; set; }
 }

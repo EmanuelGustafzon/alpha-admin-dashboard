@@ -1,36 +1,31 @@
-using System.Diagnostics;
-using Data.Repositories;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Models;
 
-namespace Presentation.Controllers
+namespace Presentation.Controllers;
+
+[Authorize]
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private ProjectViewModel _projectViewModel { get; set; }
+
+    public HomeController()
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly UserRepository _userRepository;
+        _projectViewModel = new ProjectViewModel();
+        _projectViewModel.Projects = [
+             new Project{ProjectName = "cool project", ClientName = "GitLab", Description = "awsome", StartDate = new DateTime(2025, 01, 05), EndDate = new DateTime(2025, 01, 06), Budget = 10}
+             ];
+    }
+    public IActionResult Index()
+    {
+        return View(_projectViewModel);
+    }
 
-        public HomeController(ILogger<HomeController> logger, UserRepository userRepository)
-        {
-            _logger = logger;
-            _userRepository = userRepository;
-        }
-
-        public async Task<IActionResult> Index()
-        {
-            var users = await _userRepository.Get();
-            return View(users);
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+    [HttpPost]
+    public IActionResult Create(ProjectCreateFormModel form)
+    {
+        _projectViewModel.CreateProjectForm = form;
+        return View("index", _projectViewModel);
     }
 }

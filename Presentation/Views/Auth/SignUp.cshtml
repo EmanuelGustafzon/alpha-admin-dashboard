@@ -1,0 +1,53 @@
+﻿@{
+    Layout = "_FormLayout";
+}
+@model AuthViewModel
+
+<div>
+    @if (Model.ExternalLogins != null && Model.ExternalLogins.Any())
+    {
+        <form method="post" asp-action="ExternalLogin" asp-controller="Auth">
+            <div>
+                <p>Or sign up using:</p>
+                @foreach (var provider in Model.ExternalLogins)
+                {
+                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name">
+                        Sign in with @provider.DisplayName
+                    </button>
+                }
+            </div>
+        </form>
+    }
+    <form method="post" asp-controller="Auth" asp-action="SignUp" novalidate>
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="form-group">
+            <label asp-for="SignUpForm.Firstname"></label>
+            <input asp-for="SignUpForm.Firstname" class="form-control" value="@Model?.SignUpForm?.Firstname" />
+            <span asp-validation-for="SignUpForm.Firstname" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="SignUpForm.Lastname"></label>
+            <input asp-for="SignUpForm.Lastname" class="form-control" value="@Model?.SignUpForm?.Lastname" />
+            <span asp-validation-for="SignUpForm.Lastname" class="text-error"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="SignUpForm.Email"></label>
+            <input asp-for="SignUpForm.Email" class="form-control" />
+            <span asp-validation-for="SignUpForm.Email" class="text-error"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="SignUpForm.Password"></label>
+            <input asp-for="SignUpForm.Password" class="form-control" />
+            <span asp-validation-for="SignUpForm.Password" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="SignUpForm.ConfirmPassword"></label>
+            <input asp-for="SignUpForm.ConfirmPassword" class="form-control"/>
+            <span asp-validation-for="SignUpForm.ConfirmPassword" class="text-error"></span>
+        </div>
+
+        <button type="submit">Register</button>
+    </form>
+</div>

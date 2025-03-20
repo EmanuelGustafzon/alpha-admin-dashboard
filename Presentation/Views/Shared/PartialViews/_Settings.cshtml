@@ -1,0 +1,42 @@
+﻿<div class="popover-container">
+    <button id="open-settings" class="settings btn-clean ">
+        <i class="bi bi-gear-fill"></i>
+    </button>
+    <div id="settings-popover" class="popover">
+        <div>
+            <div>
+                @User.Identity.Name
+            </div>
+            <div class="theme-settings-container">
+                <div>
+                    <i class="bi bi-gear-fill"></i>
+                    <span class="px-1">Dark Mode</span>
+                </div>
+                <label class="toggle-container">
+                    <input type="checkbox" id="theme-checkbox">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+        <div>
+            <i class="bi bi-box-arrow-right"></i>
+            <a class="btn-clean" asp-action="SignOut" asp-controller="Auth">
+                Log Out
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const openSettings = document.getElementById("open-settings");
+    const settingsPopOver = document.getElementById("settings-popover");
+    openSettings.addEventListener("click", () => {
+        settingsPopOver.classList.contains("show") === true ? settingsPopOver.classList.remove("show") : settingsPopOver.classList.add("show");
+    });
+
+    const themeCheckbox = document.getElementById("theme-checkbox");
+
+    themeCheckbox.addEventListener("change", () => {
+        themeCheckbox.checked ? document.body.dataset.theme = "dark" : document.body.dataset.theme = "light";
+    })
+</script>
