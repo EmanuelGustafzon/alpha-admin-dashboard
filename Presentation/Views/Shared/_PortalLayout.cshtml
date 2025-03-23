@@ -38,12 +38,16 @@
                 </div>
             </div>
             <div class="side-border side-bar">
-                <button class="btn nav-buttons nav-btn-active">
+                <a class="btn nav-buttons @(Context.Request.Path == "/" ?  "nav-btn-active" : "")" asp-controller="Home" asp-action="Index">
                     <i class="bi bi-briefcase-fill"></i>
                     Projects
-                </button>
+                </a>
+                <a class="btn nav-buttons @(Context.Request.Path == "/Members" ? "nav-btn-active" : "")" asp-controller="Members" asp-action="Index">
+                    <i class="bi bi-briefcase-fill"></i>
+                    Members
+                </a>
             </div>
-            <div class="projets">
+            <div>
                 @RenderBody()
             </div>
         </div>

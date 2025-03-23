@@ -1,6 +1,4 @@
-﻿@model ProjectViewModel
-
-<div class="projects-top-bar">
+﻿<div class="projects-top-bar">
     <h2>Projects</h2>
     <button id="add-project" class="btn btn-primary ">+ Add Project</button>
 </div>
@@ -16,30 +14,8 @@
     </div>
 </div>
 <div class="projects-view">
-    @foreach(var project in Model.Projects) {
-        @await Html.PartialAsync("PartialViews/_ProjectCard", project)
-    }
+
 </div>
 
-@await Html.PartialAsync("PartialViews/_ProjectForm", Model.CreateProjectForm)
-
-<script>
-    const projectForm = document.getElementById("project-form");
-    const addProject = document.getElementById("add-project");
-    const closeProjectForm = document.getElementById("close-project-form");
-    window.addEventListener("DOMContentLoaded", () => {
-        if(sessionStorage.getItem("projectFormOpen") === "true") {
-            projectForm.classList.remove("d-none")
-        }
-    })
-    addProject.addEventListener("click", () => {
-        projectForm.classList.remove("d-none")
-        sessionStorage.setItem("projectFormOpen", "true");
-    });
-    closeProjectForm.addEventListener("click", () => {
-        projectForm.classList.add("d-none")
-        sessionStorage.setItem("projectFormOpen", "false");
-    });
-
-</script>
+@await Html.PartialAsync("PartialViews/_ProjectForm")
 

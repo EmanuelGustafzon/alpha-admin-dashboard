@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250319195456_InitialMigration")]
+    [Migration("20250323170630_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -25,7 +25,29 @@ namespace Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Data.Entities.UserEntity", b =>
+            modelBuilder.Entity("Data.Entities.MemberAddressEntity", b =>
+                {
+                    b.Property<string>("MemberProfileId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PostCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MemberProfileId");
+
+                    b.ToTable("MemberAddresses");
+                });
+
+            modelBuilder.Entity("Data.Entities.MemberEntity", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -43,14 +65,6 @@ namespace Data.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Firstname")
-                        .IsRequired()
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("Lastname")
-                        .IsRequired()
-                        .HasColumnType("varchar(200)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -96,6 +110,30 @@ namespace Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Data.Entities.MemberProfileEntity", b =>
+                {
+                    b.Property<string>("MemberId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("BirthDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Firstname")
+                        .IsRequired()
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Lastname")
+                        .IsRequired()
+                        .HasColumnType("varchar(200)");
+
+                    b.HasKey("MemberId");
+
+                    b.ToTable("MemberProfiles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -231,6 +269,28 @@ namespace Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Data.Entities.MemberAddressEntity", b =>
+                {
+                    b.HasOne("Data.Entities.MemberProfileEntity", "MemberProfile")
+                        .WithOne("Address")
+                        .HasForeignKey("Data.Entities.MemberAddressEntity", "MemberProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MemberProfile");
+                });
+
+            modelBuilder.Entity("Data.Entities.MemberProfileEntity", b =>
+                {
+                    b.HasOne("Data.Entities.MemberEntity", "Member")
+                        .WithOne("Profile")
+                        .HasForeignKey("Data.Entities.MemberProfileEntity", "MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -242,7 +302,7 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Data.Entities.UserEntity", null)
+                    b.HasOne("Data.Entities.MemberEntity", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -251,7 +311,7 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Data.Entities.UserEntity", null)
+                    b.HasOne("Data.Entities.MemberEntity", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -266,7 +326,7 @@ namespace Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Data.Entities.UserEntity", null)
+                    b.HasOne("Data.Entities.MemberEntity", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -275,11 +335,21 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Data.Entities.UserEntity", null)
+                    b.HasOne("Data.Entities.MemberEntity", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Data.Entities.MemberEntity", b =>
+                {
+                    b.Navigation("Profile");
+                });
+
+            modelBuilder.Entity("Data.Entities.MemberProfileEntity", b =>
+                {
+                    b.Navigation("Address");
                 });
 #pragma warning restore 612, 618
         }

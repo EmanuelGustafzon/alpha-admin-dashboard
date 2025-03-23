@@ -30,8 +30,6 @@ namespace Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Firstname = table.Column<string>(type: "varchar(200)", nullable: false),
-                    Lastname = table.Column<string>(type: "varchar(200)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -158,6 +156,47 @@ namespace Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "MemberProfiles",
+                columns: table => new
+                {
+                    MemberId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Firstname = table.Column<string>(type: "varchar(200)", nullable: false),
+                    Lastname = table.Column<string>(type: "varchar(200)", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MemberProfiles", x => x.MemberId);
+                    table.ForeignKey(
+                        name: "FK_MemberProfiles_AspNetUsers_MemberId",
+                        column: x => x.MemberId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MemberAddresses",
+                columns: table => new
+                {
+                    MemberProfileId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PostCode = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MemberAddresses", x => x.MemberProfileId);
+                    table.ForeignKey(
+                        name: "FK_MemberAddresses_MemberProfiles_MemberProfileId",
+                        column: x => x.MemberProfileId,
+                        principalTable: "MemberProfiles",
+                        principalColumn: "MemberId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -217,7 +256,13 @@ namespace Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "MemberAddresses");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "MemberProfiles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

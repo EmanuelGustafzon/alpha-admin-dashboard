@@ -12,7 +12,7 @@ services:
       context: .
       dockerfile: Presentation/Dockerfile
     networks: 
-      - aplha-dashboard-network
+      - alpha-dashboard-network
     restart: on-failure
     
   mssql:
@@ -25,10 +25,10 @@ services:
     volumes:
       - alpha-dashboard-volume:/var/opt/mssql
     networks: 
-      - aplha-dashboard-network
+      - alpha-dashboard-network
     restart: on-failure
 
 networks:
-  aplha-dashboard-network:
+  alpha-dashboard-network:
 volumes: 
   alpha-dashboard-volume:

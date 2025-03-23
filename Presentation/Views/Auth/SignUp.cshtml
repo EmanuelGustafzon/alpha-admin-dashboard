@@ -21,6 +21,7 @@
     <form method="post" asp-controller="Auth" asp-action="SignUp" novalidate>
 
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <p>@ViewBag.ErrorMessage</p>
 
         <div class="form-group">
             <label asp-for="SignUpForm.Firstname"></label>
@@ -47,7 +48,6 @@
             <input asp-for="SignUpForm.ConfirmPassword" class="form-control"/>
             <span asp-validation-for="SignUpForm.ConfirmPassword" class="text-error"></span>
         </div>
-
         <button type="submit">Register</button>
     </form>
 </div>

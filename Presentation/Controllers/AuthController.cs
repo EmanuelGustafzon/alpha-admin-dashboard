@@ -1,16 +1,18 @@
-﻿using Data.Entities;
+﻿using Business.Interfaces;
+using Business.Models;
+using Data.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Models;
-using System.Security.Claims;
 
 namespace Presentation.Controllers;
 
-public class AuthController(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager) : Controller
+public class AuthController(UserManager<MemberEntity> userManager, SignInManager<MemberEntity> signInManager, IUserService userService) : Controller
 {
-    private readonly UserManager<UserEntity> _userManager = userManager;
-    private readonly SignInManager<UserEntity> _signInManager = signInManager;
+    private readonly UserManager<MemberEntity> _userManager = userManager;
+    private readonly SignInManager<MemberEntity> _signInManager = signInManager;
+    private readonly IUserService _userService = userService;
     public async Task<IActionResult> SignUp()
     {
         var model = new AuthViewModel
@@ -23,49 +25,24 @@ public class AuthController(UserManager<UserEntity> userManager, SignInManager<U
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SignUp([Bind(Prefix = "SignUpForm")] SignUpFormModel form)
+    public async Task<IActionResult> SignUp([Bind(Prefix = "SignUpForm")] SignUpForm form)
     {
-        if (!ModelState.IsValid)
-        {
-            var model = new AuthViewModel
-            {
-                SignUpForm = form,
-                ExternalLogins = await GetExternalLogins()
-            };
-            return View(model);
-        }
+        ViewBag.ErrorMessage = null;
 
-        var user = new UserEntity
+        var model = new AuthViewModel
         {
-            Email = form.Email,
-            UserName = form.Email,
-            
-        };
-        var profile = new ProfileEntity
-        {
-            User = user,
-            Firstname = form.Firstname,
-            Lastname = form.Lastname
+            SignUpForm = form,
+            ExternalLogins = await GetExternalLogins()
         };
 
-        var result = await _userManager.CreateAsync(user, form.Password);
-        if (!result.Succeeded)
-        {
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
+        if (!ModelState.IsValid) return View(model);
 
-            var model = new AuthViewModel
-            {
-                SignUpForm = form,
-                ExternalLogins = await GetExternalLogins()
-            };
-            return View(model);
-        }
-        await _signInManager.SignInAsync(user, isPersistent: false);
+        var result = await _userService.CreateUserAsync(form);
 
-        return RedirectToAction("Index", "Home");
+        if(result.StatusCode == 201) return RedirectToAction("SignIn", "Auth");
+
+        ViewBag.ErrorMessage = result.ErrorMessage;
+        return View(model);  
     }
 
     public async Task<IActionResult> SignIn(string returnUrl = "/")
@@ -96,14 +73,14 @@ public class AuthController(UserManager<UserEntity> userManager, SignInManager<U
             return View(model);
         }
 
-        var result = await _signInManager.PasswordSignInAsync(form.Email, form.Password, false, false);
-        if (!result.Succeeded)
+        var result = await _userService.SignInUserAsync(form.Email, form.Password);
+        if (result.StatusCode != 204)
         {
             var model = new AuthViewModel
             {
                 SignInForm = form,
                 ExternalLogins = await GetExternalLogins(),
-                ExternalLoginSignUpForm = new ExternalLoginSignUpForm()
+                ExternalAuthSignUpForm = new ExternalAuthSignUpForm()
             };
             ModelState.AddModelError("SignInError", "Failed to sign in");
             return View(model);
@@ -118,8 +95,12 @@ public class AuthController(UserManager<UserEntity> userManager, SignInManager<U
     public IActionResult ExternalLogin(string provider, string returnUrl = "/")
     {
         var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Auth", new { returnUrl });
-        var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-        return Challenge(properties, provider);
+        var result = _userService.ConfigureExternalAuthProps(provider, redirectUrl);
+        if(result.Data is AuthenticationProperties)
+        {
+            return Challenge(result.Data, provider);
+        }
+        return RedirectToAction("SignIn", "Auth");
     }
 
     public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null, string? remoteError = null)
@@ -128,45 +109,41 @@ public class AuthController(UserManager<UserEntity> userManager, SignInManager<U
 
         if (remoteError != null)
         {
-            ModelState.AddModelError(string.Empty, $"Error from external provider: {remoteError}");
+            ModelState.AddModelError(remoteError, $"Error from external provider: {remoteError}");
             return RedirectToAction("SignIn", "Auth");
         }
+        // try to sign in user
+        var result = await _userService.ExternalAuthSignIn();
 
-        var info = await _signInManager.GetExternalLoginInfoAsync();
-        if (info == null)
-        {
-            return RedirectToAction("SignIn", "Auth");
-        }
-        var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
-
-        if (result.Succeeded)
+        if (result.StatusCode == 204)
         {
             return LocalRedirect(returnUrl);
         }
+        // try to create user
+        if (result.StatusCode == 404)
+        {
+            var model = new AuthViewModel
+            {
+                ExternalLogins = await GetExternalLogins(),
+                ExternalAuthSignUpForm = new ExternalAuthSignUpForm()
+            };
+            return View("ExternalAuthSignUp", model);
+        }
 
+        return RedirectToAction("SignIn", "Auth");
+    }
+    public async Task<IActionResult> AddUserFromExternalProvider([Bind(Prefix = "ExternalAuthSignUpForm")] ExternalAuthSignUpForm form)
+    {
+        var result = await _userService.ExternalAuthSignUp(form);
+
+        if (result.StatusCode == 201) return RedirectToAction("index", "Home");
+
+        ViewBag.ErrorMessage = result.ErrorMessage;
         var model = new AuthViewModel
         {
-            ExternalLogins = await GetExternalLogins(),
-            ExternalLoginSignUpForm = new ExternalLoginSignUpForm(),
+            ExternalLogins = await GetExternalLogins()
         };
-        return View(model);
-    }
-    public async Task<IActionResult> AddUserFromExternalProvider(ExternalLoginSignUpForm form)
-    {
-        var info = await _signInManager.GetExternalLoginInfoAsync();
-        var user = new UserEntity
-        {
-            Email = info?.Principal.FindFirstValue(ClaimTypes.Email),
-            UserName = info?.Principal.FindFirstValue(ClaimTypes.Email),
-        };
-        var profile = new ProfileEntity
-        {
-            User = user,
-            Firstname = form.Firstname,
-            Lastname = form.Lastname
-        };
-        var result = await _userManager.CreateAsync(user);
-        return RedirectToAction("Index", "Home");
+        return View("SignUp", model);
     }
     private async Task<IList<AuthenticationScheme>> GetExternalLogins()
     {
