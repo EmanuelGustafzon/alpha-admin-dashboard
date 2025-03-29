@@ -1,4 +1,7 @@
-﻿<div class="projects-top-bar">
+﻿@{
+    ViewData["Title"] = "Projects";
+}
+<div class="projects-top-bar">
     <h2>Projects</h2>
     <button id="add-project" class="btn btn-primary ">+ Add Project</button>
 </div>
@@ -17,5 +20,5 @@
 
 </div>
 
-@await Html.PartialAsync("PartialViews/_ProjectForm")
+
 

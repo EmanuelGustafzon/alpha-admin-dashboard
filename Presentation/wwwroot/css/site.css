@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
-@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
+/*@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");*/
 
 :root {
     --font: "Nunito", sans-serif;
@@ -60,13 +60,15 @@ main {
 .text-error {
     color: var(--red);
 }
+.input-error {
+    border-color: var(--red);
+}
 .center-screen {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
-
 .center-content {
     display: flex;
     justify-content: center;
@@ -190,7 +192,7 @@ p, i {
 .side-border {
     border-right: 1.5px solid var(--border-color);
 }
-
+/* topbar */
 .top-bar {
     margin-left: 12px;
     margin-right: 12px;
@@ -265,12 +267,9 @@ p, i {
     font-family: var(--font);
     font-weight: var(--font-bold);
     font-size: 16px;
-    p
-
-{
+    p {
     color: var(--accent);
-}
-
+    }
 }
 
 .filter-projects {
@@ -385,7 +384,7 @@ p, i {
     .popover.show {
         display: block;
     }
-
+/* modal form */
 .form-modal {
     position: absolute;
     margin-top: 5%;
@@ -401,17 +400,62 @@ p, i {
     align-items: center;
     justify-content: center;
 }
+.img-preview-container {
+    border: 3px dashed var(--border-color);
+    height: 150px;
+    width: 150px;
+    margin: 2rem auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+}
+.img-preview-container::after {
+    content: "\F220";
+    font-family: "bootstrap-icons";
+    color: white;
+    padding-left: 8px;
+    padding-right: 8px;
+    line-height: 2rem;
+    background-color: var(--body-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+.img-preview-container.selected::after {
+    content: '\F4CA';
+    position: absolute;
+    bottom: 10px;
+}
+.img-preview-container.circle {
+    border-radius: 50%;
+}
 
 .add-photo-continer {
     display: flex;
     justify-content: center;
 }
 
-.dot-square {
+.dotted-square {
     border-style: dotted;
     border-color: var(--border-color);
     border-width: 4px;
     border-radius: 14px;
+    width: 100px;
+    Height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.dotted-circle {
+    border-style: dotted;
+    border-color: var(--border-color);
+    border-width: 4px;
+    border-radius: 50%;
     width: 100px;
     Height: 100px;
     display: flex;

@@ -112,14 +112,14 @@ public class AuthController(IAuthService authService) : Controller
             ModelState.AddModelError(remoteError, $"Error from external provider: {remoteError}");
             return RedirectToAction("SignIn", "Auth");
         }
-        // try to sign in user
+        // try to sign in account
         var result = await _authService.ExternalAuthSignInAsync();
 
         if (result.StatusCode == 204)
         {
             return LocalRedirect(returnUrl);
         }
-        // try to create user
+        // try to create account
         if (result.StatusCode == 404)
         {
             var model = new AuthViewModel

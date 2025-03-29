@@ -10,10 +10,10 @@ public class MemberAddressEntity()
     public string MemberProfileId { get; set; } = null!;
 
     public MemberProfileEntity MemberProfile { get; set; } = null!;
-
-    public string Address { get; set; } = null!;
-
     public string City { get; set; } = null!;
 
     public string PostCode { get; set; } = null!;
+
+    public string Street { get; set; } = null!;
+
 }

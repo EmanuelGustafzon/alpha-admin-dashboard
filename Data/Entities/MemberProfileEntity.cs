@@ -17,6 +17,7 @@ public class MemberProfileEntity
     public string Lastname { get; set; } = null!;
 
     public string? ImageUrl { get; set; }
+    public string? JobTitle { get; set; }
 
     public DateTime? BirthDate { get; set; }
 
