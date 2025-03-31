@@ -8,17 +8,22 @@ using Presentation.Models;
 namespace Presentation.Controllers;
 
 [Authorize]
-public class AccountController(IWebHostEnvironment webHostEnv) : Controller
+public class AccountController(IMemberService memberService, IWebHostEnvironment webHostEnv) : Controller
 {
     private readonly IWebHostEnvironment _webHostEnv = webHostEnv;
-    public IActionResult Index()
+    private readonly IMemberService _memberService = memberService;
+    public async Task<IActionResult> Index()
     {
         var model = new AccountViewModel();
+        var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var result = await _memberService.GetMember(userId);
+        model.CurrentUserAccount = result.Data;
+
         return View(model);
     }
 
     [HttpPost]
-    public async Task<IActionResult> EditAccount([Bind(Prefix = "EditAccountForm")] EditAccountForm form)
+    public async Task<IActionResult> EditAccount([Bind(Prefix = "EditAccountForm")] MemberForm form)
     {
         if (!ModelState.IsValid)
         {
@@ -41,6 +46,9 @@ public class AccountController(IWebHostEnvironment webHostEnv) : Controller
                 await form.Image.CopyToAsync(stream);
             }
         }
+
+        var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var result = await _memberService.UpdateMemberAsync(form, userId);
         return Ok();
     }
 }

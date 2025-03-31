@@ -12,4 +12,14 @@ public class ApplicationDbContext : IdentityDbContext<MemberEntity>
     }
     public DbSet<MemberAddressEntity> MemberAddresses { get; set; } = null!;
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<MemberEntity>()
+            .HasOne(m => m.Address) 
+            .WithOne(a => a.Member) 
+            .HasForeignKey<MemberAddressEntity>(a => a.MemberId)
+            .IsRequired(); 
+    }
 }

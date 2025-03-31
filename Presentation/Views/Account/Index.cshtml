@@ -4,5 +4,11 @@
 <button data-targetId="#edit-account" data-openModal="true" class="btn-primary">
     Edit Profile
 </button>
+<p>@Model.CurrentUserAccount.FirstName</p>
+<p>@Model.CurrentUserAccount.LastName</p>
+<p>@Model.CurrentUserAccount.JobTitle</p>
+<p>@Model.CurrentUserAccount.BirthDate</p>
+<p>@Model.CurrentUserAccount.PhoneNumber</p>
+<p>@Model.CurrentUserAccount.Address.City</p>
 
 @await Html.PartialAsync("PartialViews/_EditAccount", Model)

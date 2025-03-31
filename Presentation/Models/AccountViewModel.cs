@@ -5,7 +5,7 @@ namespace Presentation.Models;
 
 public class AccountViewModel
 {
-    public EditAccountForm EditAccountForm { get; set; } = new();
+    public MemberForm EditAccountForm { get; set; } = new();
 
     public Member CurrentUserAccount { get; set; } = new(); 
 }
