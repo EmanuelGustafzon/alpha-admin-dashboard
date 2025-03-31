@@ -154,12 +154,21 @@ p, i {
     color: white;
     background-color: var(--accent);
 }
+.btn-danger {
+    background-color: var(--red);
+}
 
 .btn-secondary {
     color: var(--text-color);
     background-color: var(--btn-color-secondary);
 }
-
+.profile-img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%; 
+    object-fit: cover; 
+    border: 2px solid #ddd;
+}
 /* layout */
 .layout {
     display: grid;
@@ -221,7 +230,12 @@ p, i {
     border-radius: 14px;
     outline: none;
 }
-
+.top-bar-buttons {
+    display: flex;
+    width: 8rem;
+    align-items: center;
+    justify-content: space-around;
+}
 .new-notification {
     position: absolute;
     margin-left: 10px;
@@ -554,3 +568,44 @@ p, i {
         padding: 0;
     }
 }
+
+/* account */
+.profile-card {
+    max-width: 350px;
+    margin: 20px auto;
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.profile-card img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+}
+
+.profile-card h4 {
+    margin: 5px 0;
+    font-weight: bold;
+}
+
+.profile-card p {
+    color: #777;
+    margin: 2px 0;
+}
+.profile-actions {
+  
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+.profile-actions button {
+    max-width: 350px;
+    width: 100%;
+}
+

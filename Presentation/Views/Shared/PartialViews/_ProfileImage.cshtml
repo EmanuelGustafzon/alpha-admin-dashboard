@@ -1,0 +1,10 @@
+﻿@{
+    var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var result = await memberService.GetMemberByIdAsync(userId);
+    string url = result.Data.ImageUrl ?? "/images/default-profile-picture.png";
+}
+<img src="@url"
+        class="profile-img"
+        alt="Profile Picture" />
+
+

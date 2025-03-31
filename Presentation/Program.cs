@@ -36,6 +36,7 @@ builder.Services.AddAuthentication()
         options.CallbackPath = "/signin-google";
     });
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+builder.Services.AddScoped<IUploadFile, UploadFile>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 

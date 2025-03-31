@@ -8,9 +8,8 @@ using Presentation.Models;
 namespace Presentation.Controllers;
 
 [Authorize]
-public class AccountController(IMemberService memberService, IWebHostEnvironment webHostEnv) : Controller
+public class AccountController(IMemberService memberService) : Controller
 {
-    private readonly IWebHostEnvironment _webHostEnv = webHostEnv;
     private readonly IMemberService _memberService = memberService;
     public async Task<IActionResult> Index()
     {
@@ -35,18 +34,6 @@ public class AccountController(IMemberService memberService, IWebHostEnvironment
                 );
             return BadRequest(new { success = false, errors });
         }
-        if(form.Image != null && form.Image.Length > 0)
-        {
-            var imageFolder = Path.Combine(_webHostEnv.WebRootPath, "image-uploads");
-            Directory.CreateDirectory(imageFolder);
-
-            var imagePath = Path.Combine(imageFolder, $"{Guid.NewGuid().ToString()}_{Path.GetFileName(form.Image.FileName)}");
-            using (var stream = new FileStream(imagePath, FileMode.Create))
-            {
-                await form.Image.CopyToAsync(stream);
-            }
-        }
-
         var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         var result = await _memberService.UpdateMemberAsync(form, userId);
         return Ok();

@@ -3,6 +3,8 @@
 @using Microsoft.AspNetCore.Identity
 @using Data.Entities
 @using Business.Models
+@using Business.Interfaces
 @inject SignInManager<MemberEntity> signInManager
 @inject UserManager<MemberEntity> userManager
+@inject IMemberService memberService
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

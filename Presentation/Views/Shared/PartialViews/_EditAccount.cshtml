@@ -6,7 +6,6 @@
         <button data-closeModal="true" class="btn-clean">x</button>
     </div>
     <form asp-action="EditAccount" asp-controller="Account" method="post" enctype="multipart/form-data" novalidate>
-
         <div class="img-preview-container circle">
             <img src="" class="img-preview"/>
             <input asp-for="@Model.EditAccountForm.Image" accept="image/*" class="d-none" />
