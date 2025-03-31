@@ -16,7 +16,7 @@ public class AccountController(IMemberService memberService, IWebHostEnvironment
     {
         var model = new AccountViewModel();
         var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        var result = await _memberService.GetMember(userId);
+        var result = await _memberService.GetMemberByIdAsync(userId);
         model.CurrentUserAccount = result.Data;
 
         return View(model);

@@ -387,7 +387,7 @@ p, i {
 /* modal form */
 .form-modal {
     position: absolute;
-    margin-top: 5%;
+    margin-top: 10%;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);

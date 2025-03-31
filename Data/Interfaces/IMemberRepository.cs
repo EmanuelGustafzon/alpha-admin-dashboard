@@ -3,6 +3,6 @@ using Domain.Models;
 
 namespace Data.Interfaces;
 
-public interface IMemberRepository : IRepository<MemberEntity, Member>
+public interface IMemberRepository : IRepository<MemberEntity>
 {
 }

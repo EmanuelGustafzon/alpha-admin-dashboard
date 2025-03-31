@@ -24,5 +24,5 @@ public class MemberEntity : IdentityUser
     public DateTime? BirthDate { get; set; }
 
     [ProtectedPersonalData]
-    public MemberAddressEntity Address { get; set; } = new();
+    public MemberAddressEntity? Address { get; set; }
 }

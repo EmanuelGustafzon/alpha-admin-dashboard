@@ -10,5 +10,7 @@
 <p>@Model.CurrentUserAccount.BirthDate</p>
 <p>@Model.CurrentUserAccount.PhoneNumber</p>
 <p>@Model.CurrentUserAccount.Address.City</p>
+<p>@Model.CurrentUserAccount.Address.PostCode</p>
+<p>@Model.CurrentUserAccount.Address.Street</p>
 
 @await Html.PartialAsync("PartialViews/_EditAccount", Model)

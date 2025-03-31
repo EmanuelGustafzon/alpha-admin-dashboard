@@ -16,8 +16,8 @@ public class MemberAddressEntity()
     public string? City { get; set; }
 
     [Column(TypeName = "varchar(200)")]
-    public string? PostCode { get; set; } = null!;
+    public string? PostCode { get; set; }
 
     [Column(TypeName = "varchar(300)")]
-    public string? Street { get; set; } = null!;
+    public string? Street { get; set; }
 }
