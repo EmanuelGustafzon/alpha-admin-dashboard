@@ -1,11 +1,11 @@
 ﻿using Data.Context;
 using Data.Entities;
 using Data.Interfaces;
-
+using Domain.Models;
 
 namespace Data.Repositories;
 
-public class MemberRepository(ApplicationDbContext context) : BaseRepository<MemberEntity>(context), IMemberRepository
+public class MemberRepository(ApplicationDbContext context) : BaseRepository<MemberEntity, Member>(context), IMemberRepository
 {
     private readonly ApplicationDbContext _context = context;
 }

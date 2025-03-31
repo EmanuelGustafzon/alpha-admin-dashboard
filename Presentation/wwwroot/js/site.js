@@ -11,6 +11,8 @@ forms.forEach(form => {
                 method: 'post',
                 body: formData
             });
+            if (res.ok) window.location.reload();
+            
             if (res.status == 400) {
                 const data = await res.json();
                 if (data.errors) {

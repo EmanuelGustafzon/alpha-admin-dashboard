@@ -35,12 +35,9 @@ builder.Services.AddAuthentication()
         options.ClientSecret = builder.Configuration["GoogleAuth:ClientSecret"];
         options.CallbackPath = "/signin-google";
     });
-
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
-builder.Services.AddScoped<IMemberProfileRepository, MemberProfileRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IMemberProfileService, MemberProfileService>();
+builder.Services.AddScoped<IMemberService, MemberService>();
 
 var app = builder.Build();
 

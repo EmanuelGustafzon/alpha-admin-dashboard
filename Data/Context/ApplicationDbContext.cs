@@ -10,8 +10,6 @@ public class ApplicationDbContext : IdentityDbContext<MemberEntity>
     : base(options)
     {
     }
-
-    public DbSet<MemberProfileEntity> MemberProfiles { get; set; } = null!;
     public DbSet<MemberAddressEntity> MemberAddresses { get; set; } = null!;
 
 }

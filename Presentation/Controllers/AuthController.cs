@@ -24,7 +24,6 @@ public class AuthController(IAuthService authService) : Controller
     }
 
     [HttpPost]
-    //[ValidateAntiForgeryToken]
     public async Task<IActionResult> SignUp([Bind(Prefix = "SignUpForm")] SignUpForm form)
     {
         ViewBag.ErrorMessage = null;
@@ -95,6 +94,7 @@ public class AuthController(IAuthService authService) : Controller
     public IActionResult ExternalLogin(string provider, string returnUrl = "/")
     {
         var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Auth", new { returnUrl });
+
         var result = _authService.ConfigureExternalAuthProps(provider, redirectUrl);
         if(result.Data is AuthenticationProperties)
         {
