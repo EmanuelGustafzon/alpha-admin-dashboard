@@ -3,8 +3,6 @@
     var result = await memberService.GetMemberByIdAsync(userId);
     string url = result.Data.ImageUrl ?? "/images/default-profile-picture.png";
 }
-<img src="@url"
-        class="profile-img"
-        alt="Profile Picture" />
+<img src="@url" class="profile-img" alt="Profile Picture" />
 
 
