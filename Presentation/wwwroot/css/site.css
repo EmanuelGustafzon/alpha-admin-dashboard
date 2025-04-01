@@ -413,7 +413,7 @@ a {
 /* modal form */
 .form-modal {
     position: absolute;
-    margin-top: 10%;
+    margin-top: 200px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -501,6 +501,15 @@ a {
     color: var(--white);
     }
 }  
+
+/*user settings*/
+.user-settings-profile-info {
+    background-color: var(--background);
+    border-radius: 8px;
+    display: flex;
+    column-gap: 8px;
+    height: 48px;
+}
 /*
     dark mode toggle
 */
@@ -509,6 +518,7 @@ a {
     justify-content: space-between;
     align-items: center;
     margin-right: 20%;
+    height: 44px;
 }
 
 .toggle-container {
@@ -558,7 +568,11 @@ a {
     border-radius: 50%;
     background: var(--surface);
 }
-
+.sign-out-container {
+    height: 32px;
+    display: flex;
+    column-gap: 8px;
+}
 @media (max-width: 720px) {
     .layout {
         display: grid;

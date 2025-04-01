@@ -1,8 +1,8 @@
 ﻿@{
     var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
     var result = await memberService.GetMemberByIdAsync(userId);
-    string url = result.Data.ImageUrl ?? "/images/default-profile-picture.png";
-    string fullName = $"{result.Data.FirstName} {result.Data.LastName}";
+    string url = result.Data?.ImageUrl ?? "/images/default-profile-picture.png";
+    string fullName = $"{result.Data?.FirstName} {result.Data?.LastName}";
 }
 <div class="popover-container">
     <button id="open-settings" class="settings btn-clean">
@@ -10,11 +10,11 @@
     </button>
     <div id="settings-popover" class="popover">
         <div>
-            <div class="flex align space-evenly">
+            <div class="flex align user-settings-profile-info">
                 <img src="@url" class="profile-img" alt="Profile Picture" />
                 <span>@fullName</span>
             </div>
-            <div class="theme-settings-container">
+            <div class="theme-settings-container border-bottom">
                 <div>
                     <i class="bi bi-gear-fill"></i>
                     <span class="px-1">Dark Mode</span>
@@ -25,7 +25,7 @@
                 </label>
             </div>
         </div>
-        <div>
+        <div class="sign-out-container">
             <i class="bi bi-box-arrow-right"></i>
             <a class="btn-clean" asp-action="SignOut" asp-controller="Auth">
                 Log Out

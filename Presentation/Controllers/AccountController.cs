@@ -16,8 +16,12 @@ public class AccountController(IMemberService memberService) : Controller
         var model = new AccountViewModel();
         var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         var result = await _memberService.GetMemberByIdAsync(userId);
-        model.CurrentUserAccount = result.Data;
-
+        if(result.Data != null)
+        {
+            model.CurrentUserAccount = result.Data;
+            bool? useExternalprovider = await _memberService.MemberUseExternalProvider(userId);
+            model.CurrentUserHasExternalprovider = useExternalprovider == false ? false : true;
+        }  
         return View(model);
     }
 
