@@ -1,4 +1,24 @@
-﻿<div class="projects-top-bar">
+﻿@model MembersViewModel
+
+<div class="projects-top-bar">
     <h2>Member</h2>
     <button class="btn btn-primary ">+ Add Member</button>
+</div>
+
+<div class="flex">
+    @foreach(var member in Model.Members) {
+        <div class="profile-card">
+            <div class="flex flex-end">
+                <i class="bi bi-three-dots"></i>
+            </div>
+            <img src="@(member.ImageUrl ?? "/images/default-profile-picture.png")" alt="member profile picture">
+            <h4>@member.FirstName @member.LastName</h4>
+            <div class="member-job-title">
+                <p>@member.JobTitle</p>
+            </div>
+            <p>@member.PhoneNumber</p>
+            <p>@member.Email</p>
+            <button class="btn btn-secondary">Message</button>
+        </div>
+    }
 </div>

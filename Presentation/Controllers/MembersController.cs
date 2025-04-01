@@ -1,11 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Business.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Presentation.Models;
 
 namespace Presentation.Controllers;
 
-public class MembersController : Controller
+public class MembersController(IMemberService memberService) : Controller
 {
-    public IActionResult Index()
+    private readonly IMemberService _memberService = memberService;
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var model = new MembersViewModel();
+        var result = await _memberService.GetAllMembersAsync();
+        if(result.Success)
+        {
+            model.Members = result.Data!;
+        }
+        return View(model);
     }
 }

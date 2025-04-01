@@ -128,6 +128,9 @@ a {
 .flex {
     display: flex;
 }
+.flex-end {
+    justify-content: flex-end;
+}
 .align {
     align-items: center;
 }
@@ -596,6 +599,7 @@ a {
 
 /* account */
 .profile-card {
+    min-width: 300px;
     max-width: 350px;
     margin: 20px auto;
     background: var(--surface);
@@ -604,6 +608,12 @@ a {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
+.profile-card button {
+    min-width: 280px;
+    max-width: 330px;
+    width: 100%;
+    margin-top: 20px;
+}
 
 .profile-card img {
     width: 100px;
@@ -611,7 +621,6 @@ a {
     border-radius: 50%;
     margin-bottom: 15px;
 }
-
 .profile-card h4 {
     margin: 5px 0;
     font-weight: bold;
@@ -632,5 +641,15 @@ a {
 .profile-actions button {
     max-width: 350px;
     width: 100%;
+}
+.member-job-title {
+    background-color: var(--btn-color-secondary);
+    border-radius: 8px;
+    display: inline;
+}
+.member-job-title p {
+    display: inline;
+    margin-bottom: 20px;
+    padding: 26px;
 }
 
