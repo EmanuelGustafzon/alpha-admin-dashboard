@@ -3,22 +3,29 @@
 }
 @model AuthViewModel;
 
-<div>
+<div class="login-form-container">
+    <h1>Login</h1>
+
     @if (Model.ExternalLogins != null && Model.ExternalLogins.Any())
     {
-        <form method="post" asp-action="ExternalLogin" asp-controller="Auth">
+        <form class="external-login-form" method="post" asp-action="ExternalLogin" asp-controller="Auth">
             <div>
-                <p>Or sign up using:</p>
                 @foreach (var provider in Model.ExternalLogins)
                 {
-                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name">
-                        Sign in with @provider.DisplayName
+                    string providerName = provider.DisplayName.Split(" ")[0];
+
+                    <button type="submit" class="btn btn-secondary" name="provider" value="@provider.Name">
+                        <i class="bi bi-@(providerName.ToLower())"></i>
+                        <span>Login with @providerName</span>
                     </button>
                 }
             </div>
         </form>
     }
-    <form method="post" asp-action="SignIn">
+    <div class="separator">
+        <span>or</span>
+    </div>
+    <form class="login-form" method="post" asp-action="SignIn">
 
         <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl">
         <div class="form-group">
@@ -32,7 +39,7 @@
         <div class="form-group">
             <span class="text-error" > @ViewBag.ErrorMessage </span>
         </div>
-
-        <button type="submit">Sign In</button>
+        <button class="btn btn-primary" type="submit">Log In</button>
     </form>
+    <p>Don't have an account? <a>Sign Up</a></p>
 </div>

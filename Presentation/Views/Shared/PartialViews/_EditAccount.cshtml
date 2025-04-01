@@ -1,14 +1,19 @@
 ﻿@model AccountViewModel
+@{
 
+}
 <div id="edit-account" class="form-modal d-none">
     <div class="flex space-between">
         <h6>Edit Profile</h6>
         <button data-closeModal="true" class="btn-clean">x</button>
     </div>
     <form asp-action="EditAccount" asp-controller="Account" method="post" enctype="multipart/form-data" novalidate>
-        <div class="img-preview-container circle">
-            <img src="" class="img-preview"/>
-            <input asp-for="@Model.EditAccountForm.Image" accept="image/*" class="d-none" />
+
+        <input hidden asp-for="@Model.EditAccountForm.ImageUrl" value="@Model.CurrentUserAccount.ImageUrl" />
+
+        <div class="img-preview-container circle @(Model.CurrentUserAccount.ImageUrl != null ? "selected" : "")">
+            <img src="@(Model.CurrentUserAccount.ImageUrl ?? "")" class="img-preview" />
+            <input asp-for="@Model.EditAccountForm.Image" accept="image/*" class="d-none"/>
         </div>
         <div class="form-group">
             <label asp-for="@Model.EditAccountForm.FirstName"></label>
@@ -22,7 +27,7 @@
         </div>
         <div class="form-group">
             <label asp-for="@Model.EditAccountForm.Email"></label>
-            <input disabled="@Model.CurrentUserHasExternalprovider" asp-for="@Model.EditAccountForm.Email" class="form-control" value="@Model.CurrentUserAccount.Email">
+            <input hidden="@Model.CurrentUserHasExternalprovider" asp-for="@Model.EditAccountForm.Email" class="form-control" value="@Model.CurrentUserAccount.Email">
             <span asp-validation-for="@Model.EditAccountForm.Email"></span>
         </div>
         <div class="form-group">
