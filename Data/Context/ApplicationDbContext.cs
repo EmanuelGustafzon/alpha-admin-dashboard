@@ -1,30 +1,25 @@
 ﻿using Data.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace Data.Context;
 
-public class ApplicationDbContext : IdentityDbContext<UserEntity>
+public class ApplicationDbContext : IdentityDbContext<MemberEntity>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : base(options)
     {
     }
-
-    public DbSet<ProfileEntity> Profiles { get; set; } = null!;
+    public DbSet<MemberAddressEntity> MemberAddresses { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<UserEntity>()
-        .HasOne(u => u.Profile)
-        .WithOne(p => p.User)
-        .HasForeignKey<ProfileEntity>(p => p.UserId)
-        .IsRequired()
-        .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<MemberEntity>()
+            .HasOne(m => m.Address) 
+            .WithOne(a => a.Member) 
+            .HasForeignKey<MemberAddressEntity>(a => a.MemberId)
+            .IsRequired(); 
     }
-
 }

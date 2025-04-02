@@ -1,0 +1,40 @@
+﻿@model ProjectViewModel
+
+<div id="add-project" class="form-modal d-none">
+    <div class="flex space-between">
+        <h6>Add Project</h6>
+        <button data-closeModal="true" class="btn-clean">x</button>
+    </div>
+    <form method="post" enctype="multipart/form-data" novalidate>
+        @* <div class="form-group"> *@
+        @*     <label asp-for="@Model.ProjectForm.Description"></label> *@
+        @*     <textarea id="mytextarea" asp-for="@Model.ProjectForm.Description" class="form-control"></textarea> *@
+        @*     <span asp-validation-for="@Model.ProjectForm.Description"></span> *@
+        @* </div> *@
+
+        <div class="multiselect-plugin-container">
+            <select asp-for="@Model.ProjectForm.MemberIds" multiple data-multi-select-plugin>
+                @foreach(var member in Model.Members) {
+                    <option value="@member.Id">
+                        <span>@($"{member.FirstName} {member.LastName}")</span>
+                    </option>
+                }
+            </select>
+        </div>
+    </form>
+</div>
+
+<script>
+    tinymce.init({
+      selector: '#mytextarea',
+      menubar: false,
+      skin: 'naked',
+      toolbar_location: 'bottom',
+      toolbar: 'bold italic underline | alignleft aligncenter alignright | numlist bullist | link',
+      plugins: 'lists link'
+    });
+</script>
+
+
+<link rel="stylesheet" href="~/searchable-multiselect-plugin/styles.css" asp-append-version="true" />
+<script src="~/searchable-multiselect-plugin/script.js" asp-append-version="true"></script>

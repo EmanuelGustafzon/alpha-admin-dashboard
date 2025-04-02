@@ -1,0 +1,67 @@
+﻿@model AccountViewModel
+@{
+
+}
+<div id="edit-account" class="form-modal d-none">
+    <div class="flex space-between">
+        <h6>Edit Profile</h6>
+        <button data-closeModal="true" class="btn-clean">x</button>
+    </div>
+    <form asp-action="EditAccount" asp-controller="Account" method="post" enctype="multipart/form-data" novalidate>
+
+        <input hidden asp-for="@Model.EditAccountForm.ImageUrl" value="@Model.CurrentUserAccount.ImageUrl" />
+
+        <div class="img-preview-container circle @(Model.CurrentUserAccount.ImageUrl != null ? "selected" : "")">
+            <img src="@(Model.CurrentUserAccount.ImageUrl ?? "")" class="img-preview" />
+            <input asp-for="@Model.EditAccountForm.Image" accept="image/*" class="d-none"/>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.EditAccountForm.FirstName"></label>
+            <input asp-for="@Model.EditAccountForm.FirstName" class="form-control" value="@Model.CurrentUserAccount.FirstName">
+            <span asp-validation-for="@Model.EditAccountForm.FirstName"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.EditAccountForm.LastName"></label>
+            <input asp-for="@Model.EditAccountForm.LastName" class="form-control" value="@Model.CurrentUserAccount.LastName">
+            <span asp-validation-for="@Model.EditAccountForm.LastName"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.EditAccountForm.Email"></label>
+            <input hidden="@Model.CurrentUserHasExternalprovider" asp-for="@Model.EditAccountForm.Email" class="form-control" value="@Model.CurrentUserAccount.Email">
+            <span asp-validation-for="@Model.EditAccountForm.Email"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.EditAccountForm.PhoneNumber"></label>
+            <input asp-for="@Model.EditAccountForm.PhoneNumber" class="form-control" value="@Model.CurrentUserAccount.PhoneNumber">
+            <span asp-validation-for="@Model.EditAccountForm.PhoneNumber"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.EditAccountForm.JobTitle"></label>
+            <input asp-for="@Model.EditAccountForm.JobTitle" class="form-control" value="@Model.CurrentUserAccount.JobTitle">
+            <span asp-validation-for="@Model.EditAccountForm.JobTitle"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.EditAccountForm.BirthDate"></label>
+            <input asp-for="@Model.EditAccountForm.BirthDate" class="form-control" value="@Model.CurrentUserAccount.BirthDate">
+            <span asp-validation-for="@Model.EditAccountForm.BirthDate"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.EditAccountForm.AddressForm.City"></label>
+            <input asp-for="@Model.EditAccountForm.AddressForm.City" class="form-control" value="@Model.CurrentUserAccount.Address.City">
+            <span asp-validation-for="@Model.EditAccountForm.AddressForm.City"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.EditAccountForm.AddressForm.PostCode"></label>
+            <input asp-for="@Model.EditAccountForm.AddressForm.PostCode" class="form-control" value="@Model.CurrentUserAccount.Address.PostCode">
+            <span asp-validation-for="@Model.EditAccountForm.AddressForm.PostCode"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.EditAccountForm.AddressForm.Street"></label>
+            <input asp-for="@Model.EditAccountForm.AddressForm.Street" class="form-control" value="@Model.CurrentUserAccount.Address.Street">
+            <span asp-validation-for="@Model.EditAccountForm.AddressForm.Street"></span>
+        </div>
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Button</button>
+        </div>
+    </form>
+</div>

@@ -21,16 +21,17 @@
     <form method="post" asp-controller="Auth" asp-action="SignUp" novalidate>
 
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <p>@ViewBag.ErrorMessage</p>
 
         <div class="form-group">
-            <label asp-for="SignUpForm.Firstname"></label>
-            <input asp-for="SignUpForm.Firstname" class="form-control" value="@Model?.SignUpForm?.Firstname" />
-            <span asp-validation-for="SignUpForm.Firstname" class="text-danger"></span>
+            <label asp-for="SignUpForm.FirstName"></label>
+            <input asp-for="SignUpForm.FirstName" class="form-control" value="@Model?.SignUpForm?.FirstName" />
+            <span asp-validation-for="SignUpForm.FirstName" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="SignUpForm.Lastname"></label>
-            <input asp-for="SignUpForm.Lastname" class="form-control" value="@Model?.SignUpForm?.Lastname" />
-            <span asp-validation-for="SignUpForm.Lastname" class="text-error"></span>
+            <label asp-for="SignUpForm.LastName"></label>
+            <input asp-for="SignUpForm.LastName" class="form-control" value="@Model?.SignUpForm?.LastName" />
+            <span asp-validation-for="SignUpForm.LastName" class="text-error"></span>
         </div>
         <div class="form-group">
             <label asp-for="SignUpForm.Email"></label>
@@ -47,7 +48,6 @@
             <input asp-for="SignUpForm.ConfirmPassword" class="form-control"/>
             <span asp-validation-for="SignUpForm.ConfirmPassword" class="text-error"></span>
         </div>
-
         <button type="submit">Register</button>
     </form>
 </div>

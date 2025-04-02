@@ -1,8 +1,12 @@
-﻿namespace Presentation.Models;
+﻿using Business.Models;
+using Domain.Models;
 
-public class ProjectViewModel
+namespace Presentation.Models
 {
-    public IEnumerable<Project> Projects { get; set; } = [];
-    public ProjectCreateFormModel CreateProjectForm { get; set; } = new ProjectCreateFormModel();
+    public class ProjectViewModel
+    {
+        public ProjectForm ProjectForm { get; set; } = new();
 
+        public IEnumerable<Member> Members { get; set; } = [];
+    }
 }
