@@ -1,9 +1,10 @@
-﻿@{
+﻿@model ProjectViewModel
+@{
     ViewData["Title"] = "Projects";
 }
 <div class="projects-top-bar">
     <h2>Projects</h2>
-    <button id="add-project" class="btn btn-primary ">+ Add Project</button>
+    <button data-targetId="#add-project" data-openModal="true" class="btn btn-primary ">+ Add Project</button>
 </div>
 <div class="filter-projects">
     <div class="active-filter tab-link">
@@ -19,6 +20,8 @@
 <div class="projects-view">
 
 </div>
+
+@await Html.PartialAsync("PartialViews/_AddProject", Model)
 
 
 
