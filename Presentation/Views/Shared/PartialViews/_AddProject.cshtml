@@ -15,9 +15,9 @@
         <div class="multiselect-plugin-container">
             <select asp-for="@Model.ProjectForm.MemberIds" multiple data-multi-select-plugin>
                 @foreach(var member in Model.Members) {
-                    <option selected value="@member.Id">
+                    <option value="@member.Id">
                         <div>
-                            <img data-image src="@member.ImageUrl"  />
+                            <img data-image src="@(member.ImageUrl ?? "/images/default-profile-picture.png")" />
                             <span data-content >@($"{member.FirstName} {member.LastName}")</span>
                         </div>
                     </option>
@@ -55,5 +55,4 @@
 
 
 
-<link rel="stylesheet" href="~/searchable-multiselect-plugin/styles.css" asp-append-version="true" />
-<script src="~/searchable-multiselect-plugin/script.js" asp-append-version="true"></script>
+

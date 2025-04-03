@@ -206,36 +206,24 @@ function populateAutocompleteList(select, query, dropdown = false) {
     autocomplete_list.innerHTML = "";
     const result_size = options_to_show.length;
 
-    if (result_size == 1) {
-        const span = getContentElement(options_to_show[0]);
-        let content = span.innerText;
-        const li = document.createElement("li");
-        const image = document.createElement("img");
-        image.src = getImageSrc(options_to_show[0])
-        image.classList.add("profile-img-small")
-        li.innerText = content;
-        li.setAttribute('data-value', options_to_show[0].value);
-        li.addEventListener("click", selectOption);
-        autocomplete_list.appendChild(li);
-        if (query.length == options_to_show[0].length) {
-            const event = new Event('click');
-            li.dispatchEvent(event);
-        }
-    } else if (result_size > 1) {
 
+
+    if (result_size > 0) {
         for (let i = 0; i < result_size; i++) {
             const span = getContentElement(options_to_show[i]);
             let content = span.innerText;
             const li = document.createElement("li");
             const image = document.createElement("img");
+
             image.src = getImageSrc(options_to_show[i])
             image.classList.add("profile-img-small")
+
             li.appendChild(image)
             li.appendChild(document.createTextNode(content));
             li.setAttribute('data-value', options_to_show[i].value);
             li.addEventListener("click", selectOption);
             autocomplete_list.appendChild(li);
-        }
+            }
     } else {
         const li = document.createElement("li");
         li.classList.add("not-cursor");
