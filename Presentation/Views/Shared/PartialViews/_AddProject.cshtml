@@ -5,35 +5,54 @@
         <h6>Add Project</h6>
         <button data-closeModal="true" class="btn-clean">x</button>
     </div>
-    <form method="post" enctype="multipart/form-data" novalidate>
-        @* <div class="form-group"> *@
-        @*     <label asp-for="@Model.ProjectForm.Description"></label> *@
-        @*     <textarea id="mytextarea" asp-for="@Model.ProjectForm.Description" class="form-control"></textarea> *@
-        @*     <span asp-validation-for="@Model.ProjectForm.Description"></span> *@
-        @* </div> *@
+    <form asp-action="AddProject" method="post" enctype="multipart/form-data" novalidate>
+         <div class="form-group">
+             <label asp-for="@Model.ProjectForm.Description"></label> 
+             <textarea id="mytextarea" asp-for="@Model.ProjectForm.Description" class="form-control"></textarea> 
+             <span asp-validation-for="@Model.ProjectForm.Description"></span> 
+         </div> 
 
         <div class="multiselect-plugin-container">
             <select asp-for="@Model.ProjectForm.MemberIds" multiple data-multi-select-plugin>
                 @foreach(var member in Model.Members) {
-                    <option value="@member.Id">
-                        <span>@($"{member.FirstName} {member.LastName}")</span>
+                    <option selected value="@member.Id">
+                        <div>
+                            <img data-image src="@member.ImageUrl"  />
+                            <span data-content >@($"{member.FirstName} {member.LastName}")</span>
+                        </div>
                     </option>
                 }
             </select>
+        </div>
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Button</button>
         </div>
     </form>
 </div>
 
 <script>
+    let theme;
+    if (localStorage.getItem("theme") === "dark") {
+        theme = 'dark';
+    } else {
+        theme = 'light';
+    }
     tinymce.init({
       selector: '#mytextarea',
+      content_css: [
+          "css/tinymce.css"
+      ],
       menubar: false,
-      skin: 'naked',
+      skin: theme === 'dark' ? 'oxide-dark' : 'oxide',
+      content_css: theme === 'dark' ? 'dark' : 'default',
+      branding: false,
       toolbar_location: 'bottom',
       toolbar: 'bold italic underline | alignleft aligncenter alignright | numlist bullist | link',
       plugins: 'lists link'
     });
 </script>
+
+
 
 
 <link rel="stylesheet" href="~/searchable-multiselect-plugin/styles.css" asp-append-version="true" />

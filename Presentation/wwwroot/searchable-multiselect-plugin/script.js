@@ -1,4 +1,11 @@
-﻿function init(selectElement) {
+﻿/*This code is copied from https://codepen.io/vdhug/pen/xxbPoJe 
+
+and then custumized to support:
+1. Queryble content is read from a dataset named data-content so the option value
+and content you search for can be different
+2. each query look for all words in each element with data-content dataset
+*/
+function init(selectElement) {
     // Create div that wroaps all the elements inside (select, elements selected, search div) to put select inside
     const wrapper = document.createElement("div");
     wrapper.addEventListener("click", clickOnWrapper);
@@ -48,7 +55,6 @@ function addPlaceholder(wrapper) {
         input_search.setAttribute("placeholder", "---------");
 }
 
-
 // Function that create the initial set of tokens with the options selected by the users
 function createInitialTokens(select) {
     let {
@@ -59,7 +65,6 @@ function createInitialTokens(select) {
         createToken(wrapper, options_selected[i]);
     }
 }
-
 
 // Listener of user search
 function inputChange(e) {
@@ -78,7 +83,6 @@ function inputChange(e) {
         dropdown.dispatchEvent(event);
     }
 }
-
 
 // Listen for clicks on the wrapper, if click happens focus on the input
 function clickOnWrapper(e) {
@@ -112,12 +116,12 @@ function openOptions(e) {
 function createToken(wrapper, option) {
     let content;
     let value;
-    if (option.children[0]) {
-        const span = option.children[0];
-        content = span.innerText
+    if (option.tagName == "OPTION") {
+        const span = getContentElement(option);
+        content = span.textContent;
         value = option.value;
     } else {
-        content = option.innerText
+        content = option.textContent
         value = option.dataset.value
     }
     
@@ -125,9 +129,15 @@ function createToken(wrapper, option) {
     // Create token wrapper
     const token = document.createElement("div");
     token.classList.add("selected-wrapper");
+
+    const token_image = document.createElement("img");
+    token_image.src = option.querySelector("img").src
+    token_image.classList.add("profile-img-small")
+
     const token_span = document.createElement("span");
     token_span.classList.add("selected-label");
     token_span.innerText = content;
+
     const close = document.createElement("a");
     close.classList.add("selected-close");
     close.setAttribute("tabindex", "-1");
@@ -136,11 +146,11 @@ function createToken(wrapper, option) {
     close.setAttribute("href", "#");
     close.innerText = "x";
     close.addEventListener("click", removeToken)
+    token.appendChild(token_image);
     token.appendChild(token_span);
     token.appendChild(close);
     wrapper.insertBefore(token, search);
 }
-
 
 // Listen for clicks in the dropdown option
 function clickDropdown(e) {
@@ -197,26 +207,31 @@ function populateAutocompleteList(select, query, dropdown = false) {
     const result_size = options_to_show.length;
 
     if (result_size == 1) {
-        const span = options_to_show[0].children[0];
-        let content = span.innerText
+        const span = getContentElement(options_to_show[0]);
+        let content = span.innerText;
         const li = document.createElement("li");
+        const image = document.createElement("img");
+        image.src = getImageSrc(options_to_show[0])
+        image.classList.add("profile-img-small")
         li.innerText = content;
         li.setAttribute('data-value', options_to_show[0].value);
-        console.log(options_to_show[0].value)
         li.addEventListener("click", selectOption);
         autocomplete_list.appendChild(li);
         if (query.length == options_to_show[0].length) {
             const event = new Event('click');
             li.dispatchEvent(event);
-
         }
     } else if (result_size > 1) {
 
         for (let i = 0; i < result_size; i++) {
-            const span = options_to_show[i].children[0];
-            let content = span.innerText
+            const span = getContentElement(options_to_show[i]);
+            let content = span.innerText;
             const li = document.createElement("li");
-            li.innerText = content;
+            const image = document.createElement("img");
+            image.src = getImageSrc(options_to_show[i])
+            image.classList.add("profile-img-small")
+            li.appendChild(image)
+            li.appendChild(document.createTextNode(content));
             li.setAttribute('data-value', options_to_show[i].value);
             li.addEventListener("click", selectOption);
             autocomplete_list.appendChild(li);
@@ -271,9 +286,12 @@ function autocomplete(query, options) {
     let options_return = [];
 
     for (let i = 0; i < options.length; i++) {
-        if (query.toLowerCase() === content[i].slice(0, query.length).toLowerCase()) {
-            options_return.push(options[i]);
-        }
+        const words = content[i].split(" ");
+        words.forEach(word => {
+            if (query.toLowerCase() === word.slice(0, query.length).toLowerCase()) {
+                options_return.push(options[i]);
+            }
+        })    
     }
     return options_return;
 }
@@ -304,6 +322,14 @@ function getOptions(select) {
         autocomplete_options
     };
 
+}
+
+function getContentElement(option) {
+    return option.querySelector("[data-content]");
+}
+
+function getImageSrc(option) {
+    return option.querySelector("[data-image]").src;
 }
 
 // Listener for when the user wants to remove a given token.
@@ -352,17 +378,6 @@ function deletePressed(e) {
         }
     }
     return true;
-}
-
-// You can call this function if you want to add new options to the select plugin
-// Target needs to be a unique identifier from the select you want to append new option for example #multi-select-plugin
-// Example of usage addOption("#multi-select-plugin", "tesla", "Tesla")
-function addOption(target, val, text) {
-    const select = document.querySelector(target);
-    let opt = document.createElement('option');
-    opt.value = val;
-    opt.innerHTML = text;
-    select.appendChild(opt);
 }
 
 document.addEventListener("DOMContentLoaded", () => {

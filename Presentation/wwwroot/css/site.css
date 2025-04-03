@@ -670,3 +670,6 @@ a {
     padding: 26px;
 }
 
+.mce-content-body {
+    background-color: black;
+}

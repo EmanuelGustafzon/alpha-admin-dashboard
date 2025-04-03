@@ -1,4 +1,7 @@
-﻿.multiselect-plugin-container {
+﻿/*This code is copied from https://codepen.io/vdhug/pen/xxbPoJe 
+*/
+
+.multiselect-plugin-container {
     max-width: 550px;
     min-width: 300px;
     margin: 0 auto;
