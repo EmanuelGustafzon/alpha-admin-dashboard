@@ -1,18 +1,16 @@
 ﻿/*This code is copied from https://codepen.io/vdhug/pen/xxbPoJe 
 */
-
 .multiselect-plugin-container {
     max-width: 550px;
-    min-width: 300px;
+    min-width: 370px;
     border-color: var(--border-color);
-    border-radius: 12px;
+    border-radius: 18px;
     margin: 0 auto;
 }
 
 select[data-multi-select-plugin] {
     display: none !important;
 }
-
 .multi-select-component {
     position: relative;
     display: flex;
@@ -24,10 +22,10 @@ select[data-multi-select-plugin] {
     font-size: 14px;
     line-height: 1.42857143;
     padding-bottom: 0px;
-    color: #555;
-    background-color: var(--background);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
+    color: var(--text-color);
+    background-color: var(--surface);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     -webkit-transition: border-color ease-in-out 0.15s, -webkit-box-shadow ease-in-out 0.15s;
@@ -38,19 +36,15 @@ select[data-multi-select-plugin] {
 .autocomplete-list {
     border-radius: 4px 0px 0px 4px;
 }
-
 .multi-select-component:focus-within {
-    box-shadow: inset 0px 0px 0px 2px #78ABFE;
+    box-shadow: inset 0px 0px 0px 2px var(--accent);
 }
-
 .multi-select-component .btn-group {
     display: none !important;
 }
-
 .multiselect-native-select .multiselect-container {
     width: 100%;
 }
-
 .selected-wrapper {
     display: flex;
     align-items: center;
@@ -62,37 +56,38 @@ select[data-multi-select-plugin] {
     -moz-border-radius: 3px;
     border-radius: 3px;
     border-color: none;
-    background-color: var(--btn-color-secondary);
+    background-color: var(--label);
     margin: 1px 5px 5px 0;
     height: 22px;
     vertical-align: top;
     cursor: default;
 }
 
-    .selected-wrapper .selected-label {
-        max-width: 514px;
-        display: inline-block;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        padding-left: 4px;
-        vertical-align: top;
-    }
+.selected-wrapper .selected-label {
+    max-width: 315px;
+    color: var(--text-color);
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 4px;
+    vertical-align: top;
+}
 
-    .selected-wrapper .selected-close {
-        display: inline-block;
-        text-decoration: none;
-        font-size: 14px;
-        line-height: 1.49em;
-        margin-left: 5px;
-        padding-bottom: 10px;
-        height: 100%;
-        vertical-align: top;
-        padding-right: 4px;
-        opacity: 0.2;
-        color: var(--text-color);
-        text-shadow: 0 1px 0 #fff;
-        font-weight: 700;
-    }
+.selected-wrapper .selected-close {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 1.49em;
+    margin-left: 5px;
+    padding-bottom: 10px;
+    height: 100%;
+    vertical-align: top;
+    padding-right: 4px;
+    opacity: 0.2;
+    color: var(--text-color);
+    text-shadow: 0 1px 0 #fff;
+    font-weight: 700;
+}
 
 .search-container {
     display: flex;
@@ -144,37 +139,41 @@ select[data-multi-select-plugin] {
     box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
 }
 
-    .search-container ul :focus {
-        outline: none;
-    }
+.search-container ul :focus {
+    outline: none;
+}
 
-    .search-container ul li {
-        display: block;
-        text-align: left;
-        padding: 8px 29px 2px 12px;
-        border-bottom: 1px solid #ccc;
-        font-size: 14px;
-        min-height: 31px;
-    }
+.search-container ul li {
+    display: flex;
+    column-gap: 8px;
+    align-items: center;
+    text-align: left;
+    padding: 8px 29px 2px 12px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 14px;
+    min-height: 31px;
+    background-color: var(--surface);
+    color: var(--text-color);
+}
 
-        .search-container ul li:first-child {
-            border-top: 1px solid #ccc;
-            border-radius: 4px 0px 0 0;
-        }
+.search-container ul li:first-child {
+    border-top: 1px solid #ccc;
+    border-radius: 4px 0px 0 0;
+}
 
-        .search-container ul li:last-child {
-            border-radius: 4px 0px 0 0;
-        }
+.search-container ul li:last-child {
+    border-radius: 4px 0px 0 0;
+}
 
 
-        .search-container ul li:hover.not-cursor {
-            cursor: default;
-        }
+.search-container ul li:hover.not-cursor {
+    cursor: default;
+}
 
-        .search-container ul li:hover {
-            color: var(--accent);
-            cursor: pointer;
-        }
+.search-container ul li:hover {
+    background-color: var(--accent);
+    cursor: pointer;
+}
 
 /* Adding scrool to select options */
 .autocomplete-list {

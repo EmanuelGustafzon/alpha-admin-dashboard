@@ -7,11 +7,48 @@
     </div>
     <form asp-action="AddProject" method="post" enctype="multipart/form-data" novalidate>
          <div class="form-group">
-             <label asp-for="@Model.ProjectForm.Description"></label> 
-             <textarea id="mytextarea" asp-for="@Model.ProjectForm.Description" class="form-control"></textarea> 
+            
+             <div class="img-preview-container square">
+                <img src="" class="img-preview" />
+                <input asp-for="@Model.ProjectForm.Image" accept="image/*" class="d-none" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="@Model.ProjectForm.ProjectName"></label>
+                <input asp-for="@Model.ProjectForm.ProjectName" class="form-control">
+                <span asp-validation-for="@Model.ProjectForm.ProjectName"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="@Model.ProjectForm.ClientName"></label>
+                <input asp-for="@Model.ProjectForm.ClientName" class="form-control">
+                <span asp-validation-for="@Model.ProjectForm.ClientName"></span>
+            </div>
+            <div>
+                <label asp-for="@Model.ProjectForm.Description"></label> 
+                <textarea id="add-project-description" asp-for="@Model.ProjectForm.Description" class="d-none"></textarea>
+                <div id="project-quill-editor"></div>
+                <div id="project-quill-toolbar">
+                <span class="ql-formats">
+                    <button class="ql-bold"></button>
+                    <button class="ql-italic"></button>
+                    <button class="ql-underline"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-align" value=""></button>
+                    <button class="ql-align" value="center"></button>
+                    <button class="ql-align" value="right"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-list" value="bullet"></button>
+                    <button class="ql-list" value="ordered"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-link"></button>
+                </span>
+            </div>     
              <span asp-validation-for="@Model.ProjectForm.Description"></span> 
          </div> 
-
         <div class="multiselect-plugin-container">
             <select asp-for="@Model.ProjectForm.MemberIds" multiple data-multi-select-plugin>
                 @foreach(var member in Model.Members) {
@@ -24,32 +61,35 @@
                 }
             </select>
         </div>
+            <div class="form-group">
+                <label asp-for="@Model.ProjectForm.Budget"></label>
+                <input asp-for="@Model.ProjectForm.Budget" class="form-control">
+                <span asp-validation-for="@Model.ProjectForm.Budget"></span>
+            </div>
         <div class="d-grid">
             <button type="submit" class="btn btn-primary">Button</button>
         </div>
     </form>
 </div>
-
 <script>
-    let theme;
-    if (localStorage.getItem("theme") === "dark") {
-        theme = 'dark';
-    } else {
-        theme = 'light';
-    }
-    tinymce.init({
-      selector: '#mytextarea',
-      content_css: [
-          "css/tinymce.css"
-      ],
-      menubar: false,
-      skin: theme === 'dark' ? 'oxide-dark' : 'oxide',
-      content_css: theme === 'dark' ? 'dark' : 'default',
-      branding: false,
-      toolbar_location: 'bottom',
-      toolbar: 'bold italic underline | alignleft aligncenter alignright | numlist bullist | link',
-      plugins: 'lists link'
-    });
+    window.addEventListener('DOMContentLoaded', () => 
+        initQuill('#project-quill-editor', '#project-quill-toolbar', '#add-project-description', '@Html.Raw(@Model.ProjectForm.Description ?? "")'))
+    
+    function initQuill(editorId, toolbarId, textareaId, content) {
+        const textarea = document.querySelector(textareaId);
+
+        const quill = new Quill(editorId, {
+        modules: {
+            syntax: true,
+            toolbar: toolbarId
+        },
+        theme: 'snow'
+        });
+
+        if(content) quill.root.innerHtml = content;
+        quill.on('text-change', () => textarea.ariaValueMax = quill.root.innerHtml)
+    };
+
 </script>
 
 

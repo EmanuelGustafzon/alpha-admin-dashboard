@@ -26,6 +26,7 @@
     --dark-red: #E94D3F;
     --background: var(--gray-100);
     --surface: #fff;
+    --label: var(--gray-100);         
     --heading: var(--dark);
     --btn-color-secondary: var(--gray-300);
     --text-color: var(--body-dark);
@@ -36,6 +37,7 @@
 [data-theme="dark"] {
     --background: #151517;
     --surface: var(--dark);
+    --label: var(--body-dark);
     --heading: var(--white);
     --btn-color-secondary: var(--body-light);
     --text-color: var(--gray-100);
@@ -486,7 +488,7 @@ a {
 
 /*user settings*/
 .user-settings-profile-info {
-    background-color: var(--background);
+    background-color: var(--label);
     border-radius: 8px;
     display: flex;
     column-gap: 8px;
@@ -670,6 +672,21 @@ a {
     padding: 26px;
 }
 
-.mce-content-body {
-    background-color: black;
+/*quill*/
+#project-quill-editor {
+    border-radius: 12px;
+    color: var(--text-color);
+    font-family: var(--font);
+    font-size: 1em;
+    font-weight: 400;
 }
+.ql-editor {
+    color: var(--text-color);
+    min-height: 150px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+}
+#project-quill-toolbar {
+    border: none;
+}
+
