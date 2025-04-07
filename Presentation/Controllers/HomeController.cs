@@ -8,23 +8,36 @@ using Presentation.Models;
 namespace Presentation.Controllers;
 
 [Authorize]
-public class HomeController(IMemberService memberService) : Controller
+public class HomeController(IMemberService memberService, IProjectService projectService) : Controller
 {
     private readonly IMemberService _memberService = memberService;
+    private readonly IProjectService _projectService = projectService;
     public async Task<IActionResult> Index()
     {
+        var projectResult = await _projectService.GetProjectsAsync();
+        var memberResult = await _memberService.GetAllMembersAsync();
+
         var model = new ProjectViewModel();
-        var result = await _memberService.GetAllMembersAsync();
-        model.Members = result.Data;
+        model.Members = memberResult.Data;
+        model.Projects = projectResult.Data;
         return View(model);
     }
 
     [HttpPost]
     public async Task<IActionResult> AddProject([Bind(Prefix = "ProjectForm")]  ProjectForm form)
     {
-        var model = new ProjectViewModel();
-        var result = await _memberService.GetAllMembersAsync();
-        model.Members = result.Data;
-        return View("Index", model);
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState
+                .Where(x => x.Value?.Errors.Count > 0)
+                .ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value?.Errors.Select(x => x.ErrorMessage).ToArray()
+                );
+            return BadRequest(new { success = false, errors });
+        }
+        var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        await _projectService.CreateProjectAsync(form, userId);
+        return Ok();
     }
 }

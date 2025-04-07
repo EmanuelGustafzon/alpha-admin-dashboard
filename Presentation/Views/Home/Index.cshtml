@@ -18,7 +18,40 @@
     </div>
 </div>
 <div class="projects-view">
-
+    @foreach(var project in Model.Projects) {
+        <div class="project-card">
+            <div>
+                <img class="project-img" src="bilder/Vector 6.svg" alt="">
+            </div>
+            <div class="project-card-headings">
+                <h6 class="project-name">@project.ProjectName</h6>
+                <p class="org-name">GitLab Inc</p>
+            </div>
+            <div class="project-card-settings">
+                <div class="popover-container">
+                    <button><i class="bi bi-three-dots"></i></button>
+                    <div class="popover show">
+                        <p>Edit</p>
+                        <p>Add Member</p>
+                        <p>Delete</p>
+                    </div>
+                </div>
+            </div>
+            <div class="project-card-content">
+                <p>It is necessary to develop a website redesign in a corporate style.</p>
+            </div>
+            <div class="label project-countdown">
+                <i class="bi bi-clock-fill"></i>
+                <span>1 week left</span>
+            </div>
+            <div class="project-members">
+                <i class="bi bi-person-circle"></i>
+                <i class="bi bi-person-circle"></i>
+                <i class="bi bi-person-circle"></i>
+            </div>
+        </div>
+    }
+    
 </div>
 
 @await Html.PartialAsync("PartialViews/_AddProject", Model)

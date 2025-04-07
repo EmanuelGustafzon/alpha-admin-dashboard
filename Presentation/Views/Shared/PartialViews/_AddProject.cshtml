@@ -5,14 +5,11 @@
         <h6>Add Project</h6>
         <button data-closeModal="true" class="btn-clean">x</button>
     </div>
-    <form asp-action="AddProject" method="post" enctype="multipart/form-data" novalidate>
-         <div class="form-group">
-            
-             <div class="img-preview-container square">
+    <form asp-action="AddProject" method="post" enctype="multipart/form-data" novalidate>     
+            <div class="img-preview-container square">
                 <img src="" class="img-preview" />
                 <input asp-for="@Model.ProjectForm.Image" accept="image/*" class="d-none" />
             </div>
-
             <div class="form-group">
                 <label asp-for="@Model.ProjectForm.ProjectName"></label>
                 <input asp-for="@Model.ProjectForm.ProjectName" class="form-control">
@@ -26,41 +23,52 @@
             </div>
             <div>
                 <label asp-for="@Model.ProjectForm.Description"></label> 
-                <textarea id="add-project-description" asp-for="@Model.ProjectForm.Description" class="d-none"></textarea>
+                <textarea id="add-project-textarea" asp-for="@Model.ProjectForm.Description" class="d-none"></textarea>
                 <div id="project-quill-editor"></div>
                 <div id="project-quill-toolbar">
-                <span class="ql-formats">
-                    <button class="ql-bold"></button>
-                    <button class="ql-italic"></button>
-                    <button class="ql-underline"></button>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-align" value=""></button>
-                    <button class="ql-align" value="center"></button>
-                    <button class="ql-align" value="right"></button>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-list" value="bullet"></button>
-                    <button class="ql-list" value="ordered"></button>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-link"></button>
-                </span>
-            </div>     
-             <span asp-validation-for="@Model.ProjectForm.Description"></span> 
-         </div> 
-        <div class="multiselect-plugin-container">
-            <select asp-for="@Model.ProjectForm.MemberIds" multiple data-multi-select-plugin>
-                @foreach(var member in Model.Members) {
-                    <option value="@member.Id">
-                        <div>
-                            <img data-image src="@(member.ImageUrl ?? "/images/default-profile-picture.png")" />
-                            <span data-content >@($"{member.FirstName} {member.LastName}")</span>
-                        </div>
-                    </option>
-                }
-            </select>
-        </div>
+                    <span class="ql-formats">
+                        <button class="ql-bold"></button>
+                        <button class="ql-italic"></button>
+                        <button class="ql-underline"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-align" value=""></button>
+                        <button class="ql-align" value="center"></button>
+                        <button class="ql-align" value="right"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-list" value="bullet"></button>
+                        <button class="ql-list" value="ordered"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-link"></button>
+                    </span>
+                </div>     
+                <span asp-validation-for="@Model.ProjectForm.Description"></span> 
+            </div> 
+
+            <div class="multiselect-plugin-container">
+                <select asp-for="@Model.ProjectForm.MemberIds" multiple data-multi-select-plugin>
+                    @foreach(var member in Model.Members) {
+                        <option value="@member.Id">
+                            <div>
+                                <img data-image src="@(member.ImageUrl ?? "/images/default-profile-picture.png")" />
+                                <span data-content >@($"{member.FirstName} {member.LastName}")</span>
+                            </div>
+                        </option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.ProjectForm.StartDate"></label>
+                <input asp-for="@Model.ProjectForm.StartDate" class="form-control">
+                <span asp-validation-for="@Model.ProjectForm.StartDate"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.ProjectForm.EndDate"></label>
+                <input asp-for="@Model.ProjectForm.EndDate" class="form-control">
+                <span asp-validation-for="@Model.ProjectForm.EndDate"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="@Model.ProjectForm.Budget"></label>
                 <input asp-for="@Model.ProjectForm.Budget" class="form-control">
@@ -73,7 +81,7 @@
 </div>
 <script>
     window.addEventListener('DOMContentLoaded', () => 
-        initQuill('#project-quill-editor', '#project-quill-toolbar', '#add-project-description', '@Html.Raw(@Model.ProjectForm.Description ?? "")'))
+        initQuill('#project-quill-editor', '#project-quill-toolbar', '#add-project-textarea', '@Html.Raw(@Model.ProjectForm.Description ?? "")'))
     
     function initQuill(editorId, toolbarId, textareaId, content) {
         const textarea = document.querySelector(textareaId);
@@ -86,8 +94,9 @@
         theme: 'snow'
         });
 
-        if(content) quill.root.innerHtml = content;
-        quill.on('text-change', () => textarea.ariaValueMax = quill.root.innerHtml)
+        if(content) quill.root.innerHTML = content;
+
+        quill.on('text-change', () => textarea.value = quill.root.innerHTML)
     };
 
 </script>

@@ -36,9 +36,13 @@ builder.Services.AddAuthentication()
         options.CallbackPath = "/signin-google";
     });
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+builder.Services.AddScoped<IMemberService, MemberService>();
+builder.Services.AddScoped<IClientRepository, ClientRepository>();
+builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IUploadFile, UploadFile>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IMemberService, MemberService>();
 
 var app = builder.Build();
 

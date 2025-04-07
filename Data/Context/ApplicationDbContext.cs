@@ -11,6 +11,9 @@ public class ApplicationDbContext : IdentityDbContext<MemberEntity>
     {
     }
     public DbSet<MemberAddressEntity> MemberAddresses { get; set; } = null!;
+    public DbSet<ClientEntity> Clients { get; set; } = null!;
+    public DbSet<ProjectEntity> Projects { get; set; } = null!;
+    public DbSet<MemberProjectEntity> MemberProjects { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
