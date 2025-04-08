@@ -17,44 +17,64 @@
         <p>COMPLETED[2]</p>
     </div>
 </div>
-<div class="projects-view">
+<div id="projects-view" class="projects-view">
     @foreach(var project in Model.Projects) {
-        <div class="project-card">
-            <div>
-                <img class="project-img" src="bilder/Vector 6.svg" alt="">
-            </div>
-            <div class="project-card-headings">
-                <h6 class="project-name">@project.ProjectName</h6>
-                <p class="org-name">GitLab Inc</p>
-            </div>
-            <div class="project-card-settings">
-                <div class="popover-container">
-                    <button><i class="bi bi-three-dots"></i></button>
-                    <div class="popover show">
-                        <p>Edit</p>
-                        <p>Add Member</p>
-                        <p>Delete</p>
+        <div class="projects-view">
+            <div class="project-card">
+                <div>
+                    <img class="project-img" src="@project.ImageUrl" alt="">
+                </div>
+                <div class="project-card-headings">
+                    <h6 class="project-name">@project.ProjectName</h6>
+                    <p class="org-name">@project.Client.ClientName</p>
+                </div>
+                <div class="project-card-settings">
+                    <div class="popover-container">
+                        <button><i class="bi bi-three-dots"></i></button>
+                        <div class="popover">
+                            <p>Edit</p>
+                            <p>Add Member</p>
+                            <p>Delete</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="project-card-content">
-                <p>It is necessary to develop a website redesign in a corporate style.</p>
-            </div>
-            <div class="label project-countdown">
-                <i class="bi bi-clock-fill"></i>
-                <span>1 week left</span>
-            </div>
-            <div class="project-members">
-                <i class="bi bi-person-circle"></i>
-                <i class="bi bi-person-circle"></i>
-                <i class="bi bi-person-circle"></i>
+                <div class="project-card-content">
+                    <p>@Html.Raw(project.Description)</p>
+                </div>
+                <div class="label project-countdown">
+                    <i class="bi bi-clock-fill"> <span>1 week left</span></i>
+                </div>
+                <div class="project-members">
+                    @foreach(var member in project.Members) {
+                        <img class="profile-img-small" src="@member.ImageUrl"/> 
+                    }
+                </div>
             </div>
         </div>
-    }
-    
+    } 
 </div>
 
 @await Html.PartialAsync("PartialViews/_AddProject", Model)
+
+<script>
+    fetchData("https://localhost:8081/home/projects", "projects-view");
+
+        async function fetchData(url, containerId) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+            const data = await response.json();
+            const container = document.getElementById(containerId);
+            data.forEach(item => {
+                console.log(item)
+            });
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+</script>
 
 
 

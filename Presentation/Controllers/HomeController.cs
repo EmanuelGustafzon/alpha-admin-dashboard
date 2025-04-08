@@ -40,4 +40,16 @@ public class HomeController(IMemberService memberService, IProjectService projec
         await _projectService.CreateProjectAsync(form, userId);
         return Ok();
     }
+    [HttpGet]
+    public async Task<IActionResult> Projects()
+    {
+        try
+        {
+            var r = await _projectService.GetProjectsAsync();
+            return Ok(r.Data);
+        } catch
+        {
+            return BadRequest("");
+        }
+    }
 }

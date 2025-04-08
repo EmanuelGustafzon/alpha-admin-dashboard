@@ -127,3 +127,21 @@ async function displayImage(file, imagePreview, size = 150) {
         return false;
     }
 }
+// Fetch Data
+
+async function fetchData(url, containerId) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(data)
+        const container = document.getElementById(containerId);
+        data.forEach(item => {
+            container.innerHTML += `<div>${item.ProjectName}</div>`;
+        });
+    } catch (error) {
+        console.error(error.message);
+    }
+}
