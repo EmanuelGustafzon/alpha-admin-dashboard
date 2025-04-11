@@ -5,10 +5,10 @@
     string fullName = $"{result.Data?.FirstName} {result.Data?.LastName}";
 }
 <div class="popover-container">
-    <button id="open-settings" class="settings btn-clean">
+    <button data-open-pop-over data-targetId="#settings-popover" class="settings btn-clean">
         <i class="bi bi-gear-fill"></i>
     </button>
-    <div id="settings-popover" class="popover">
+    <div id="settings-popover" class="popover d-none">
         <div>
             <div class="flex align user-settings-profile-info">
                 <img src="@url" class="profile-img" alt="Profile Picture" />
@@ -35,11 +35,7 @@
 </div>
 
 <script>
-    const openSettings = document.getElementById("open-settings");
-    const settingsPopOver = document.getElementById("settings-popover");
-    openSettings.addEventListener("click", () => {
-        settingsPopOver.classList.contains("show") === true ? settingsPopOver.classList.remove("show") : settingsPopOver.classList.add("show");
-    });
+
 
     const themeCheckbox = document.getElementById("theme-checkbox");
 

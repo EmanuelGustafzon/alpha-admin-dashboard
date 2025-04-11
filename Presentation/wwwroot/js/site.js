@@ -145,3 +145,19 @@ async function fetchData(url, containerId) {
         console.error(error.message);
     }
 }
+
+const popOver = document.querySelectorAll('[data-pop-over]');
+const openPopOver = document.querySelectorAll('[data-open-pop-over]');
+openPopOver.forEach(trigger => {
+    trigger.addEventListener('click', () => {
+        const targetId = trigger.getAttribute('data-targetId');
+        const popOverElement = document.querySelector(targetId);
+        if (popOverElement.classList.contains("d-none"))
+            popOverElement.classList.remove('d-none');
+        else 
+            popOverElement.classList.add('d-none'); 
+    })
+    
+})
+
+    

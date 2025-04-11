@@ -22,7 +22,7 @@
         <div class="projects-view">
             <div class="project-card">
                 <div>
-                    <img class="project-img" src="@project.ImageUrl" alt="">
+                    <img class="project-img" src="@project.ImageUrl" alt="project display image">
                 </div>
                 <div class="project-card-headings">
                     <h6 class="project-name">@project.ProjectName</h6>
@@ -30,8 +30,8 @@
                 </div>
                 <div class="project-card-settings">
                     <div class="popover-container">
-                        <button><i class="bi bi-three-dots"></i></button>
-                        <div class="popover">
+                        <button data-open-pop-over data-targetId="#pop-over-@project.Id"><i class="bi bi-three-dots"></i></button>
+                        <div id="pop-over-@project.Id" data-pop-over class="popover d-none">
                             <p>Edit</p>
                             <p>Add Member</p>
                             <p>Delete</p>
@@ -46,7 +46,7 @@
                 </div>
                 <div class="project-members">
                     @foreach(var member in project.Members) {
-                        <img class="profile-img-small" src="@member.ImageUrl"/> 
+                        <img class="profile-img-medium" src="@member.ImageUrl"/> 
                     }
                 </div>
             </div>
@@ -75,6 +75,22 @@
         }
     }
 </script>
+
+<style>
+    .ql-toolbar .ql-stroke {
+        fill: none;
+        stroke: black !important;
+    }
+
+    .ql-toolbar .ql-fill {
+        fill: black !important;
+        stroke: none;
+    }
+
+    .ql-toolbar .ql-picker {
+        color: black !important; 
+    }
+</style>
 
 
 

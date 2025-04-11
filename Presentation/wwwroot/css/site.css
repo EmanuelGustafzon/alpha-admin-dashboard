@@ -183,6 +183,13 @@ a {
     object-fit: cover; 
     border: 2px solid #ddd;
 }
+.profile-img-medium {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
 .profile-img-small {
     width: 16px;
     height: 16px;
@@ -402,7 +409,6 @@ a {
 }
 
 .popover {
-    display: none;
     min-width: 15em;
     position: absolute;
     top: 2em;
@@ -415,10 +421,6 @@ a {
 }
 .popover div {
     margin-top: 4px;
-}
-.popover.show {
-    display: flex;
-    flex-direction: column;
 }
 /* modal form */
 .form-modal {

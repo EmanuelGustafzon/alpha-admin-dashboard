@@ -45,8 +45,8 @@ public class HomeController(IMemberService memberService, IProjectService projec
     {
         try
         {
-            var r = await _projectService.GetProjectsAsync();
-            return Ok(r.Data);
+            var result = await _projectService.GetProjectsAsync();
+            return Ok(result.Data);
         } catch
         {
             return BadRequest("");
