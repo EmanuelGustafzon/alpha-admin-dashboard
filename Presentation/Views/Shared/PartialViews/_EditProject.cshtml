@@ -5,7 +5,8 @@
         <h6>Add Project</h6>
         <button data-closeModal="true" class="btn-clean">x</button>
     </div>
-    <form id="edit-project-form" asp-action="EditProject" method="post" enctype="multipart/form-data" novalidate>
+    <form id="edit-project-form" method="post" enctype="multipart/form-data" novalidate>
+        <input hidden asp-for="@Model.ProjectForm.ImageUrl" />
         <div class="img-preview-container square">
             <img src="" class="img-preview" />
             <input asp-for="@Model.ProjectForm.Image" accept="image/*" class="d-none" />
@@ -86,15 +87,15 @@
     async function fetchPopulateProject(projectId) {
         const url = `https://localhost:8081/project/${projectId}`
         const data = await fetchData(url);
-        console.log(data)
         populateProjectForm(data)
     }
 
     function populateProjectForm(data) {
         const form = document.getElementById('edit-project-form');
-        form.action = `Home/EditProject/${data.id}`
+        form.action = `updateProject/${data.id}`
 
         form.getElementsByTagName('img')[0].src = data['imageUrl']
+        form.querySelector('input[name="ProjectForm.ImageUrl"]').value = data['imageUrl'];
         form.querySelector('input[name="ProjectForm.ProjectName"]').value = data['projectName'];
         form.querySelector('input[name="ProjectForm.ClientName"]').value = data['client'].clientName;
         form.querySelector('input[name="ProjectForm.StartDate"]').value = formatDate(data['startDate']);;
@@ -109,10 +110,10 @@
             for (let member of members) {
                 if (member.id === option.value) {
                     console.log(member)
-                    option.selected = true
+                    option.setAttribute("selected", "");
                 }
             }
         }
-            createInitialTokens(form.getElementsByTagName('select')[0])
+        createInitialTokens(form.getElementsByTagName('select')[0])
     }    
 </script>

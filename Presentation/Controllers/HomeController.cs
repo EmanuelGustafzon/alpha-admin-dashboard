@@ -75,7 +75,12 @@ public class HomeController(IMemberService memberService, IProjectService projec
         }
     }
 
-
+    [HttpPost("updateProject/{id}")]
+    public async Task<IActionResult> UpdateProject(string id, [Bind(Prefix = "ProjectForm")] ProjectForm form)
+    {
+        await _projectService.GetProjectAsync(id);
+        return NoContent();
+    }
 
     [HttpPost]
     public async Task<IActionResult> DeleteProject([Bind(Prefix = "DeleteProject")] DeleteProject form )
