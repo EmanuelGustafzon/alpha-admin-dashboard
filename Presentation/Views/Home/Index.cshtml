@@ -17,11 +17,70 @@
         <p>COMPLETED[2]</p>
     </div>
 </div>
-<div class="projects-view">
-
+<div id="projects-view" class="projects-view">
+    @foreach(var project in Model.Projects) {
+        <div class="projects-view">
+            <div class="project-card">
+                <div>
+                    <img class="project-img" src="@project.ImageUrl" alt="project display image">
+                </div>
+                <div class="project-card-headings">
+                    <h6 class="project-name">@project.ProjectName</h6>
+                    <p class="org-name">@project.Client.ClientName</p>
+                </div>
+                <div class="project-card-settings">
+                    <div class="popover-container">
+                        <button data-open-pop-over data-targetId="#pop-over-@project.Id"><i class="bi bi-three-dots"></i></button>
+                        <div id="pop-over-@project.Id" data-pop-over class="popover d-none">
+                            <div class="flex align c-gap-5">
+                                <i class="bi bi-pencil-square"></i>
+                                <button onclick="fetchPopulateProject('@project.Id')" data-targetId="#edit-project" data-openModal="true" class="btn-clean">
+                                    Edit Project
+                                </button>
+                            </div>
+                            <div class="flex align c-gap-5 border-bottom">
+                                <i class="bi bi-person-add"></i>
+                                <button data-targetId="#add-members" data-openModal="true" class="btn-clean">
+                                    Add Members
+                                </button>
+                            </div>
+                            <div class="flex align c-gap-5">
+                                <i class="bi bi-trash text-error"></i>
+                                <form asp-action="DeleteProject" method="post">
+                                    <input hidden asp-for="@Model.DeleteProject.Id" value="@project.Id" />
+                                    <span asp-validation-for="@Model.DeleteProject.Id"></span>
+                                    <button type="submit" class="btn-clean text-error" >
+                                        Delete
+                                    </button>
+                                </form>    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card-content">
+                    <p>@Html.Raw(project.Description)</p>
+                </div>
+                <div class="label project-countdown">
+                    <i class="bi bi-clock-fill"> <span>1 week left</span></i>
+                </div>
+                <div class="project-members">
+                    @foreach(var member in project.Members) {
+                        <img class="profile-img-medium" src="@member.ImageUrl"/> 
+                    }
+                </div>
+            </div>
+        </div>
+    } 
 </div>
 
 @await Html.PartialAsync("PartialViews/_AddProject", Model)
+@await Html.PartialAsync("PartialViews/_Addmembers", Model)
+@await Html.PartialAsync("PartialViews/_EditProject", Model)
+
+<script>
+
+</script>
+
 
 
 

@@ -4,6 +4,7 @@ using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250406143928_AddProjectsClientsMemberProjectsTables")]
+    partial class AddProjectsClientsMemberProjectsTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,7 +161,7 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Budget")
-                        .HasColumnType("money");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ClientId")
                         .IsRequired()
@@ -167,9 +170,6 @@ namespace Data.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("varchar(200)");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("date");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("varchar(200)");
@@ -181,9 +181,6 @@ namespace Data.Migrations
                     b.Property<string>("ProjectName")
                         .IsRequired()
                         .HasColumnType("varchar(200)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("date");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");

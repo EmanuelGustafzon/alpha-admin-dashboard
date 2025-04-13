@@ -14,6 +14,7 @@ public class MemberEntity : IdentityUser
     public string LastName { get; set; } = null!;
 
     [PersonalData]
+    [Column(TypeName = "varchar(400)")]
     public string? ImageUrl { get; set; }
 
     [Column(TypeName = "varchar(200)")]
@@ -25,4 +26,6 @@ public class MemberEntity : IdentityUser
 
     [ProtectedPersonalData]
     public MemberAddressEntity? Address { get; set; }
+
+    public ICollection<MemberProjectEntity>? MemberProjects { get; set; }
 }

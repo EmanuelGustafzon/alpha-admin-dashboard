@@ -104,6 +104,26 @@ public abstract class BaseRepository<TEntity>(ApplicationDbContext context) : IR
             return RepositoryResult<TEntity>.Errror($"Failed to update the {nameof(TEntity)}");
         }
     }
+    public virtual async Task<RepositoryResult<TEntity>> UpdateAsync(Expression<Func<TEntity, bool>> predicate, TEntity entity)
+    {
+        if (entity == null) return RepositoryResult<TEntity>.BadRequest($"No {nameof(entity)} was provided");
+        if (predicate == null) return RepositoryResult<TEntity>.BadRequest("No predicate was provided");
+        try
+        {
+            var currentEntity = await _table.FirstOrDefaultAsync(predicate);
+            if (currentEntity == null) return RepositoryResult<TEntity>.NotFound($"{nameof(entity)} not found");
+
+            _table.Entry(currentEntity).CurrentValues.SetValues(entity);
+            await _context.SaveChangesAsync();
+
+            return RepositoryResult<TEntity>.Ok(entity);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error Updating {nameof(TEntity)} entity: {ex.Message}");
+            return RepositoryResult<TEntity>.Errror($"Failed to update the {nameof(TEntity)}");
+        }
+    }
 
     public virtual async Task<RepositoryResult<bool>> DeleteAsync(TEntity entity)
     {
@@ -118,6 +138,26 @@ public abstract class BaseRepository<TEntity>(ApplicationDbContext context) : IR
         catch (Exception ex)
         {
             Debug.WriteLine($"Error Deleting {nameof(TEntity)} entity :: {ex.Message}");
+            return RepositoryResult<bool>.Errror($"Failed to delete the {nameof(TEntity)}");
+        }
+    }
+
+    public virtual async Task<RepositoryResult<bool>> DeleteAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        if (predicate == null) return RepositoryResult<bool>.BadRequest("No predicate was provided");
+        try
+        {
+            var foundEntity = await _table.FirstOrDefaultAsync(predicate);
+            if (foundEntity == null) return RepositoryResult<bool>.NotFound("Project not found");
+
+            _table.Remove(foundEntity);
+            await _context.SaveChangesAsync();
+
+            return RepositoryResult<bool>.NoContent();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error Deleting {nameof(TEntity)} entity: {ex.Message}");
             return RepositoryResult<bool>.Errror($"Failed to delete the {nameof(TEntity)}");
         }
     }

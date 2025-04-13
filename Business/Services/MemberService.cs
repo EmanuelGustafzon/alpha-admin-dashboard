@@ -92,14 +92,8 @@ public class MemberService(
 
             if (result.Result == null)
                 return ServiceResult<Member>.NotFound("Could not find member");
-            
 
             var member = result.Result.MapTo<Member>();
-            if (result.Result.Address != null)
-            {
-                var address = result.Result.Address.MapTo<MemberAddress>();
-                member.Address = address;
-            }
                 
             return ServiceResult<Member>.Ok(member);
         }

@@ -16,7 +16,11 @@ public interface IRepository<TEntity> where TEntity : class
 
     public Task<RepositoryResult<TEntity>> UpdateAsync(TEntity entity);
 
+    public Task<RepositoryResult<TEntity>> UpdateAsync(Expression<Func<TEntity, bool>> predicate, TEntity entity);
+
     public Task<RepositoryResult<bool>> DeleteAsync(TEntity entity);
+
+    public Task<RepositoryResult<bool>> DeleteAsync(Expression<Func<TEntity, bool>> predicate);
 
     public Task BeginTransactionAsync();
 
