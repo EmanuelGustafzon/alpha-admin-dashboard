@@ -24,7 +24,7 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
                 var memberResult = await _memberService.GetMemberByIdAsync(id);
                 if (memberResult.Data is not null)
                 {
-                    var memberProject = new MemberProjectEntity { ProjectId = projectEntity.projectId, MemberId = id };
+                    var memberProject = new MemberProjectEntity { ProjectId = projectEntity.Id, MemberId = id };
                     projectEntity.MemberProjects.Add(memberProject);
                 }
             }
@@ -82,10 +82,17 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
         {
             var result = await _projectRepository.GetAsync(findBy: x =>  x.Id == id, joins: join => join.Client);
             if (result.StatusCode == 404) return ServiceResult<Project>.NotFound($"project with id { id } not found");
-            if(result.Succeeded && result.Result is not null)
-                return ServiceResult<Project>.Ok(result.Result.MapTo<Project>());
-            else 
+            if(!result.Succeeded || result.Result is null)
+            {
                 return ServiceResult<Project>.Error(result.ErrorMessage ?? "Failed to get project");
+                
+            }
+                var project = result.Result.MapTo<Project>();
+                List<Member> members = result.Result.MemberProjects.Select(x => x.Member.MapTo<Member>()).ToList();
+                project.Members = members;
+
+            return ServiceResult<Project>.Ok(project);
+
         }
         catch (Exception ex)
         {
@@ -100,7 +107,7 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
         {
             var findProjectResult = await _projectRepository.GetAsync(findBy: x => x.Id == id, joins: join => join.Client);
             if (findProjectResult.StatusCode == 404) return ServiceResult<Project>.NotFound($"project with id {id} not found");
-            if(!findProjectResult.Succeeded && findProjectResult.Result is null) return ServiceResult<Project>.Error($"Could not get project :: {result.ErrorMessage}");
+            if(!findProjectResult.Succeeded && findProjectResult.Result is null) return ServiceResult<Project>.Error($"Could not get project :: {findProjectResult.ErrorMessage}");
             
             var project = findProjectResult.Result!;
 
@@ -152,7 +159,7 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
         {
             var findProjectResult = await _projectRepository.GetAsync(findBy: x => x.Id == projectId);
             if (findProjectResult.StatusCode == 404) return ServiceResult<Project>.NotFound($"project with id {projectId} not found");
-            if (!findProjectResult.Succeeded && findProjectResult.Result is null) return ServiceResult<Project>.Error($"Could not get project :: {result.ErrorMessage}");
+            if (!findProjectResult.Succeeded && findProjectResult.Result is null) return ServiceResult<Project>.Error($"Could not get project :: {findProjectResult.ErrorMessage}");
 
             var project = findProjectResult.Result!;
 

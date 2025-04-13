@@ -122,6 +122,7 @@ h6 {
 
 p, i, a {
     color: var(--text-color);
+    font-size: 16px;
 }
 a {
     text-decoration: none;
@@ -141,6 +142,9 @@ a {
 }
 .space-evenly {
     justify-content:space-evenly;
+}
+.c-gap-5 {
+    column-gap: 5px;
 }
 /* btn */
 .btn {
@@ -409,12 +413,23 @@ a {
 }
 
 .popover {
+    z-index: 10;
     min-width: 15em;
     position: absolute;
     top: 2em;
     left: 50%;
     background-color: var(--surface);
     transform: translateX(-100%);
+    padding: 10px;
+    border-radius: 12px;
+    border-color: var(--border-300);
+}
+.popover-down {
+    z-index: 10;
+    min-width: 15em;
+    position: absolute;
+    top: 2em;
+    background-color: var(--surface);
     padding: 10px;
     border-radius: 12px;
     border-color: var(--border-300);

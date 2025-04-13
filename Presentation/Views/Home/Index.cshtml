@@ -32,9 +32,28 @@
                     <div class="popover-container">
                         <button data-open-pop-over data-targetId="#pop-over-@project.Id"><i class="bi bi-three-dots"></i></button>
                         <div id="pop-over-@project.Id" data-pop-over class="popover d-none">
-                            <p>Edit</p>
-                            <p>Add Member</p>
-                            <p>Delete</p>
+                            <div class="flex align c-gap-5">
+                                <i class="bi bi-pencil-square"></i>
+                                <button onclick="fetchPopulateProject('@project.Id')" data-targetId="#edit-project" data-openModal="true" class="btn-clean">
+                                    Edit Project
+                                </button>
+                            </div>
+                            <div class="flex align c-gap-5 border-bottom">
+                                <i class="bi bi-person-add"></i>
+                                <button data-targetId="#add-members" data-openModal="true" class="btn-clean">
+                                    Add Members
+                                </button>
+                            </div>
+                            <div class="flex align c-gap-5">
+                                <i class="bi bi-trash text-error"></i>
+                                <form asp-action="DeleteProject" method="post">
+                                    <input hidden asp-for="@Model.DeleteProject.Id" value="@project.Id" />
+                                    <span asp-validation-for="@Model.DeleteProject.Id"></span>
+                                    <button type="submit" class="btn-clean text-error" >
+                                        Delete
+                                    </button>
+                                </form>    
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -55,42 +74,13 @@
 </div>
 
 @await Html.PartialAsync("PartialViews/_AddProject", Model)
+@await Html.PartialAsync("PartialViews/_Addmembers", Model)
+@await Html.PartialAsync("PartialViews/_EditProject", Model)
 
 <script>
-    fetchData("https://localhost:8081/home/projects", "projects-view");
 
-        async function fetchData(url, containerId) {
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Response status: ${response.status}`);
-            }
-            const data = await response.json();
-            const container = document.getElementById(containerId);
-            data.forEach(item => {
-                console.log(item)
-            });
-        } catch (error) {
-            console.error(error.message);
-        }
-    }
 </script>
 
-<style>
-    .ql-toolbar .ql-stroke {
-        fill: none;
-        stroke: black !important;
-    }
-
-    .ql-toolbar .ql-fill {
-        fill: black !important;
-        stroke: none;
-    }
-
-    .ql-toolbar .ql-picker {
-        color: black !important; 
-    }
-</style>
 
 
 

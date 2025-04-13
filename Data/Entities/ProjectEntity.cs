@@ -28,6 +28,7 @@ public class ProjectEntity
     [Column(TypeName = "date")]
     public DateTime EndDate { get; set; }
 
+    [Column(TypeName = "money")]
     public decimal Budget { get; set; }
 
     public ProjectStatuses Status { get; set; }

@@ -1,4 +1,4 @@
-﻿//send forms with ajax
+﻿//send forms with fetch
 const forms = document.querySelectorAll("form");
 forms.forEach(form => {
     form.addEventListener("submit", async (e) => {
@@ -127,25 +127,6 @@ async function displayImage(file, imagePreview, size = 150) {
         return false;
     }
 }
-// Fetch Data
-
-async function fetchData(url, containerId) {
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log(data)
-        const container = document.getElementById(containerId);
-        data.forEach(item => {
-            container.innerHTML += `<div>${item.ProjectName}</div>`;
-        });
-    } catch (error) {
-        console.error(error.message);
-    }
-}
-
 const popOver = document.querySelectorAll('[data-pop-over]');
 const openPopOver = document.querySelectorAll('[data-open-pop-over]');
 openPopOver.forEach(trigger => {
@@ -159,5 +140,42 @@ openPopOver.forEach(trigger => {
     })
     
 })
+/*quill*/
+function initQuill(editorId, toolbarId, textareaId, content) {
+    const textarea = document.querySelector(textareaId);
 
-    
+    const quill = new Quill(editorId, {
+        modules: {
+            syntax: true,
+            toolbar: toolbarId
+        },
+        theme: 'snow'
+    });
+
+    if (content) quill.root.innerHTML = content;
+
+    quill.on('text-change', () => textarea.value = quill.root.innerHTML)
+};
+
+/*1. fetch data from url*/
+
+async function fetchData(url) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+/* 2 populate view */
+
+
+
+const formatDate = (datetime) => {
+    return new Date(datetime).toISOString().split('T')[0];
+};  

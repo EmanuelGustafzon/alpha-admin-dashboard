@@ -1,0 +1,118 @@
+﻿@model ProjectViewModel
+
+<div id="edit-project" class="form-modal d-none">
+    <div class="flex space-between">
+        <h6>Add Project</h6>
+        <button data-closeModal="true" class="btn-clean">x</button>
+    </div>
+    <form id="edit-project-form" asp-action="EditProject" method="post" enctype="multipart/form-data" novalidate>
+        <div class="img-preview-container square">
+            <img src="" class="img-preview" />
+            <input asp-for="@Model.ProjectForm.Image" accept="image/*" class="d-none" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.ProjectForm.ProjectName"></label>
+            <input asp-for="@Model.ProjectForm.ProjectName" class="form-control">
+            <span asp-validation-for="@Model.ProjectForm.ProjectName"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="@Model.ProjectForm.ClientName"></label>
+            <input asp-for="@Model.ProjectForm.ClientName" class="form-control">
+            <span asp-validation-for="@Model.ProjectForm.ClientName"></span>
+        </div>
+        <div>
+            <label asp-for="@Model.ProjectForm.Description"></label>
+            <textarea id="edit-project-textarea" asp-for="@Model.ProjectForm.Description" class="d-none"></textarea>
+            <div id="edit-project-quill-editor"></div>
+            <div id="edit-project-quill-toolbar">
+                <span class="ql-formats">
+                    <button class="ql-bold"></button>
+                    <button class="ql-italic"></button>
+                    <button class="ql-underline"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-align" value=""></button>
+                    <button class="ql-align" value="center"></button>
+                    <button class="ql-align" value="right"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-list" value="bullet"></button>
+                    <button class="ql-list" value="ordered"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-link"></button>
+                </span>
+            </div>
+            <span asp-validation-for="@Model.ProjectForm.Description"></span>
+        </div>
+
+        <div class="multiselect-plugin-container">
+            <select asp-for="@Model.ProjectForm.MemberIds" multiple data-multi-select-plugin>
+                @foreach (var member in Model.Members)
+                {
+                    <option value="@member.Id">
+                        <div>
+                            <img data-image src="@(member.ImageUrl ?? "/images/default-profile-picture.png")" />
+                            <span data-content>@($"{member.FirstName} {member.LastName}")</span>
+                        </div>
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.ProjectForm.StartDate"></label>
+            <input asp-for="@Model.ProjectForm.StartDate" class="form-control">
+            <span asp-validation-for="@Model.ProjectForm.StartDate"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.ProjectForm.EndDate"></label>
+            <input asp-for="@Model.ProjectForm.EndDate" class="form-control">
+            <span asp-validation-for="@Model.ProjectForm.EndDate"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.ProjectForm.Budget"></label>
+            <input asp-for="@Model.ProjectForm.Budget" class="form-control">
+            <span asp-validation-for="@Model.ProjectForm.Budget"></span>
+        </div>
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Button</button>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    async function fetchPopulateProject(projectId) {
+        const url = `https://localhost:8081/project/${projectId}`
+        const data = await fetchData(url);
+        console.log(data)
+        populateProjectForm(data)
+    }
+
+    function populateProjectForm(data) {
+        const form = document.getElementById('edit-project-form');
+        form.action = `Home/EditProject/${data.id}`
+
+        form.getElementsByTagName('img')[0].src = data['imageUrl']
+        form.querySelector('input[name="ProjectForm.ProjectName"]').value = data['projectName'];
+        form.querySelector('input[name="ProjectForm.ClientName"]').value = data['client'].clientName;
+        form.querySelector('input[name="ProjectForm.StartDate"]').value = formatDate(data['startDate']);;
+        form.querySelector('input[name="ProjectForm.EndDate"]').value = formatDate(data['endDate']);
+        form.querySelector('input[name="ProjectForm.Budget"]').value = data['budget'];
+
+        initQuill('#edit-project-quill-editor', '#edit-project-quill-toolbar', '#edit-project-textarea', data['description'])
+
+        let members = data['members']
+        const options = form.getElementsByTagName('option')
+        for (let option of options) {
+            for (let member of members) {
+                if (member.id === option.value) {
+                    console.log(member)
+                    option.selected = true
+                }
+            }
+        }
+            createInitialTokens(form.getElementsByTagName('select')[0])
+    }    
+</script>

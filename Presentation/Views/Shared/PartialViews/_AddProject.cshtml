@@ -79,26 +79,12 @@
         </div>
     </form>
 </div>
+
+
 <script>
     window.addEventListener('DOMContentLoaded', () => 
         initQuill('#project-quill-editor', '#project-quill-toolbar', '#add-project-textarea', '@Html.Raw(@Model.ProjectForm.Description ?? "")'))
-    
-    function initQuill(editorId, toolbarId, textareaId, content) {
-        const textarea = document.querySelector(textareaId);
-
-        const quill = new Quill(editorId, {
-        modules: {
-            syntax: true,
-            toolbar: toolbarId
-        },
-        theme: 'snow'
-        });
-
-        if(content) quill.root.innerHTML = content;
-
-        quill.on('text-change', () => textarea.value = quill.root.innerHTML)
-    };
-
+     
 </script>
 
 

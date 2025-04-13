@@ -8,5 +8,6 @@ namespace Presentation.Models
         public ProjectForm ProjectForm { get; set; } = new();
         public IEnumerable<Member> Members { get; set; } = [];
         public IEnumerable<Project> Projects { get; set; } = [];
+        public DeleteProject DeleteProject { get; set; } = new();
     }
 }

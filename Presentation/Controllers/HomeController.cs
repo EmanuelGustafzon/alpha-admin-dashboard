@@ -1,9 +1,11 @@
 ﻿using Business.Interfaces;
 using Business.Models;
 using Business.Services;
+using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Models;
+using System.Diagnostics;
 
 namespace Presentation.Controllers;
 
@@ -51,5 +53,45 @@ public class HomeController(IMemberService memberService, IProjectService projec
         {
             return BadRequest("");
         }
+    }
+
+    [HttpGet("project/{id}")]
+    public async Task<IActionResult> GetProject(string id)
+    {
+        try
+        {
+            var result = await _projectService.GetProjectAsync(id);
+
+            if (result == null || result.Data == null)
+            {
+                return NotFound(); 
+            }
+
+            return Ok(result.Data); 
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "Something went wrong.");
+        }
+    }
+
+
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteProject([Bind(Prefix = "DeleteProject")] DeleteProject form )
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState
+                .Where(x => x.Value?.Errors.Count > 0)
+                .ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value?.Errors.Select(x => x.ErrorMessage).ToArray()
+                );
+            return BadRequest(new { success = false, errors });
+        }
+        var result = await _projectService.DeleteProjectAsync(form.Id);
+        if(!result.Success) return StatusCode(result.StatusCode, $"Failed to Delete project :: {result.ErrorMessage}");
+        return NoContent();     
     }
 }

@@ -13,7 +13,7 @@ public interface IProjectService
 
     public Task<ServiceResult<Project>> UpdateProjectAsync(ProjectForm form, string id);
 
-    public Task<ServiceResult<Project>> UpdateProjectMembersAsync(ProjectForm form, string projectId);
+    public Task<ServiceResult<Project>> UpdateProjectMembersAsync(List<string> memberIds, string projectId);
 
     public Task<ServiceResult<bool>> DeleteProjectAsync(string projectId);
 }
