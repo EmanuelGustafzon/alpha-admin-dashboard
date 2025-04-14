@@ -43,17 +43,35 @@ function clearErrorMesseges(form) {
         span.classList.remove('text-error')
     })
 }
+// popovers
+document.addEventListener('click', function (e) {
+    const toggleBtn = e.target.closest('[data-open-pop-over]');
+
+    // Close all popovers if click is outside
+    if (!e.target.closest('[data-pop-over]')) document.querySelectorAll('[data-pop-over]').forEach(p => p.classList.add('d-none'));
+
+    if (!toggleBtn) return;
+
+    const targetId = toggleBtn.getAttribute('data-targetId');
+    const popover = document.querySelector(targetId);
+    if (popover) {
+        popover.classList.toggle('d-none');
+    }
+});
 
 // handle open and close of form modals 
-const openModalButtons = document.querySelectorAll('[data-openModal="true"]');
-openModalButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-        const modalTargetId = btn.getAttribute('data-targetId');
-        const modal = document.querySelector(modalTargetId);
-        modal ? modal.classList.remove("d-none")
-            : console.error("Modal element not found!");
-    })
-})
+document.addEventListener('click', function (e) {
+    const openModalBtn = e.target.closest('[data-openModal="true"]');
+
+    if (!openModalBtn) return;
+
+    const targetId = openModalBtn.getAttribute('data-targetId');
+    const modal = document.querySelector(targetId);
+    if (modal) {
+        modal.classList.remove('d-none');
+    }
+});
+
 const closeModalButtons = document.querySelectorAll('[data-closeModal="true"]');
 closeModalButtons.forEach(btn => {
     btn.addEventListener("click", () => {
@@ -127,19 +145,7 @@ async function displayImage(file, imagePreview, size = 150) {
         return false;
     }
 }
-const popOver = document.querySelectorAll('[data-pop-over]');
-const openPopOver = document.querySelectorAll('[data-open-pop-over]');
-openPopOver.forEach(trigger => {
-    trigger.addEventListener('click', () => {
-        const targetId = trigger.getAttribute('data-targetId');
-        const popOverElement = document.querySelector(targetId);
-        if (popOverElement.classList.contains("d-none"))
-            popOverElement.classList.remove('d-none');
-        else 
-            popOverElement.classList.add('d-none'); 
-    })
-    
-})
+
 /*quill*/
 function initQuill(editorId, toolbarId, textareaId, content) {
     const textarea = document.querySelector(textareaId);
