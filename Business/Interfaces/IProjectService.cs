@@ -9,6 +9,8 @@ public interface IProjectService
 
     public Task<ServiceResult<IEnumerable<Project>>> GetProjectsAsync();
 
+    public Task<ServiceResult<IEnumerable<Project>>> GetProjectsAsync(string query);
+
     public Task<ServiceResult<Project>> GetProjectAsync(string id);
 
     public Task<ServiceResult<Project>> UpdateProjectAsync(ProjectForm form, string id);

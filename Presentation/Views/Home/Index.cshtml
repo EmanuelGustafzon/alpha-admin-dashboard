@@ -25,17 +25,30 @@
 @await Html.PartialAsync("PartialViews/_EditProject", Model)
 
 <script>
-    async function getProjects(statusFilter = "", query = "") {
-        const data = await fetchData("https://localhost:8081/Home/Projects")
+    
+    window.addEventListener('DOMContentLoaded', () => {
+        getProjects();
+    })
+
+    let debounceTimer;
+    document.getElementById("search-field").addEventListener("input", (e) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            getProjects(e.target.value);
+        }, 500);
+    });
+
+    async function getProjects(query = "") {
+        const url = `https://localhost:8081/Home/Projects?query=${query}`;
+        const data = await fetchData(url)
+        console.log(data)
         const projectView = document.getElementById('projects-view')
+        projectView.innerHTML = "";
         for(let p of data) {
-            let card = projectCard(p.id, p.imageUrl, p.projectName, p.clientName, p.description, p.members)
+            let card = projectCard(p.id, p.imageUrl, p.projectName, p.client.clientName, p.description, p.members)
             projectView.insertAdjacentHTML('beforeend', card)
         }
     }
-    window.addEventListener('DOMContentLoaded', () => {
-    getProjects();
-    })
 
     function projectCard(id, imageUrl, projectName, clientName, description, members) {
         return `

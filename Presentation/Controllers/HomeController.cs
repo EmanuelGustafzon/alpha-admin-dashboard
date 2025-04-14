@@ -43,15 +43,28 @@ public class HomeController(IMemberService memberService, IProjectService projec
         return Ok();
     }
     [HttpGet]
-    public async Task<IActionResult> Projects()
+    public async Task<IActionResult> Projects([FromQuery] string? query = null)
     {
         try
         {
+            if(query is not null)
+            {
+                var queryResult = await _projectService.GetProjectsAsync(query);
+                if (queryResult.Data is null)
+                {
+                    return NotFound("No matching projects found.");
+                }
+                return Ok(queryResult.Data);
+            }
             var result = await _projectService.GetProjectsAsync();
+            if (result.Data is null)
+            {
+                return NotFound("No matching projects found.");
+            }
             return Ok(result.Data);
         } catch
         {
-            return BadRequest("");
+            return StatusCode(500, "An error occurred while fetching projects.");
         }
     }
 
