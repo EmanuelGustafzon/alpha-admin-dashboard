@@ -92,7 +92,7 @@
 
     function populateProjectForm(data) {
         const form = document.getElementById('edit-project-form');
-        form.action = `updateProject/${data.id}`
+        form.action = `UpdateProject/${data.id}`
 
         form.getElementsByTagName('img')[0].src = data['imageUrl']
         form.querySelector('input[name="ProjectForm.ImageUrl"]').value = data['imageUrl'];

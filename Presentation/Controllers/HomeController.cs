@@ -88,11 +88,19 @@ public class HomeController(IMemberService memberService, IProjectService projec
         }
     }
 
-    [HttpPost("updateProject/{id}")]
+    [HttpPost("UpdateProject/{id}")]
     public async Task<IActionResult> UpdateProject(string id, [Bind(Prefix = "ProjectForm")] ProjectForm form)
     {
-        await _projectService.GetProjectAsync(id);
-        return NoContent();
+        try
+        {
+            var result = await _projectService.UpdateProjectAsync(form, id);
+            if(result.Data is null) return NotFound("No matching projects found.");
+
+            return Ok(result.Data);
+        } catch (Exception ex)
+        {
+            return StatusCode(500, "Something went wrong.");
+        }
     }
 
     [HttpPost]

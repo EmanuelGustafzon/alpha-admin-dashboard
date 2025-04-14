@@ -63,12 +63,12 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
             if (result.Result is not IEnumerable<ProjectEntity>)
                 return ServiceResult<IEnumerable<Project>>.Error("Failed to get projects");
 
-            var UpdateprojectsThatStarted = result.Result.Where(project => project.StartDate >= DateTime.Now);
-            foreach (var startedProject in UpdateprojectsThatStarted) 
+            var sartedProjects = result.Result.Where(project => project.StartDate <= DateTime.Now);
+            foreach (var startedProject in sartedProjects)
             {
-                await UpdateStatus(startedProject.Id, "started");
+                await UpdateStatus(startedProject.Id, "Started");
             }
-
+            
             var projects = result.Result.Select(x => {
                 var project = x.MapTo<Project>();
                 List<Member> members = x.MemberProjects.Select(x => x.Member.MapTo<Member>()).ToList();
@@ -170,6 +170,12 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
             if(!findProjectResult.Succeeded && findProjectResult.Result is null) return ServiceResult<Project>.Error($"Could not get project :: {findProjectResult.ErrorMessage}");
             
             var project = findProjectResult.Result!;
+
+            project.ProjectName = form.ProjectName;
+            project.Description = form.Description;
+            project.StartDate = form.StartDate;
+            project.EndDate = form.EndDate;
+            project.Budget = form.Budget;
 
             var membersToRemove = project.MemberProjects.Where(mp => form.MemberIds.Contains(mp.MemberId) == false).ToList();
             foreach (var item in membersToRemove)
