@@ -5,18 +5,48 @@
         <h6>Add Members</h6>
         <button data-closeModal="true" class="btn-clean">x</button>
     </div>
-    <div class="multiselect-plugin-container">
-        <select asp-for="@Model.ProjectForm.MemberIds" multiple data-multi-select-plugin>
-            @foreach (var member in Model.Members)
-            {
-                <option  value="@member.Id">
-                    <div>
-                        <img data-image src="@(member.ImageUrl ?? "/images/default-profile-picture.png")" />
-                        <span data-content>@($"{member.FirstName} {member.LastName}")</span>
-                    </div>
-                </option>
-            }
-        </select>
-    </div>
+    <form id="add-members-form">
+        <div class="multiselect-plugin-container">
+            <select asp-for="@Model.ProjectMembersForm.MemberIds" multiple data-multi-select-plugin>
+                @foreach (var member in Model.Members)
+                {
+                    <option value="@member.Id">
+                        <div>
+                            <img data-image src="@(member.ImageUrl ?? "/images/default-profile-picture.png")" />
+                            <span data-content>@($"{member.FirstName} {member.LastName}")</span>
+                        </div>
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Add Members</button>
+        </div>
+    </form>
 </div>
+
+<script>
+    async function fetchPopulateProjectMembers(projectId) {
+        const url = `https://localhost:8081/project/${projectId}`
+        const data = await fetchData(url);
+        populateProjectMembersForm(data)
+    }
+
+    function populateProjectMembersForm(data) {
+        const form = document.getElementById('add-members-form');
+        form.action = `updateMembers/${data.id}`
+
+        let members = data['members']
+        const options = form.getElementsByTagName('option')
+        for (let option of options) {
+            for (let member of members) {
+                if (member.id === option.value) {
+                    console.log(member)
+                    option.setAttribute("selected", "");
+                }
+            }
+        }
+        createInitialTokens(form.getElementsByTagName('select')[0])
+    }
+</script>
 

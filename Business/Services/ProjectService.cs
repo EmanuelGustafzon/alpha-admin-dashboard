@@ -63,15 +63,18 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
             if (result.Result is not IEnumerable<ProjectEntity>)
                 return ServiceResult<IEnumerable<Project>>.Error("Failed to get projects");
 
-            var sartedProjects = result.Result.Where(project => project.StartDate <= DateTime.Now);
-            foreach (var startedProject in sartedProjects)
+            var startedProjects = result.Result.Where(project => project.StartDate <= DateTime.Now && project.Status != ProjectStatuses.Completed);
+            foreach (var startedProject in startedProjects)
             {
-                await UpdateStatus(startedProject.Id, "Started");
+                await UpdateStatusAsync(startedProject.Id, "Started");
             }
             
             var projects = result.Result.Select(x => {
                 var project = x.MapTo<Project>();
-                project.CalculatedTimeDiff = ProjectDateCalculator.GetTimeDiffFromToday(project.StartDate, project.EndDate);
+
+                if (project.Status == ProjectStatuses.Completed) project.CalculatedTimeDiff = "Completed";
+                else project.CalculatedTimeDiff = ProjectDateCalculator.GetTimeDiffFromToday(project.StartDate, project.EndDate);
+
                 List<Member> members = x.MemberProjects.Select(x => x.Member.MapTo<Member>()).ToList();
                 project.Members = members;
                 return project;
@@ -106,35 +109,6 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
         {
             Debug.WriteLine(ex.Message);
             return ServiceResult<IEnumerable<Project>>.Error("Failed to get projects");
-        }
-    }
-
-    public async Task<ServiceResult<Project>> UpdateStatus(string id, string status)
-    {
-        try
-        {
-            var result = await _projectRepository.GetAsync(x => x.Id == id);
-            if(result.Result is null) return ServiceResult<Project>.Error("Failed to fetch the project to update status");
-
-            var project = result.Result;
-
-            if (Enum.TryParse(status, out ProjectStatuses convertedStatus))
-            {
-                project.Status = convertedStatus;
-            } else
-            {
-                return ServiceResult<Project>.Error("The status was not of right enum type");
-            }
-            
-            var updateResult = await _projectRepository.UpdateAsync(project);
-            if(updateResult.Result is null) ServiceResult<Project>.Error("Failed to update project status");
-
-            return ServiceResult<Project>.Ok(project.MapTo<Project>());
-
-        } catch(Exception ex)
-        {
-            Debug.Write(ex.Message);
-            return ServiceResult<Project>.Error("Failed to update project status");
         }
     }
     public async Task<ServiceResult<Project>> GetProjectAsync(string id)
@@ -220,7 +194,7 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
         }
     }
 
-    public async Task<ServiceResult<Project>> UpdateProjectMembersAsync(List<string> memberIds, string projectId)
+    public async Task<ServiceResult<Project>> UpdateProjectMembersAsync(ProjectMembersForm form, string projectId)
     {
         try
         {
@@ -230,12 +204,12 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
 
             var project = findProjectResult.Result!;
 
-            var membersToRemove = project.MemberProjects.Where(mp => memberIds.Contains(mp.MemberId) == false).ToList();
+            var membersToRemove = project.MemberProjects.Where(mp => form.MemberIds.Contains(mp.MemberId) == false).ToList();
             foreach (var item in membersToRemove)
             {
                 project.MemberProjects.Remove(item);
             }
-            foreach (var memberId in memberIds)
+            foreach (var memberId in form.MemberIds)
             {
                 var existingMember = project.MemberProjects.FirstOrDefault(x => x.MemberId == memberId);
                 if (existingMember is not null) continue;
@@ -259,6 +233,35 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
             return ServiceResult<Project>.Error("Failed to add new memebrs");
         }
     }
+
+    public async Task<ServiceResult<Project>> UpdateStatusAsync(string id, string status)
+    {
+        try
+        {
+            var result = await _projectRepository.GetAsync(x => x.Id == id);
+            if (result.Result is null)
+                return ServiceResult<Project>.Error("Failed to fetch the project to update status");
+
+            var project = result.Result;
+
+            if (!Enum.TryParse(status, true, out ProjectStatuses convertedStatus))
+                return ServiceResult<Project>.Error("The status was not of the right enum type");
+
+            project.Status = convertedStatus;
+
+            var updateResult = await _projectRepository.UpdateAsync(project);
+            if (updateResult.Result is null)
+                return ServiceResult<Project>.Error("Failed to update project status");
+
+            return ServiceResult<Project>.Ok(project.MapTo<Project>());
+        }
+        catch (Exception ex)
+        {
+            Debug.Write(ex.Message);
+            return ServiceResult<Project>.Error("Failed to update project status");
+        }
+    }
+
 
     public async Task<ServiceResult<bool>> DeleteProjectAsync(string projectId)
     {

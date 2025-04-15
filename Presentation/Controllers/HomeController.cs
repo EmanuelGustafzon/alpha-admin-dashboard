@@ -1,7 +1,5 @@
 ﻿using Business.Interfaces;
 using Business.Models;
-using Business.Services;
-using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Models;
@@ -20,8 +18,8 @@ public class HomeController(IMemberService memberService, IProjectService projec
         var memberResult = await _memberService.GetAllMembersAsync();
 
         var model = new ProjectViewModel();
-        model.Members = memberResult.Data;
-        model.Projects = projectResult.Data;
+        model.Members = memberResult.Data ?? [];
+        model.Projects = projectResult.Data ?? [];
         return View(model);
     }
 
@@ -88,7 +86,7 @@ public class HomeController(IMemberService memberService, IProjectService projec
         }
     }
 
-    [HttpPost("UpdateProject/{id}")]
+    [HttpPost("updateProject/{id}")]
     public async Task<IActionResult> UpdateProject(string id, [Bind(Prefix = "ProjectForm")] ProjectForm form)
     {
         try
@@ -102,21 +100,45 @@ public class HomeController(IMemberService memberService, IProjectService projec
             return StatusCode(500, "Something went wrong.");
         }
     }
-
-    [HttpPost]
-    public async Task<IActionResult> DeleteProject([Bind(Prefix = "DeleteProject")] DeleteProject form )
+    [HttpPost("updateStatus/{id}")]
+    public async Task<IActionResult> UpdateStatus(string id, string status)
     {
-        if (!ModelState.IsValid)
+        try
         {
-            var errors = ModelState
-                .Where(x => x.Value?.Errors.Count > 0)
-                .ToDictionary(
-                    kvp => kvp.Key,
-                    kvp => kvp.Value?.Errors.Select(x => x.ErrorMessage).ToArray()
-                );
-            return BadRequest(new { success = false, errors });
+            var result = await _projectService.UpdateStatusAsync(id, status);
+            if(!result.Success) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
+
+            return Ok("Successfully updated the status");
+
+        } catch(Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return StatusCode(500, "Something went wrong.");
         }
-        var result = await _projectService.DeleteProjectAsync(form.Id);
+    }
+
+    [HttpPost("updateMembers/{id}")]
+    public async Task<IActionResult> UpdateMembers(string id, [Bind(Prefix = "ProjectMembersForm")] ProjectMembersForm form)
+    {
+        try
+        {
+            var result = await _projectService.UpdateProjectMembersAsync(form, id);
+            if (!result.Success) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
+
+            return Ok();
+
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return StatusCode(500, "Something went wrong.");
+        }
+    }
+
+    [HttpDelete("deleteProject/{id}")]
+    public async Task<IActionResult> DeleteProject(string id)
+    {
+        var result = await _projectService.DeleteProjectAsync(id);
         if(!result.Success) return StatusCode(result.StatusCode, $"Failed to Delete project :: {result.ErrorMessage}");
         return NoContent();     
     }

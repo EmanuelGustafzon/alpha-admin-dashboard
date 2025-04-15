@@ -77,7 +77,7 @@
             <span asp-validation-for="@Model.ProjectForm.Budget"></span>
         </div>
         <div class="d-grid">
-            <button type="submit" class="btn btn-primary">Button</button>
+            <button type="submit" class="btn btn-primary">Edit project</button>
         </div>
     </form>
 </div>
@@ -92,7 +92,7 @@
 
     function populateProjectForm(data) {
         const form = document.getElementById('edit-project-form');
-        form.action = `UpdateProject/${data.id}`
+        form.action = `updateProject/${data.id}`
 
         form.getElementsByTagName('img')[0].src = data['imageUrl']
         form.querySelector('input[name="ProjectForm.ImageUrl"]').value = data['imageUrl'];

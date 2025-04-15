@@ -21,12 +21,12 @@
     --white: #fff;
     --accent: #2D99FF;
     --accent-10: rgba(45, 153, 255, 0.1);
-
     --red: #FF6640;
     --dark-red: #E94D3F;
+    --green: #88E397;
     --background: var(--gray-100);
     --surface: #fff;
-    --label: var(--gray-100);         
+    --label: var(--gray-100);
     --heading: var(--dark);
     --btn-color-secondary: var(--gray-300);
     --text-color: var(--body-dark);
@@ -52,6 +52,18 @@ html, body {
     font-family: var(--font);
     font-style: normal;
     color: var(--text-color)
+}
+.label {
+    background-color: var(--label);
+    border-radius: 8px;
+}
+.label-red {
+    background-color: var(--red);
+    border-radius: 8px;
+}
+.label-green {
+    background-color: var(--green);
+    border-radius: 8px;
 }
 button {
     color: var(--text-color)
@@ -396,7 +408,7 @@ a {
     align-items: center;
     justify-content: center;
     grid-row: 10 / 12;
-    grid-column: 1 / 5;
+    grid-column: 1 / 6;
 }
 
 .project-members {
@@ -405,7 +417,7 @@ a {
     justify-content: flex-end;
     column-gap: 5px;
     grid-row: 10 / 12;
-    grid-column: 6 / 12;
+    grid-column: 7 / 12;
 }
 
 

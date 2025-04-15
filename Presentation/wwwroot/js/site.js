@@ -178,10 +178,34 @@ async function fetchData(url) {
     }
 }
 
-/* 2 populate view */
+async function deleteData(url) {
+    try {
+        const response = await fetch(url, {
+            method: 'DELETE',
+        });
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status} ${response.errorMessage}`);
+        }
+        window.location.current.reload();
+    } catch (error) {
+        console.error(error.message);
+    }
+}
 
+async function sendDataAsQuery(url) {
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json' 
+            }
+        });
+        if (!response.ok) {
+            console.error(`Response status: ${response.status} ${response.errorMessage}`);
+        }
+        window.location.reload();
+    } catch (error) {
+        console.error(error.message);
+    }
+}
 
-
-const formatDate = (datetime) => {
-    return new Date(datetime).toISOString().split('T')[0];
-};  

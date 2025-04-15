@@ -60,13 +60,16 @@
         const projectView = document.getElementById('projects-view')
         projectView.innerHTML = "";
         for(let project of statusFilterdData) {
-            console.log(project)
-            let card = projectCard(project.id, project.imageUrl, project.projectName, project.client.clientName, project.description, project.members, project.calculatedTimeDiff)
+
+            let timeDiffClass = 'label'
+            if(Date.now() > new Date(project.endDate).getTime()) timeDiffClass = 'label-red';
+            if(project.status === 2) timeDiffClass = 'label-green';
+            let card = projectCard(project.id, project.imageUrl, project.projectName, project.client.clientName, project.description, project.members, project.calculatedTimeDiff, timeDiffClass )
             projectView.insertAdjacentHTML('beforeend', card)
         }
     }
 
-    function projectCard(id, imageUrl, projectName, clientName, description, members, status) {
+    function projectCard(id, imageUrl, projectName, clientName, description, members, timeDiff, timeDiffClass) {
         return `
         <div class="project-card">
             <div>
@@ -88,19 +91,19 @@
                         </div>
                         <div class="flex align c-gap-5">
                             <i class="bi bi-check2-circle"></i>
-                            <button class="btn-clean">
+                            <button onClick="sendDataAsQuery('https://localhost:8081/updateStatus/${id}?status=Completed')" class="btn-clean">
                                 Mark As Completed
                             </button>
                         </div>
                         <div class="flex align c-gap-5 border-bottom">
                             <i class="bi bi-person-add"></i>
-                            <button data-targetId="#add-members" data-openModal="true" class="btn-clean">
+                            <button onclick="fetchPopulateProjectMembers('${id}')" data-targetId="#add-members" data-openModal="true" class="btn-clean">
                                 Add Members
                             </button>
                         </div>
                         <div class="flex align c-gap-5">
                             <i class="bi bi-trash text-error"></i>
-                            <button class="btn-clean text-error">
+                            <button onClick="deleteData('https://localhost:8081/deleteProject/${id}')" class="btn-clean text-error">
                                 Delete
                             </button>
                         </div>
@@ -110,8 +113,8 @@
             <div class="project-card-content">
                 <p>${description}</p>
             </div>
-            <div class="label project-countdown">
-                <i class="bi bi-clock-fill"> <span>${status}</span></i>
+            <div class="${timeDiffClass} project-countdown">
+                <i class="bi bi-clock-fill"> <span>${timeDiff}</span></i>
             </div>
             <div class="project-members">
                 ${members.map(member => (`<img class="profile-img-medium" src="${member.imageUrl}" />`)).join('')}
@@ -135,10 +138,14 @@
         if(filterBy === 'completed') return completedProjects;
 
         return data
-    }
+        }
+
+    const formatDate = (datetime) => {
+    return new Date(datetime).toISOString().split('T')[0];
+    };
 
     window.addEventListener('DOMContentLoaded', () => {
-        getProjects();
+    getProjects();
     })
 </script>
 
