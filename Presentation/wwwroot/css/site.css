@@ -333,12 +333,16 @@ a {
     color: var(--accent);
     font-weight: var(--font-bold);
 }
+    .active-filter button {
+        color: var(--accent);
+    }
 
-/* project card */
-.projects-view {
-    display: flex;
-    flex-wrap: wrap;
-}
+
+    /* project card */
+    .projects-view {
+        display: flex;
+        flex-wrap: wrap;
+    }
 
 .project-card {
     margin: 12px;
