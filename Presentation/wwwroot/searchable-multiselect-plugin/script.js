@@ -61,6 +61,7 @@ function createInitialTokens(select) {
         options_selected
     } = getOptions(select);
     const wrapper = select.parentNode;
+    if (options_selected.length != 0) removePlaceholder(wrapper)
     for (let i = 0; i < options_selected.length; i++) {
         createToken(wrapper, options_selected[i]);
     }
@@ -325,6 +326,7 @@ function removeToken(e) {
     // Get the value to remove
     const value_to_remove = e.target.dataset.option;
     const wrapper = e.target.parentNode.parentNode;
+    const select = wrapper.querySelector("select");
     const input_search = wrapper.querySelector(".selected-input");
     const dropdown = wrapper.querySelector(".dropdown-icon");
     // Get the options in the select to be unselected
@@ -334,6 +336,9 @@ function removeToken(e) {
     e.target.parentNode.remove();
     input_search.focus();
     dropdown.classList.remove("active");
+
+    populateAutocompleteList(select, input_search.value, true);
+
     const event = new Event('click');
     dropdown.dispatchEvent(event);
     e.stopPropagation();

@@ -2,6 +2,7 @@
 using Business.Models;
 using Data.Entities;
 using Data.Interfaces;
+using Domain.Enums;
 using Domain.Extensions;
 using Domain.Models;
 using System.Diagnostics;
@@ -62,6 +63,12 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
             if (result.Result is not IEnumerable<ProjectEntity>)
                 return ServiceResult<IEnumerable<Project>>.Error("Failed to get projects");
 
+            var sartedProjects = result.Result.Where(project => project.StartDate <= DateTime.Now);
+            foreach (var startedProject in sartedProjects)
+            {
+                await UpdateStatus(startedProject.Id, "Started");
+            }
+            
             var projects = result.Result.Select(x => {
                 var project = x.MapTo<Project>();
                 List<Member> members = x.MemberProjects.Select(x => x.Member.MapTo<Member>()).ToList();
@@ -74,6 +81,59 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
         {
             Debug.WriteLine(ex.Message);
             return ServiceResult<IEnumerable<Project>>.Error("Failed to get projects");
+        }
+    }
+    public async Task<ServiceResult<IEnumerable<Project>>> GetProjectsAsync(string query)
+    {
+        try
+        {
+            var result = await _projectRepository.GetAllAsync( filterBy: x => x.ProjectName.Contains(query) , joins: join => join.Client);
+
+            if (result.Result is not IEnumerable<ProjectEntity>)
+                return ServiceResult<IEnumerable<Project>>.Error("Failed to get projects");
+
+            var projects = result.Result.Select(x => {
+                var project = x.MapTo<Project>();
+                List<Member> members = x.MemberProjects.Select(x => x.Member.MapTo<Member>()).ToList();
+                project.Members = members;
+                return project;
+            }).ToList();
+
+            return ServiceResult<IEnumerable<Project>>.Ok(projects);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return ServiceResult<IEnumerable<Project>>.Error("Failed to get projects");
+        }
+    }
+
+    public async Task<ServiceResult<Project>> UpdateStatus(string id, string status)
+    {
+        try
+        {
+            var result = await _projectRepository.GetAsync(x => x.Id == id);
+            if(result.Result is null) return ServiceResult<Project>.Error("Failed to fetch the project to update status");
+
+            var project = result.Result;
+
+            if (Enum.TryParse(status, out ProjectStatuses convertedStatus))
+            {
+                project.Status = convertedStatus;
+            } else
+            {
+                return ServiceResult<Project>.Error("The status was not of right enum type");
+            }
+            
+            var updateResult = await _projectRepository.UpdateAsync(project);
+            if(updateResult.Result is null) ServiceResult<Project>.Error("Failed to update project status");
+
+            return ServiceResult<Project>.Ok(project.MapTo<Project>());
+
+        } catch(Exception ex)
+        {
+            Debug.Write(ex.Message);
+            return ServiceResult<Project>.Error("Failed to update project status");
         }
     }
     public async Task<ServiceResult<Project>> GetProjectAsync(string id)
@@ -110,6 +170,12 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
             if(!findProjectResult.Succeeded && findProjectResult.Result is null) return ServiceResult<Project>.Error($"Could not get project :: {findProjectResult.ErrorMessage}");
             
             var project = findProjectResult.Result!;
+
+            project.ProjectName = form.ProjectName;
+            project.Description = form.Description;
+            project.StartDate = form.StartDate;
+            project.EndDate = form.EndDate;
+            project.Budget = form.Budget;
 
             var membersToRemove = project.MemberProjects.Where(mp => form.MemberIds.Contains(mp.MemberId) == false).ToList();
             foreach (var item in membersToRemove)

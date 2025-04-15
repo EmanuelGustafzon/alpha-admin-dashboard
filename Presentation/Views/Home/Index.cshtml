@@ -7,78 +7,132 @@
     <button data-targetId="#add-project" data-openModal="true" class="btn btn-primary ">+ Add Project</button>
 </div>
 <div class="filter-projects">
-    <div class="active-filter tab-link">
-        <p>ALL[8]</p>
+    <div id="all" class="active-filter">
+        <button class="btn-clean" data-filter-status>ALL[<span id="count-all">0</span>]</button>
     </div>
-    <div class="nav-link">
-        <p>STARTED[4]</p>
+    <div id="started">
+        <button  class="btn-clean" data-filter-status>STARTED[<span id="count-started">0</span>]</button>
     </div>
-    <div class="nav-link">
-        <p>COMPLETED[2]</p>
+    <div id="completed">
+        <button class="btn-clean" data-filter-status>COMPLETED[<span id="count-completed">0</span>]</button>
     </div>
 </div>
-<div id="projects-view" class="projects-view">
-    @foreach(var project in Model.Projects) {
-        <div class="projects-view">
-            <div class="project-card">
-                <div>
-                    <img class="project-img" src="@project.ImageUrl" alt="project display image">
-                </div>
-                <div class="project-card-headings">
-                    <h6 class="project-name">@project.ProjectName</h6>
-                    <p class="org-name">@project.Client.ClientName</p>
-                </div>
-                <div class="project-card-settings">
-                    <div class="popover-container">
-                        <button data-open-pop-over data-targetId="#pop-over-@project.Id"><i class="bi bi-three-dots"></i></button>
-                        <div id="pop-over-@project.Id" data-pop-over class="popover d-none">
-                            <div class="flex align c-gap-5">
-                                <i class="bi bi-pencil-square"></i>
-                                <button onclick="fetchPopulateProject('@project.Id')" data-targetId="#edit-project" data-openModal="true" class="btn-clean">
-                                    Edit Project
-                                </button>
-                            </div>
-                            <div class="flex align c-gap-5 border-bottom">
-                                <i class="bi bi-person-add"></i>
-                                <button data-targetId="#add-members" data-openModal="true" class="btn-clean">
-                                    Add Members
-                                </button>
-                            </div>
-                            <div class="flex align c-gap-5">
-                                <i class="bi bi-trash text-error"></i>
-                                <form asp-action="DeleteProject" method="post">
-                                    <input hidden asp-for="@Model.DeleteProject.Id" value="@project.Id" />
-                                    <span asp-validation-for="@Model.DeleteProject.Id"></span>
-                                    <button type="submit" class="btn-clean text-error" >
-                                        Delete
-                                    </button>
-                                </form>    
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card-content">
-                    <p>@Html.Raw(project.Description)</p>
-                </div>
-                <div class="label project-countdown">
-                    <i class="bi bi-clock-fill"> <span>1 week left</span></i>
-                </div>
-                <div class="project-members">
-                    @foreach(var member in project.Members) {
-                        <img class="profile-img-medium" src="@member.ImageUrl"/> 
-                    }
-                </div>
-            </div>
-        </div>
-    } 
-</div>
+
+<div id="projects-view" class="projects-view"></div>
 
 @await Html.PartialAsync("PartialViews/_AddProject", Model)
 @await Html.PartialAsync("PartialViews/_Addmembers", Model)
 @await Html.PartialAsync("PartialViews/_EditProject", Model)
 
 <script>
+    let showByStatus = 'all';
 
+    const filterContainer = document.querySelector('.filter-projects');
+    const filterByStatusBtn = document.querySelectorAll('[data-filter-status]')
+    filterByStatusBtn.forEach(button => {
+        button.addEventListener('click', function () {
+            const currentActive = filterContainer.querySelector('.active-filter');
+            if (currentActive) {
+                currentActive.classList.remove('active-filter');
+            }
+
+            this.parentElement.classList.add('active-filter');
+            showByStatus = this.parentElement.id;
+            
+            getProjects();
+        });
+    });
+
+    let debounceTimer;
+    document.getElementById("search-field").addEventListener("input", (e) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            getProjects(e.target.value);
+        }, 500);
+    });
+
+    async function getProjects(query = "") {
+        const url = `https://localhost:8081/Home/Projects?query=${query}`;
+        const data = await fetchData(url)
+
+        const statusFilterdData = organizeAndCountProjetAfterStatus(data, showByStatus)
+
+        const projectView = document.getElementById('projects-view')
+        projectView.innerHTML = "";
+        for(let project of statusFilterdData) {
+            let card = projectCard(project.id, project.imageUrl, project.projectName, project.client.clientName, project.description, project.members, project.status)
+            projectView.insertAdjacentHTML('beforeend', card)
+        }
+    }
+
+    function organizeAndCountProjetAfterStatus(data, filterBy) {
+        let all = document.getElementById('count-all')
+        let started = document.getElementById('count-started')
+        let completed = document.getElementById('count-completed')
+
+        all.innerText = data.length;
+        const startedProjects = [...data.filter(x => x.status === 1)];
+        const completedProjects = [...data.filter(x => x.status === 2)];
+
+        started.innerText = startedProjects.length;
+        completed.innerText = completedProjects.length
+
+        if(filterBy === 'started') return startedProjects;
+        if(filterBy === 'completed') return completedProjects;
+
+        return data
+    }
+
+    function projectCard(id, imageUrl, projectName, clientName, description, members, status) {
+        return `
+        <div class="project-card">
+            <div>
+                <img class="project-img" src="${imageUrl}" alt="project display image">
+            </div>
+            <div class="project-card-headings">
+                <h6 class="project-name">${projectName}</h6>
+                <p class="org-name">${clientName}</p>
+            </div>
+            <div class="project-card-settings">
+                <div class="popover-container">
+                    <button data-open-pop-over data-targetId="#pop-over-${id}" ><i class="bi bi-three-dots"></i></button>
+                    <div id="pop-over-${id}" data-pop-over class="popover d-none">
+                        <div class="flex align c-gap-5">
+                            <i class="bi bi-pencil-square"></i>
+                            <button onclick="fetchPopulateProject('${id}')" data-targetId="#edit-project" data-openModal="true" class="btn-clean">
+                                Edit Project
+                            </button>
+                        </div>
+                        <div class="flex align c-gap-5 border-bottom">
+                            <i class="bi bi-person-add"></i>
+                            <button data-targetId="#add-members" data-openModal="true" class="btn-clean">
+                                Add Members
+                            </button>
+                        </div>
+                        <div class="flex align c-gap-5">
+                            <i class="bi bi-trash text-error"></i>
+                            <button class="btn-clean text-error">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="project-card-content">
+                <p>${description}</p>
+            </div>
+            <div class="label project-countdown">
+                <i class="bi bi-clock-fill"> <span>${status}</span></i>
+            </div>
+            <div class="project-members">
+                ${members.map(member => (`<img class="profile-img-medium" src="${member.imageUrl}" />`)).join('')}
+            </div>
+        </div>
+            `};
+
+    window.addEventListener('DOMContentLoaded', () => {
+        getProjects();
+    })
 </script>
 
 
