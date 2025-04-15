@@ -71,6 +71,7 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
             
             var projects = result.Result.Select(x => {
                 var project = x.MapTo<Project>();
+                project.CalculatedTimeDiff = ProjectDateCalculator.GetTimeDiffFromToday(project.StartDate, project.EndDate);
                 List<Member> members = x.MemberProjects.Select(x => x.Member.MapTo<Member>()).ToList();
                 project.Members = members;
                 return project;

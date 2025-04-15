@@ -60,27 +60,10 @@
         const projectView = document.getElementById('projects-view')
         projectView.innerHTML = "";
         for(let project of statusFilterdData) {
-            let card = projectCard(project.id, project.imageUrl, project.projectName, project.client.clientName, project.description, project.members, project.status)
+            console.log(project)
+            let card = projectCard(project.id, project.imageUrl, project.projectName, project.client.clientName, project.description, project.members, project.calculatedTimeDiff)
             projectView.insertAdjacentHTML('beforeend', card)
         }
-    }
-
-    function organizeAndCountProjetAfterStatus(data, filterBy) {
-        let all = document.getElementById('count-all')
-        let started = document.getElementById('count-started')
-        let completed = document.getElementById('count-completed')
-
-        all.innerText = data.length;
-        const startedProjects = [...data.filter(x => x.status === 1)];
-        const completedProjects = [...data.filter(x => x.status === 2)];
-
-        started.innerText = startedProjects.length;
-        completed.innerText = completedProjects.length
-
-        if(filterBy === 'started') return startedProjects;
-        if(filterBy === 'completed') return completedProjects;
-
-        return data
     }
 
     function projectCard(id, imageUrl, projectName, clientName, description, members, status) {
@@ -101,6 +84,12 @@
                             <i class="bi bi-pencil-square"></i>
                             <button onclick="fetchPopulateProject('${id}')" data-targetId="#edit-project" data-openModal="true" class="btn-clean">
                                 Edit Project
+                            </button>
+                        </div>
+                        <div class="flex align c-gap-5">
+                            <i class="bi bi-check2-circle"></i>
+                            <button class="btn-clean">
+                                Mark As Completed
                             </button>
                         </div>
                         <div class="flex align c-gap-5 border-bottom">
@@ -129,6 +118,24 @@
             </div>
         </div>
             `};
+
+    function organizeAndCountProjetAfterStatus(data, filterBy) {
+        let all = document.getElementById('count-all')
+        let started = document.getElementById('count-started')
+        let completed = document.getElementById('count-completed')
+
+        all.innerText = data.length;
+        const startedProjects = [...data.filter(x => x.status === 1)];
+        const completedProjects = [...data.filter(x => x.status === 2)];
+
+        started.innerText = startedProjects.length;
+        completed.innerText = completedProjects.length
+
+        if(filterBy === 'started') return startedProjects;
+        if(filterBy === 'completed') return completedProjects;
+
+        return data
+    }
 
     window.addEventListener('DOMContentLoaded', () => {
         getProjects();
