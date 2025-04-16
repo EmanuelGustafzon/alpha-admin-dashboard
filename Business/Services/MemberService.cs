@@ -6,10 +6,7 @@ using Data.Interfaces;
 using Domain.Extensions;
 using Domain.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
-using System.Net;
 
 namespace Business.Services;
 public class MemberService(
@@ -35,6 +32,10 @@ public class MemberService(
             if (!result.Succeeded)
                 return ServiceResult<MemberEntity>.Error("Failed to Create Accont");
 
+            var thisIsTheFirstUser = _userManager.Users.Count() == 1;
+            if (thisIsTheFirstUser)
+                await _userManager.AddToRoleAsync(member, "Admin");
+
             return ServiceResult<MemberEntity>.Created(member);
         }
         catch (Exception ex)
@@ -57,12 +58,52 @@ public class MemberService(
             if (!result.Succeeded)
                 return ServiceResult<MemberEntity>.Error("Failed to Create Accont");
 
+            var thisIsTheFirstUser = _userManager.Users.Count() == 1;
+            if (thisIsTheFirstUser)
+                await _userManager.AddToRoleAsync(member, "Admin");
+
             return ServiceResult<MemberEntity>.Created(member);
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
             return ServiceResult<MemberEntity>.Error("Failed to Create User");
+        }
+    }
+
+    public async Task<ServiceResult<string>> CreateMemberAsync(MemberWithRoleForm form)
+    {
+        try
+        {
+
+            var memberEntity = form.MapTo<MemberEntity>();
+            memberEntity.UserName = form.Email;
+
+            if (memberEntity.Address == null)
+                memberEntity.Address = new MemberAddressEntity { MemberId = memberEntity.Id };
+            memberEntity.Address.City = form.AddressForm.City;
+            memberEntity.Address.PostCode = form.AddressForm.PostCode;
+            memberEntity.Address.Street = form.AddressForm.Street;
+
+            if (form.Image != null && form.Image.Length != 0)
+            {
+                string imageUrl = await _uploadFile.UploadFileLocally(form.Image);
+                memberEntity.ImageUrl = imageUrl;
+            }
+
+            string generatedPassword = $"{form.FirstName.ToUpper()}-{Guid.NewGuid().ToString()[..4]}";
+
+            var result = await _userManager.CreateAsync(memberEntity, generatedPassword);
+            if(!result.Succeeded) return ServiceResult<string>.Error($"Failed to create member {result.Errors.ToString()}");
+
+            var roleResult = await _userManager.AddToRoleAsync(memberEntity, form.Role);
+
+            return ServiceResult<string>.Created(generatedPassword);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return ServiceResult<string>.Error("Failed to create member");
         }
     }
 

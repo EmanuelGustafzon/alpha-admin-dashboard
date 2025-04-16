@@ -11,7 +11,6 @@ forms.forEach(form => {
                 method: 'post',
                 body: formData
             });
-            if (res.ok) window.location.reload();
             
             if (res.status == 400) {
                 const data = await res.json();
@@ -26,6 +25,20 @@ forms.forEach(form => {
                             span.classList.add('text-error');
                         }
                     })
+                }
+            } else {
+                closeAllModals()
+                const data = await res.json();
+                const message = data.message;
+                if (message) {
+                    const alert = document.querySelector("#alert");
+                    const alertText = alert?.querySelector("#alert-text");
+                    if (alert && alertText) {
+                        alertText.innerText = message;
+                        alert.classList.remove('d-none');
+                    }
+                } else {
+                    window.location.reload();
                 }
             }
         } catch (error) {
@@ -61,7 +74,7 @@ document.addEventListener('click', function (e) {
 
 // handle open and close of form modals 
 document.addEventListener('click', function (e) {
-    const openModalBtn = e.target.closest('[data-openModal="true"]');
+    const openModalBtn = e.target.closest('[data-openModal]');
 
     if (!openModalBtn) return;
 
@@ -72,7 +85,7 @@ document.addEventListener('click', function (e) {
     }
 });
 
-const closeModalButtons = document.querySelectorAll('[data-closeModal="true"]');
+const closeModalButtons = document.querySelectorAll('[data-closeModal]');
 closeModalButtons.forEach(btn => {
     btn.addEventListener("click", () => {
         const modal = btn.closest('.form-modal');
@@ -94,6 +107,11 @@ closeModalButtons.forEach(btn => {
             imgPreviewContainer.classList.remove("selected");
     })
 })
+
+function closeAllModals() {
+    const closeModalButtons = document.querySelectorAll('[data-closeModal]');
+    closeModalButtons.forEach(btn => btn.click())
+}
 
 // handle image previews 
 document.querySelectorAll('.img-preview-container').forEach(previewContainer => {
@@ -186,7 +204,7 @@ async function deleteData(url) {
         if (!response.ok) {
             throw new Error(`Response status: ${response.status} ${response.errorMessage}`);
         }
-        window.location.current.reload();
+        window.location.reload();
     } catch (error) {
         console.error(error.message);
     }

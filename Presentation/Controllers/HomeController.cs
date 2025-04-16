@@ -37,9 +37,12 @@ public class HomeController(IMemberService memberService, IProjectService projec
             return BadRequest(new { success = false, errors });
         }
         var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        await _projectService.CreateProjectAsync(form, userId);
-        return Ok();
+        var result = await _projectService.CreateProjectAsync(form, userId);
+        if(result.Data is null || result.Success is false) return StatusCode(500, "Failed to Adding projects.");
+
+        return Ok(new { success = true});
     }
+
     [HttpGet]
     public async Task<IActionResult> Projects([FromQuery] string? query = null)
     {

@@ -11,6 +11,8 @@ public interface IMemberService
 
     public Task<ServiceResult<MemberEntity>> CreateMemberAsync(string firstName, string lastName, string email);
 
+    public Task<ServiceResult<string>> CreateMemberAsync(MemberWithRoleForm form);
+
     public Task<ServiceResult<IEnumerable<Member>>> GetAllMembersAsync();
     public Task<ServiceResult<Member>> GetMemberByIdAsync(string id);
 

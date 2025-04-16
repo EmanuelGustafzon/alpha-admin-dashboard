@@ -1,0 +1,70 @@
+﻿@model MembersViewModel
+
+<div id="add-member" class="form-modal d-none">
+    <div class="flex space-between">
+        <h6>Add Member</h6>
+        <button data-closeModal class="btn-clean">x</button>
+    </div>
+    <form asp-action="AddMember" method="post" enctype="multipart/form-data" novalidate>
+        <div class="img-preview-container circle">
+            <img src="" class="img-preview" />
+            <input asp-for="@Model.memberWithRoleForm.Image" accept="image/*" class="d-none" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.memberWithRoleForm.FirstName"></label>
+            <input asp-for="@Model.memberWithRoleForm.FirstName" class="form-control">
+            <span asp-validation-for="@Model.memberWithRoleForm.FirstName"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.memberWithRoleForm.LastName"></label>
+            <input asp-for="@Model.memberWithRoleForm.LastName" class="form-control">
+            <span asp-validation-for="@Model.memberWithRoleForm.LastName"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.memberWithRoleForm.Email"></label>
+            <input asp-for="@Model.memberWithRoleForm.Email" class="form-control">
+            <span asp-validation-for="@Model.memberWithRoleForm.Email"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.memberWithRoleForm.PhoneNumber"></label>
+            <input asp-for="@Model.memberWithRoleForm.PhoneNumber" class="form-control">
+            <span asp-validation-for="@Model.memberWithRoleForm.PhoneNumber"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.memberWithRoleForm.JobTitle"></label>
+            <input asp-for="@Model.memberWithRoleForm.JobTitle" class="form-control">
+            <span asp-validation-for="@Model.memberWithRoleForm.JobTitle"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.memberWithRoleForm.Role"></label>
+            <select asp-for="@Model.memberWithRoleForm.Role" class="form-control">
+                <option value="User">User</option>
+                <option value="Admin">Admin</option>
+            </select>
+            <span asp-validation-for="@Model.memberWithRoleForm.Role"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.memberWithRoleForm.BirthDate"></label>
+            <input asp-for="@Model.memberWithRoleForm.BirthDate" class="form-control">
+            <span asp-validation-for="@Model.memberWithRoleForm.BirthDate"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.memberWithRoleForm.AddressForm.City"></label>
+            <input asp-for="@Model.memberWithRoleForm.AddressForm.City" class="form-control">
+            <span asp-validation-for="@Model.memberWithRoleForm.AddressForm.City"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.memberWithRoleForm.AddressForm.PostCode"></label>
+            <input asp-for="@Model.memberWithRoleForm.AddressForm.PostCode" class="form-control">
+            <span asp-validation-for="@Model.memberWithRoleForm.AddressForm.PostCode"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.memberWithRoleForm.AddressForm.Street"></label>
+            <input asp-for="@Model.memberWithRoleForm.AddressForm.Street" class="form-control">
+            <span asp-validation-for="@Model.memberWithRoleForm.AddressForm.Street"></span>
+        </div>
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Add Member</button>
+        </div>
+    </form>
+</div>

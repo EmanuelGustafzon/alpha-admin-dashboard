@@ -4,8 +4,13 @@
 }
 <div class="projects-top-bar">
     <h2>Projects</h2>
-    <button data-targetId="#add-project" data-openModal="true" class="btn btn-primary ">+ Add Project</button>
+    <button data-targetId="#add-project" data-openModal class="btn btn-primary ">+ Add Project</button>
 </div>
+
+@await Html.PartialAsync("PartialViews/_AddProject", Model)
+@await Html.PartialAsync("PartialViews/_AddProjectmembers", Model)
+@await Html.PartialAsync("PartialViews/_EditProject", Model)
+
 <div class="filter-projects">
     <div id="all" class="active-filter">
         <button class="btn-clean" data-filter-status>ALL[<span id="count-all">0</span>]</button>
@@ -19,10 +24,6 @@
 </div>
 
 <div id="projects-view" class="projects-view"></div>
-
-@await Html.PartialAsync("PartialViews/_AddProject", Model)
-@await Html.PartialAsync("PartialViews/_Addmembers", Model)
-@await Html.PartialAsync("PartialViews/_EditProject", Model)
 
 <script>
     let showByStatus = 'all';
@@ -85,7 +86,7 @@
                     <div id="pop-over-${id}" data-pop-over class="popover d-none">
                         <div class="flex align c-gap-5">
                             <i class="bi bi-pencil-square"></i>
-                            <button onclick="fetchPopulateProject('${id}')" data-targetId="#edit-project" data-openModal="true" class="btn-clean">
+                            <button onclick="fetchPopulateProject('${id}')" data-targetId="#edit-project" data-openModal class="btn-clean">
                                 Edit Project
                             </button>
                         </div>
@@ -97,7 +98,7 @@
                         </div>
                         <div class="flex align c-gap-5 border-bottom">
                             <i class="bi bi-person-add"></i>
-                            <button onclick="fetchPopulateProjectMembers('${id}')" data-targetId="#add-members" data-openModal="true" class="btn-clean">
+                            <button onclick="fetchPopulateProjectMembers('${id}')" data-targetId="#add-members" data-openModal class="btn-clean">
                                 Add Members
                             </button>
                         </div>

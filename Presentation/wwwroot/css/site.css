@@ -420,8 +420,6 @@ a {
     grid-column: 7 / 12;
 }
 
-
-
 /* tool tips */
 .popover-container {
     position: relative;
@@ -456,11 +454,10 @@ a {
 /* modal form */
 .form-modal {
     position: absolute;
-    margin-top: 15em;
-    margin-bottom: 10em;
-    top: 50%;
+    z-index:10;
+    margin-top: -50px;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     min-width: 370px;
     max-width: 550px;
     height: auto;

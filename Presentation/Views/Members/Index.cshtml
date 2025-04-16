@@ -1,11 +1,30 @@
 ﻿@model MembersViewModel
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const alert = document.querySelector("#alert");
+        const alertText = alert.querySelector("#alert-text");
+        const generatedPassword = "@(ViewBag.GeneratedPassword as string)";
+        console.log(generatedPassword);
+        if (generatedPassword === "") return;
+
+        if (alert) {
+            console.log(generatedPassword);
+            alertText.innerText = `Send this generated password to the member: ${generatedPassword} and tell the member to change the password!`;
+            alert.classList.remove('d-none');
+        }
+    });
+</script>
+
+
 <div class="projects-top-bar">
     <h2>Member</h2>
-    <button class="btn btn-primary ">+ Add Member</button>
+    <button data-targetId="#add-member" data-openModal class="btn btn-primary ">+ Add Member</button>
 </div>
 
-<div class="flex">
+@await Html.PartialAsync("PartialViews/_AddMember", Model)
+
+<div class="projects-view">
     @foreach(var member in Model.Members) {
         <div class="profile-card">
             <div class="flex flex-end">
