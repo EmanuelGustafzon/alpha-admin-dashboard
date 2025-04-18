@@ -65,6 +65,10 @@ html, body {
     background-color: var(--green);
     border-radius: 8px;
 }
+.bg-accent {
+    background-color: var(--accent);
+    border-radius: 8px;
+}
 button {
     color: var(--text-color)
 }
@@ -157,6 +161,10 @@ a {
 }
 .c-gap-5 {
     column-gap: 5px;
+}
+.list-view {
+    display: flex;
+    flex-wrap: wrap;
 }
 /* btn */
 .btn {
@@ -351,10 +359,6 @@ a {
 
 
     /* project card */
-    .projects-view {
-        display: flex;
-        flex-wrap: wrap;
-    }
 
 .project-card {
     margin: 12px;

@@ -85,6 +85,7 @@ public class HomeController(IMemberService memberService, IProjectService projec
         }
         catch (Exception ex)
         {
+            Debug.WriteLine(ex.Message);
             return StatusCode(500, "Something went wrong.");
         }
     }
@@ -97,12 +98,14 @@ public class HomeController(IMemberService memberService, IProjectService projec
             var result = await _projectService.UpdateProjectAsync(form, id);
             if(result.Data is null) return NotFound("No matching projects found.");
 
-            return Ok(result.Data);
+            return Ok(new {success = true});
         } catch (Exception ex)
         {
+            Debug.WriteLine(ex.Message);
             return StatusCode(500, "Something went wrong.");
         }
     }
+
     [HttpPost("updateStatus/{id}")]
     public async Task<IActionResult> UpdateStatus(string id, string status)
     {
@@ -120,7 +123,7 @@ public class HomeController(IMemberService memberService, IProjectService projec
         }
     }
 
-    [HttpPost("updateMembers/{id}")]
+    [HttpPost("updateProjectMembers/{id}")]
     public async Task<IActionResult> UpdateMembers(string id, [Bind(Prefix = "ProjectMembersForm")] ProjectMembersForm form)
     {
         try
@@ -128,7 +131,7 @@ public class HomeController(IMemberService memberService, IProjectService projec
             var result = await _projectService.UpdateProjectMembersAsync(form, id);
             if (!result.Success) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
 
-            return Ok();
+            return Ok(new {success = true});
 
         }
         catch (Exception ex)

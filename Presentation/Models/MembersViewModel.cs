@@ -7,5 +7,5 @@ public class MembersViewModel
 {
     public IEnumerable<Member> Members { get; set; } = [];
 
-    public MemberWithRoleForm memberWithRoleForm { get; set; } = new();
+    public MemberWithRoleForm MemberWithRoleForm { get; set; } = new();
 }

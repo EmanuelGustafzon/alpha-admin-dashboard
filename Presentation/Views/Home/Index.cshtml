@@ -23,7 +23,7 @@
     </div>
 </div>
 
-<div id="projects-view" class="projects-view"></div>
+<div id="projects-view" class="list-view"></div>
 
 <script>
     let showByStatus = 'all';
@@ -53,7 +53,7 @@
     });
 
     async function getProjects(query = "") {
-        const url = `https://localhost:8081/Home/Projects?query=${query}`;
+        const url = `/home/projects?query=${query}`;
         const data = await fetchData(url)
 
         const statusFilterdData = organizeAndCountProjetAfterStatus(data, showByStatus)
@@ -140,10 +140,6 @@
 
         return data
         }
-
-    const formatDate = (datetime) => {
-    return new Date(datetime).toISOString().split('T')[0];
-    };
 
     window.addEventListener('DOMContentLoaded', () => {
     getProjects();

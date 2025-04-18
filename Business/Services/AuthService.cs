@@ -39,7 +39,7 @@ public class AuthService(
     {
         try
         {
-            SignInResult result = await _signInManager.PasswordSignInAsync(form.Email, form.Password, false, false);
+            SignInResult result = await _signInManager.PasswordSignInAsync(form.Email, form.Password, form.RememberMe, false);
             if (result.Succeeded)
             {
                 return ServiceResult<MemberEntity>.NoContent();

@@ -87,6 +87,7 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
             return ServiceResult<IEnumerable<Project>>.Error("Failed to get projects");
         }
     }
+
     public async Task<ServiceResult<IEnumerable<Project>>> GetProjectsAsync(string query)
     {
         try

@@ -34,7 +34,7 @@
 
     function populateProjectMembersForm(data) {
         const form = document.getElementById('add-members-form');
-        form.action = `updateMembers/${data.id}`
+        form.action = `updateProjectMembers/${data.id}`
 
         let members = data['members']
         const options = form.getElementsByTagName('option')

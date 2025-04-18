@@ -11,9 +11,9 @@ forms.forEach(form => {
                 method: 'post',
                 body: formData
             });
-            
             if (res.status == 400) {
                 const data = await res.json();
+
                 if (data.errors) {
                     Object.keys(data.errors).forEach(key => {
                         const input = form.querySelector(`[name="${key}"]`);
@@ -226,4 +226,8 @@ async function sendDataAsQuery(url) {
         console.error(error.message);
     }
 }
+
+const formatDate = (datetime) => {
+    return new Date(datetime).toISOString().split('T')[0];
+};
 
