@@ -6,10 +6,7 @@ using Data.Interfaces;
 using Domain.Extensions;
 using Domain.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
-using System.Net;
 
 namespace Business.Services;
 public class MemberService(
@@ -35,6 +32,10 @@ public class MemberService(
             if (!result.Succeeded)
                 return ServiceResult<MemberEntity>.Error("Failed to Create Accont");
 
+            var thisIsTheFirstUser = _userManager.Users.Count() == 1;
+            if (thisIsTheFirstUser)
+                await _userManager.AddToRoleAsync(member, "Admin");
+
             return ServiceResult<MemberEntity>.Created(member);
         }
         catch (Exception ex)
@@ -57,12 +58,52 @@ public class MemberService(
             if (!result.Succeeded)
                 return ServiceResult<MemberEntity>.Error("Failed to Create Accont");
 
+            var thisIsTheFirstUser = _userManager.Users.Count() == 1;
+            if (thisIsTheFirstUser)
+                await _userManager.AddToRoleAsync(member, "Admin");
+
             return ServiceResult<MemberEntity>.Created(member);
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
             return ServiceResult<MemberEntity>.Error("Failed to Create User");
+        }
+    }
+
+    public async Task<ServiceResult<string>> CreateMemberAsync(MemberWithRoleForm form)
+    {
+        try
+        {
+
+            var memberEntity = form.MapTo<MemberEntity>();
+            memberEntity.UserName = form.Email;
+
+            if (memberEntity.Address == null)
+                memberEntity.Address = new MemberAddressEntity { MemberId = memberEntity.Id };
+            memberEntity.Address.City = form.AddressForm.City;
+            memberEntity.Address.PostCode = form.AddressForm.PostCode;
+            memberEntity.Address.Street = form.AddressForm.Street;
+
+            if (form.Image != null && form.Image.Length != 0)
+            {
+                string imageUrl = await _uploadFile.UploadFileLocally(form.Image);
+                memberEntity.ImageUrl = imageUrl;
+            }
+
+            string generatedPassword = $"{form.FirstName.ToUpper()}-{Guid.NewGuid().ToString()[..4]}";
+
+            var result = await _userManager.CreateAsync(memberEntity, generatedPassword);
+            if(!result.Succeeded) return ServiceResult<string>.Error($"Failed to create member {result.Errors.ToString()}");
+
+            var roleResult = await _userManager.AddToRoleAsync(memberEntity, form.Role);
+
+            return ServiceResult<string>.Created(generatedPassword);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return ServiceResult<string>.Error("Failed to create member");
         }
     }
 
@@ -81,20 +122,39 @@ public class MemberService(
         return ServiceResult<IEnumerable<Member>>.Ok([]);
     }
 
+    public async Task<ServiceResult<IEnumerable<Member>>> GetAllMembersAsync(string query)
+    {
+        var result = await _memberRepository.GetAllAsync(filterBy: x => x.FirstName.Contains(query) || x.LastName.Contains(query) || x.Email.Contains(query));
+        if (!result.Succeeded)
+        {
+            return ServiceResult<IEnumerable<Member>>.Error("failed to fetch members");
+        }
+        if (result.Result is not null)
+        {
+            var members = result.Result.Select(m => m.MapTo<Member>()).ToList();
+            return ServiceResult<IEnumerable<Member>>.Ok(members);
+        }
+        return ServiceResult<IEnumerable<Member>>.Ok([]);
+    }
+
     public async Task<ServiceResult<Member>> GetMemberByIdAsync(string id)
     {
         try
         {
             var result = await _memberRepository.GetAsync(
                 entity => entity.Id == id,
-                join => join.Address
+                joins: join => join.Address
                 );
 
-            if (result.Result == null)
+            var memberEntity = result.Result;
+
+            if (memberEntity == null)
                 return ServiceResult<Member>.NotFound("Could not find member");
 
-            var member = result.Result.MapTo<Member>();
-                
+            var member = memberEntity.MapTo<Member>();
+            var roles = await _userManager.GetRolesAsync(memberEntity);
+            member.Role = roles[0];
+
             return ServiceResult<Member>.Ok(member);
         }
         catch (Exception ex)
@@ -157,6 +217,120 @@ public class MemberService(
         {
             Debug.WriteLine(ex.Message);
             return ServiceResult<Member>.Error("Failed to update member");
+        }
+    }
+
+    public async Task<ServiceResult<Member>> UpdateMemberAsync(MemberWithRoleForm form, string id)
+    {
+        try
+        {
+            var repositoryResult = await _memberRepository.GetAsync(
+                entity => entity.Id == id,
+                join => join.Address
+                );
+
+            if (repositoryResult.Result == null)
+                return ServiceResult<Member>.NotFound("Could not find member");
+
+            var memberEntity = repositoryResult.Result;
+
+            memberEntity.ImageUrl = form.ImageUrl;
+            if (form.Image != null && form.Image.Length != 0)
+            {
+                string imageUrl = await _uploadFile.UploadFileLocally(form.Image);
+                memberEntity.ImageUrl = imageUrl;
+            }
+            memberEntity.FirstName = form.FirstName;
+            memberEntity.LastName = form.LastName;
+            memberEntity.JobTitle = form.JobTitle;
+            memberEntity.PhoneNumber = form.PhoneNumber;
+            memberEntity.BirthDate = form.BirthDate;
+
+            var useExternalprovider = await MemberUseExternalProvider(memberEntity);
+            if (useExternalprovider == false)
+            {
+                memberEntity.Email = form.Email;
+                memberEntity.UserName = form.Email;
+            }
+
+            if (memberEntity.Address == null)
+                memberEntity.Address = new MemberAddressEntity { MemberId = memberEntity.Id };
+
+            memberEntity.Address.City = form.AddressForm.City;
+            memberEntity.Address.PostCode = form.AddressForm.PostCode;
+            memberEntity.Address.Street = form.AddressForm.Street;
+
+            await _memberRepository.BeginTransactionAsync();
+
+            var identityResult = await _userManager.UpdateAsync(memberEntity);
+            if (!identityResult.Succeeded)
+                return ServiceResult<Member>.Error("Failed to update member");
+
+            var currentRole = (await _userManager.GetRolesAsync(memberEntity))[0];
+            if(currentRole != form.Role)
+            {
+                var totalAdmins = await _userManager.GetUsersInRoleAsync("Admin");
+                if(totalAdmins.Count == 1 && currentRole == "Admin" && form.Role == "User")
+                {
+                    return ServiceResult<Member>.Error("At least one Admin is Required, now you are trying to remove the only admin in the system");
+                }
+                var roleResult = await _userManager.AddToRoleAsync(memberEntity, form.Role);
+                if (!roleResult.Succeeded)
+                {
+                    await _memberRepository.RollbackTransactionAsync();
+                    return ServiceResult<Member>.Error("Failed to update member role");
+                }
+            }
+
+            MemberAddress address = memberEntity.Address.MapTo<MemberAddress>();
+            var member = memberEntity.MapTo<Member>();
+            member.Address = address;
+
+            await _memberRepository.CommitTransactionAsync();
+            return ServiceResult<Member>.Ok(member);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            await _memberRepository.RollbackTransactionAsync();
+            return ServiceResult<Member>.Error("Failed to update member");
+        }
+    }
+
+    public async Task<ServiceResult<Member>> DeleteMemberAsync(string id)
+    {
+        try
+        {
+            var result = await _memberRepository.DeleteAsync(x => x.Id == id);
+            if (result.StatusCode == 404) return ServiceResult<Member>.NotFound("Member not found");
+            if (!result.Succeeded) return ServiceResult<Member>.Error("Failed to delete member");
+
+            return ServiceResult<Member>.NoContent();
+
+        } catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to delete member :: {ex.Message}");
+            return ServiceResult<Member>.Error("Failed to delete member");
+        }
+    }
+
+    public async Task<ServiceResult<bool>> ChangePasswordAsync(string id, ChangePasswordForm form) 
+    {
+        try
+        {
+            var findUserResult = await _memberRepository.GetAsync(x => x.Id == id);
+            if (findUserResult.Result is null) return ServiceResult<bool>.NotFound("Member not found");
+
+            var result = await _userManager.ChangePasswordAsync(findUserResult.Result, form.OldPassword, form.NewPassword);
+            if(!result.Succeeded) return ServiceResult<bool>.Error("Failed to change password");
+
+            return ServiceResult<bool>.NoContent();
+
+        }
+        catch (Exception ex) 
+        {
+            Debug.Write(ex.Message);
+            return ServiceResult<bool>.Error("Failed to change password");
         }
     }
     public async Task<bool> MemberUseExternalProvider(MemberEntity member)

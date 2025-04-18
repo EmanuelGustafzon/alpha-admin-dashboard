@@ -1,0 +1,99 @@
+﻿@model MembersViewModel
+
+<div id="edit-member" class="form-modal d-none">
+    <div class="flex space-between">
+        <h6>Edit Profile</h6>
+        <button data-closeModal class="btn-clean">x</button>
+    </div>
+    <form id="edit-member-form" method="post" enctype="multipart/form-data" novalidate>
+        <input hidden asp-for="@Model.MemberWithRoleForm.ImageUrl" value="@Model.MemberWithRoleForm.ImageUrl" />
+
+        <div class="img-preview-container circle @(Model.MemberWithRoleForm.ImageUrl != null ? "selected" : "")">
+            <img src="@(Model.MemberWithRoleForm.ImageUrl ?? "")" class="img-preview" />
+            <input asp-for="@Model.MemberWithRoleForm.Image" accept="image/*" class="d-none" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.MemberWithRoleForm.FirstName"></label>
+            <input asp-for="@Model.MemberWithRoleForm.FirstName" class="form-control">
+            <span asp-validation-for="@Model.MemberWithRoleForm.FirstName"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.MemberWithRoleForm.LastName"></label>
+            <input asp-for="@Model.MemberWithRoleForm.LastName" class="form-control">
+            <span asp-validation-for="@Model.MemberWithRoleForm.LastName"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.MemberWithRoleForm.Email"></label>
+            <input asp-for="@Model.MemberWithRoleForm.Email" class="form-control">
+            <span asp-validation-for="@Model.MemberWithRoleForm.Email"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.MemberWithRoleForm.PhoneNumber"></label>
+            <input asp-for="@Model.MemberWithRoleForm.PhoneNumber" class="form-control">
+            <span asp-validation-for="@Model.MemberWithRoleForm.PhoneNumber"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.MemberWithRoleForm.JobTitle"></label>
+            <input asp-for="@Model.MemberWithRoleForm.JobTitle" class="form-control">
+            <span asp-validation-for="@Model.MemberWithRoleForm.JobTitle"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.MemberWithRoleForm.Role"></label>
+            <select asp-for="@Model.MemberWithRoleForm.Role" class="form-control">
+                <option value="User">User</option>
+                <option value="Admin">Admin</option>
+            </select>
+            <span asp-validation-for="@Model.MemberWithRoleForm.Role"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.MemberWithRoleForm.BirthDate"></label>
+            <input asp-for="@Model.MemberWithRoleForm.BirthDate" class="form-control">
+            <span asp-validation-for="@Model.MemberWithRoleForm.BirthDate"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.MemberWithRoleForm.AddressForm.City"></label>
+            <input asp-for="@Model.MemberWithRoleForm.AddressForm.City" class="form-control">
+            <span asp-validation-for="@Model.MemberWithRoleForm.AddressForm.City"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.MemberWithRoleForm.AddressForm.PostCode"></label>
+            <input asp-for="@Model.MemberWithRoleForm.AddressForm.PostCode" class="form-control">
+            <span asp-validation-for="@Model.MemberWithRoleForm.AddressForm.PostCode"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.MemberWithRoleForm.AddressForm.Street"></label>
+            <input asp-for="@Model.MemberWithRoleForm.AddressForm.Street" class="form-control">
+            <span asp-validation-for="@Model.MemberWithRoleForm.AddressForm.Street"></span>
+        </div>
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Edit Member</button>
+        </div>
+    </form>
+</div>
+
+<script>
+        async function fetchPopulateMember(memberId) {
+        const url = `https://localhost:8081/member/${memberId}`
+        const data = await fetchData(url);
+        populateMemberForm(data)
+    }
+
+    function populateMemberForm(data) {
+        const form = document.getElementById('edit-member-form');
+
+        form.action = `updateMember/${data.id}`
+
+        form.getElementsByTagName('img')[0].src = data['imageUrl']
+        form.querySelector('input[name="MemberWithRoleForm.ImageUrl"]').value = data['imageUrl'];
+        form.querySelector('input[name="MemberWithRoleForm.FirstName"]').value = data['firstName'];
+        form.querySelector('input[name="MemberWithRoleForm.LastName"]').value = data['lastName'];
+        form.querySelector('input[name="MemberWithRoleForm.Email"]').value = data['email'];;
+        form.querySelector('input[name="MemberWithRoleForm.PhoneNumber"]').value = data['phoneNumber'];
+        form.querySelector('input[name="MemberWithRoleForm.JobTitle"]').value = data['jobTitle'];
+        form.querySelector('select[name="MemberWithRoleForm.Role"]').value = data['role']
+        form.querySelector('input[name="MemberWithRoleForm.BirthDate"]').value = formatDate(data['birthDate']);
+        form.querySelector('input[name="MemberWithRoleForm.AddressForm.City"]').value = data['address'].city;
+        form.querySelector('input[name="MemberWithRoleForm.AddressForm.PostCode"]').value = data['address'].postCode;
+        form.querySelector('input[name="MemberWithRoleForm.AddressForm.Street"]').value = data['address'].street;
+    }
+</script>

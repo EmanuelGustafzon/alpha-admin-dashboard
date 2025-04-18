@@ -27,7 +27,7 @@ public class MemberForm
 }
 public class MemberAddressForm
 {
-    public string City { get; set; } = null!;
-    public string PostCode { get; set; } = null!;
-    public string Street { get; set; } = null!;
+    public string? City { get; set; } 
+    public string? PostCode { get; set; } 
+    public string? Street { get; set; } 
 }

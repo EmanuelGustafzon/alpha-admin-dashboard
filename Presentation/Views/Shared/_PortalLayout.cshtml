@@ -40,6 +40,10 @@
                         </a>
                     </div>
                 </div>
+                <div id="alert" class="alert bg-accent d-none flex space-between" role="alert">
+                    <span id="alert-text"> </span>
+                    <button onclick="this.parentNode.classList.add('d-none')" class="btn">X</button>
+                </div>
             </div>
             <div class="side-border side-bar">
                 <a class="btn nav-buttons @(Context.Request.Path == "/" ?  "nav-btn-active" : "")" asp-controller="Home" asp-action="Index">

@@ -3,7 +3,7 @@
 <div id="add-project" class="form-modal d-none">
     <div class="flex space-between">
         <h6>Add Project</h6>
-        <button data-closeModal="true" class="btn-clean">x</button>
+        <button data-closeModal class="btn-clean">x</button>
     </div>
     <form asp-action="AddProject" method="post" enctype="multipart/form-data" novalidate>     
             <div class="img-preview-container square">
@@ -75,7 +75,7 @@
                 <span asp-validation-for="@Model.ProjectForm.Budget"></span>
             </div>
         <div class="d-grid">
-            <button type="submit" class="btn btn-primary">Button</button>
+            <button type="submit" class="btn btn-primary">Add Project</button>
         </div>
     </form>
 </div>

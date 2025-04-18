@@ -1,4 +1,7 @@
-﻿@model AuthViewModel
+﻿@{
+    Layout = "_FormLayout";
+}
+@model AuthViewModel
 
 <form asp-action="AddUserFromExternalProvider" asp-controller="Auth" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>

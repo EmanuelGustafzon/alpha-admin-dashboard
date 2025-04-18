@@ -48,7 +48,6 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    //app.UseMigrationsEndPoint();
     using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -70,6 +69,20 @@ else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    string[] roles = { "Admin", "User" };
+    foreach (var role in roles)
+    {
+        var roleExist = await roleManager.RoleExistsAsync(role);
+        if(!roleExist)
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
 }
 
 app.UseHttpsRedirection();

@@ -4,8 +4,13 @@
 }
 <div class="projects-top-bar">
     <h2>Projects</h2>
-    <button data-targetId="#add-project" data-openModal="true" class="btn btn-primary ">+ Add Project</button>
+    <button data-targetId="#add-project" data-openModal class="btn btn-primary ">+ Add Project</button>
 </div>
+
+@await Html.PartialAsync("PartialViews/_AddProject", Model)
+@await Html.PartialAsync("PartialViews/_AddProjectmembers", Model)
+@await Html.PartialAsync("PartialViews/_EditProject", Model)
+
 <div class="filter-projects">
     <div id="all" class="active-filter">
         <button class="btn-clean" data-filter-status>ALL[<span id="count-all">0</span>]</button>
@@ -18,11 +23,7 @@
     </div>
 </div>
 
-<div id="projects-view" class="projects-view"></div>
-
-@await Html.PartialAsync("PartialViews/_AddProject", Model)
-@await Html.PartialAsync("PartialViews/_Addmembers", Model)
-@await Html.PartialAsync("PartialViews/_EditProject", Model)
+<div id="projects-view" class="list-view"></div>
 
 <script>
     let showByStatus = 'all';
@@ -52,7 +53,7 @@
     });
 
     async function getProjects(query = "") {
-        const url = `https://localhost:8081/Home/Projects?query=${query}`;
+        const url = `/home/projects?query=${query}`;
         const data = await fetchData(url)
 
         const statusFilterdData = organizeAndCountProjetAfterStatus(data, showByStatus)
@@ -60,10 +61,67 @@
         const projectView = document.getElementById('projects-view')
         projectView.innerHTML = "";
         for(let project of statusFilterdData) {
-            let card = projectCard(project.id, project.imageUrl, project.projectName, project.client.clientName, project.description, project.members, project.status)
+
+            let timeDiffClass = 'label'
+            if(Date.now() > new Date(project.endDate).getTime()) timeDiffClass = 'label-red';
+            if(project.status === 2) timeDiffClass = 'label-green';
+            let card = projectCard(project.id, project.imageUrl, project.projectName, project.client.clientName, project.description, project.members, project.calculatedTimeDiff, timeDiffClass )
             projectView.insertAdjacentHTML('beforeend', card)
         }
     }
+
+    function projectCard(id, imageUrl, projectName, clientName, description, members, timeDiff, timeDiffClass) {
+        return `
+        <div class="project-card">
+            <div>
+                <img class="project-img" src="${imageUrl}" alt="project display image">
+            </div>
+            <div class="project-card-headings">
+                <h6 class="project-name">${projectName}</h6>
+                <p class="org-name">${clientName}</p>
+            </div>
+            <div class="project-card-settings">
+                <div class="popover-container">
+                    <button data-open-pop-over data-targetId="#pop-over-${id}" ><i class="bi bi-three-dots"></i></button>
+                    <div id="pop-over-${id}" data-pop-over class="popover d-none">
+                        <div class="flex align c-gap-5">
+                            <i class="bi bi-pencil-square"></i>
+                            <button onclick="fetchPopulateProject('${id}')" data-targetId="#edit-project" data-openModal class="btn-clean">
+                                Edit Project
+                            </button>
+                        </div>
+                        <div class="flex align c-gap-5">
+                            <i class="bi bi-check2-circle"></i>
+                            <button onClick="sendDataAsQuery('https://localhost:8081/updateStatus/${id}?status=Completed')" class="btn-clean">
+                                Mark As Completed
+                            </button>
+                        </div>
+                        <div class="flex align c-gap-5 border-bottom">
+                            <i class="bi bi-person-add"></i>
+                            <button onclick="fetchPopulateProjectMembers('${id}')" data-targetId="#add-members" data-openModal class="btn-clean">
+                                Add Members
+                            </button>
+                        </div>
+                        <div class="flex align c-gap-5">
+                            <i class="bi bi-trash text-error"></i>
+                            <button onClick="deleteData('https://localhost:8081/deleteProject/${id}')" class="btn-clean text-error">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="project-card-content">
+                <p>${description}</p>
+            </div>
+            <div class="${timeDiffClass} project-countdown">
+                <i class="bi bi-clock-fill"> <span>${timeDiff}</span></i>
+            </div>
+            <div class="project-members">
+                ${members.map(member => (`<img class="profile-img-medium" src="${member.imageUrl}" />`)).join('')}
+            </div>
+        </div>
+            `};
 
     function organizeAndCountProjetAfterStatus(data, filterBy) {
         let all = document.getElementById('count-all')
@@ -81,57 +139,10 @@
         if(filterBy === 'completed') return completedProjects;
 
         return data
-    }
-
-    function projectCard(id, imageUrl, projectName, clientName, description, members, status) {
-        return `
-        <div class="project-card">
-            <div>
-                <img class="project-img" src="${imageUrl}" alt="project display image">
-            </div>
-            <div class="project-card-headings">
-                <h6 class="project-name">${projectName}</h6>
-                <p class="org-name">${clientName}</p>
-            </div>
-            <div class="project-card-settings">
-                <div class="popover-container">
-                    <button data-open-pop-over data-targetId="#pop-over-${id}" ><i class="bi bi-three-dots"></i></button>
-                    <div id="pop-over-${id}" data-pop-over class="popover d-none">
-                        <div class="flex align c-gap-5">
-                            <i class="bi bi-pencil-square"></i>
-                            <button onclick="fetchPopulateProject('${id}')" data-targetId="#edit-project" data-openModal="true" class="btn-clean">
-                                Edit Project
-                            </button>
-                        </div>
-                        <div class="flex align c-gap-5 border-bottom">
-                            <i class="bi bi-person-add"></i>
-                            <button data-targetId="#add-members" data-openModal="true" class="btn-clean">
-                                Add Members
-                            </button>
-                        </div>
-                        <div class="flex align c-gap-5">
-                            <i class="bi bi-trash text-error"></i>
-                            <button class="btn-clean text-error">
-                                Delete
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="project-card-content">
-                <p>${description}</p>
-            </div>
-            <div class="label project-countdown">
-                <i class="bi bi-clock-fill"> <span>${status}</span></i>
-            </div>
-            <div class="project-members">
-                ${members.map(member => (`<img class="profile-img-medium" src="${member.imageUrl}" />`)).join('')}
-            </div>
-        </div>
-            `};
+        }
 
     window.addEventListener('DOMContentLoaded', () => {
-        getProjects();
+    getProjects();
     })
 </script>
 

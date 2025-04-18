@@ -15,7 +15,9 @@ public interface IProjectService
 
     public Task<ServiceResult<Project>> UpdateProjectAsync(ProjectForm form, string id);
 
-    public Task<ServiceResult<Project>> UpdateProjectMembersAsync(List<string> memberIds, string projectId);
+    public Task<ServiceResult<Project>> UpdateProjectMembersAsync(ProjectMembersForm form, string projectId);
+
+    public Task<ServiceResult<Project>> UpdateStatusAsync(string id, string status);
 
     public Task<ServiceResult<bool>> DeleteProjectAsync(string projectId);
 }

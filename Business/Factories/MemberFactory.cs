@@ -1,5 +1,4 @@
-﻿using Business.Models;
-using Data.Entities;
+﻿using Data.Entities;
 
 namespace Business.Factories;
 

@@ -13,6 +13,7 @@ public class Project
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public ProjectStatuses Status { get; set; }
+    public string CalculatedTimeDiff { get; set; } = null!;
     public List<Member> Members { get; set; } = [];
     public decimal Budget { get; set; }
 }
