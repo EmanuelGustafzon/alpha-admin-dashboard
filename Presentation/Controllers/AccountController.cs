@@ -42,4 +42,17 @@ public class AccountController(IMemberService memberService) : Controller
         var result = await _memberService.UpdateMemberAsync(form, userId);
         return Ok();
     }
+
+    [HttpDelete("deleteAccount/{id}")]
+    public async Task<IActionResult> DeleteProject(string id)
+    {
+        var result = await _memberService.DeleteMemberAsync(id);
+
+        if (!result.Success)
+        {
+            return StatusCode(result.StatusCode, $"Failed to delete account, {result.ErrorMessage}");
+        }
+
+        return NoContent();
+    }
 }

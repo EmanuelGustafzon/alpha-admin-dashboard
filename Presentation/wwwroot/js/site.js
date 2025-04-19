@@ -220,6 +220,7 @@ async function sendDataAsQuery(url) {
         });
         if (!response.ok) {
             console.error(`Response status: ${response.status} ${response.errorMessage}`);
+            return new Error(response.errorMessage)
         }
         window.location.reload();
     } catch (error) {

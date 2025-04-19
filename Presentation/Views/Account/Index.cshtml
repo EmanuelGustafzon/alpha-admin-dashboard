@@ -4,7 +4,7 @@
     <img src="@(Model.CurrentUserAccount.ImageUrl ?? "/images/default-profile-picture.png")" alt="User Profile">
     <h4>@Model.CurrentUserAccount.FirstName @Model.CurrentUserAccount.LastName</h4>
     <p><strong>Job Title:</strong> @Model.CurrentUserAccount.JobTitle</p>
-    <p><strong>Birth Date:</strong> @Model.CurrentUserAccount.BirthDate</p>
+    <p><strong>Birth Date:</strong> @(Model.CurrentUserAccount.BirthDate?.ToString("yyyy-MM-dd"))</p>
     <p><strong>Phone:</strong> @Model.CurrentUserAccount.PhoneNumber</p>
     <p><strong>Email:</strong> @Model.CurrentUserAccount.Email</p>
     <p><strong>Address:</strong> @Model.CurrentUserAccount.Address.Street, @Model.CurrentUserAccount.Address.City, @Model.CurrentUserAccount.Address.PostCode</p>
@@ -14,9 +14,15 @@
         Edit Profile
     </button>
     <button class="btn btn-primary">Edit Password</button>
-    <button class="btn btn-danger">Delete Account</button>
+    <button onclick="deleteAccount('@Model.CurrentUserAccount.Id')" class="btn btn-danger">Delete Account</button>
 </div>
 
-
-
 @await Html.PartialAsync("PartialViews/_EditAccount", Model)
+
+<script>
+    async function deleteAccount(id) {
+        const url = `https://localhost:8081/deleteAccount/${id}`;
+        var result = await deleteData(url);
+        window.location.href = "/auth/signout";
+    }
+</script>
