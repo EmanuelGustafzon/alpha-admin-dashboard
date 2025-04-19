@@ -78,16 +78,23 @@
         populateMemberForm(data)
     }
 
-    function populateMemberForm(data) {
+    async function populateMemberForm(data) {
         const form = document.getElementById('edit-member-form');
 
         form.action = `updateMember/${data.id}`
+
+        const memberUseExternalProvider = await fetchData(`https://localhost:8081/memberUseExternalProvider/${data.id}`)
 
         form.getElementsByTagName('img')[0].src = data['imageUrl']
         form.querySelector('input[name="MemberWithRoleForm.ImageUrl"]').value = data['imageUrl'];
         form.querySelector('input[name="MemberWithRoleForm.FirstName"]').value = data['firstName'];
         form.querySelector('input[name="MemberWithRoleForm.LastName"]').value = data['lastName'];
-        form.querySelector('input[name="MemberWithRoleForm.Email"]').value = data['email'];;
+        const email = form.querySelector('input[name="MemberWithRoleForm.Email"]')
+        if(memberUseExternalProvider.message = true) {
+            email.parentNode.hidden = true
+        } else {
+            email.value = data['email'];
+        }
         form.querySelector('input[name="MemberWithRoleForm.PhoneNumber"]').value = data['phoneNumber'];
         form.querySelector('input[name="MemberWithRoleForm.JobTitle"]').value = data['jobTitle'];
         form.querySelector('select[name="MemberWithRoleForm.Role"]').value = data['role']

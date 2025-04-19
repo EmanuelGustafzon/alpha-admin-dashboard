@@ -20,7 +20,7 @@ public class AccountController(IMemberService memberService) : Controller
         {
             model.CurrentUserAccount = result.Data;
             bool? useExternalprovider = await _memberService.MemberUseExternalProvider(userId);
-            model.CurrentUserHasExternalprovider = useExternalprovider == false ? false : true;
+            model.CurrentUserHasExternalprovider = useExternalprovider != false || useExternalprovider != null;
         }  
         return View(model);
     }

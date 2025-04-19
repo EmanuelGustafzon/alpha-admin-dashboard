@@ -72,6 +72,22 @@ public class MembersController(IMemberService memberService) : Controller
         }
     }
 
+    [HttpGet("memberUseExternalProvider/{id}")]
+    public async Task<IActionResult> MemberUseExternalProvider(string id)
+    {
+        try
+        {
+            bool? useExternalprovider = await _memberService.MemberUseExternalProvider(id);
+
+            return Ok(new {success = true, message = useExternalprovider != false || useExternalprovider != null });
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return StatusCode(500, "Could not fetch memebr");
+        }
+    }
+
     [HttpPost]
     public async Task<IActionResult> AddMember([Bind(Prefix = "MemberWithRoleForm")] MemberWithRoleForm form)
     {
