@@ -79,7 +79,7 @@ public class MembersController(IMemberService memberService) : Controller
         {
             bool? useExternalprovider = await _memberService.MemberUseExternalProvider(id);
 
-            return Ok(new {success = true, message = useExternalprovider != false || useExternalprovider != null });
+            return Ok(new {success = true, message = useExternalprovider == false ? false : true });
         }
         catch (Exception ex)
         {

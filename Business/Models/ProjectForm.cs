@@ -8,8 +8,17 @@ namespace Business.Models
     {
         public IFormFile? Image { get; set; }
         public string? ImageUrl { get; set; }
+
+        [Required]
+        [Display(Name = "project Name")]
         public string ProjectName { get; set; } = null!;
+
+        [Required]
+        [Display(Name = "Client Name")]
         public string ClientName { get; set; } = null!;
+
+        [Required]
+        [Display(Name = "Description")]
         public string Description { get; set; } = null!;
 
         [DataType(DataType.Date)]
@@ -17,7 +26,11 @@ namespace Business.Models
 
         [DataType(DataType.Date)]
         public DateTime EndDate { get; set; } = DateTime.Now;
+
+        [Display(Name = "Members")]
         public List<string> MemberIds { get; set; } = [];
+
+        [Display(Name = "Budget")]
         public decimal Budget { get; set; }
     }
 }

@@ -35,10 +35,7 @@
 </div>
 
 <script>
-
-
     const themeCheckbox = document.getElementById("theme-checkbox");
-
     themeCheckbox.addEventListener("change", () => {
         if(themeCheckbox.checked) {
             document.body.dataset.theme = "dark" 
@@ -47,6 +44,5 @@
             document.body.dataset.theme = "light"
             localStorage.setItem('theme', 'light')
         }
-        console.log(localStorage.getItem("theme"));
     })
 </script>

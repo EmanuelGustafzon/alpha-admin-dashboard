@@ -69,6 +69,15 @@ html, body {
     background-color: var(--accent);
     border-radius: 8px;
 }
+.form-control {
+    background-color: var(--label);
+    color: var(--text-color);
+}
+.form-control:focus {
+    background-color: var(--label);
+    color: var(--text-color);
+}
+
 button {
     color: var(--text-color)
 }
@@ -296,6 +305,26 @@ a {
     height: 8px;
     border-radius: 50%;
 }
+/*notifications*/
+.notification {
+    border-radius: 8px;
+    display: flex;
+    height: auto;
+    column-gap: 8px;
+    align-items: center;
+    button{
+    color: var(--text-color)}
+}
+.notification-count {
+    background-color: var(--red);
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    text-align: center;
+}
+.notification:hover {
+    background-color: var(--label);
+}
 /* side bar */
 .side-bar {
     display: flex;
@@ -442,6 +471,10 @@ a {
     border-radius: 12px;
     border-color: var(--border-300);
 }
+.popover-wide {
+    min-width: 25em;
+}
+
 .popover-down {
     z-index: 10;
     min-width: 15em;
@@ -455,16 +488,18 @@ a {
 .popover div {
     margin-top: 4px;
 }
+
 /* modal form */
 .form-modal {
     position: absolute;
-    z-index:10;
-    margin-top: -50px;
+    z-index: 10;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     min-width: 370px;
     max-width: 550px;
-    height: auto;
+    max-height: 90vh;
+    overflow-y: auto;
     background-color: var(--surface);
     border-radius: 12px;
     filter: drop-shadow(0 1px 4px var(--border-color));

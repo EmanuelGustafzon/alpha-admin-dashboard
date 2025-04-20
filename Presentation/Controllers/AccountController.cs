@@ -1,6 +1,5 @@
 ﻿using Business.Interfaces;
 using Business.Models;
-using Business.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Models;
@@ -20,7 +19,8 @@ public class AccountController(IMemberService memberService) : Controller
         {
             model.CurrentUserAccount = result.Data;
             bool? useExternalprovider = await _memberService.MemberUseExternalProvider(userId);
-            model.CurrentUserHasExternalprovider = useExternalprovider != false || useExternalprovider != null;
+            
+            model.CurrentUserHasExternalprovider = useExternalprovider == false ? false : true;
         }  
         return View(model);
     }
@@ -39,7 +39,46 @@ public class AccountController(IMemberService memberService) : Controller
             return BadRequest(new { success = false, errors });
         }
         var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null) return StatusCode(403, $"UnAuthorized to edit this account");
+
         var result = await _memberService.UpdateMemberAsync(form, userId);
+        if (!result.Success) return StatusCode(result.StatusCode, $"Something went wrong, {result.ErrorMessage}");
+
         return Ok();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ChangePassword([Bind(Prefix = "ChangePasswordForm")] ChangePasswordForm form)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState
+                .Where(x => x.Value?.Errors.Count > 0)
+                .ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value?.Errors.Select(x => x.ErrorMessage).ToArray()
+                );
+            return BadRequest(new { success = false, errors });
+        }
+        var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null) return StatusCode(403, $"UnAuthorized to change this password");
+
+        var result = await _memberService.ChangePasswordAsync(userId, form);
+        if(!result.Success) return StatusCode(result.StatusCode, $"Something went wrong, {result.ErrorMessage}");
+
+        return Ok(new {success = true, message = "Password changed successfully"});
+    }
+
+    [HttpDelete("deleteAccount/{id}")]
+    public async Task<IActionResult> DeleteProject(string id)
+    {
+        var result = await _memberService.DeleteMemberAsync(id);
+
+        if (!result.Success)
+        {
+            return StatusCode(result.StatusCode, $"Failed to delete account, {result.ErrorMessage}");
+        }
+
+        return NoContent();
     }
 }
