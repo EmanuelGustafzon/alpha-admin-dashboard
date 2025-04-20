@@ -6,7 +6,7 @@ public class SignUpForm
 {
     [Required]
     [EmailAddress]
-    [Display(Name = "Email", Prompt = "Write your Email")]
+    [Display(Name = "Email")]
     public string Email { get; set; } = null!;
 
     [Required]

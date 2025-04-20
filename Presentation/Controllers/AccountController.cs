@@ -68,7 +68,7 @@ public class AccountController(IMemberService memberService) : Controller
         var result = await _memberService.ChangePasswordAsync(userId, form);
         if(!result.Success) return StatusCode(result.StatusCode, $"Something went wrong, {result.ErrorMessage}");
 
-        return Ok();
+        return Ok(new {success = true, message = "Password changed successfully"});
     }
 
     [HttpDelete("deleteAccount/{id}")]
