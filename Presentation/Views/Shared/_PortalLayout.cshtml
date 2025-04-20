@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -30,10 +32,7 @@
                         <input id="search-field" class="search-field" type="text" placeholder="search anything...">
                     </div>
                     <div class="top-bar-buttons">
-                        <button class="bell btn-clean ">
-                            <div class="new-notification"></div>
-                            <i class="bi bi-bell-fill"></i>
-                        </button>
+                        @await Html.PartialAsync("PartialViews/_Notifications")
                         @await Html.PartialAsync("PartialViews/_Settings")
                         <a class="btn-clean" asp-controller="Account" asp-action="Index">
                             @await Html.PartialAsync("PartialViews/_ProfileImage")
@@ -50,10 +49,12 @@
                     <i class="bi bi-briefcase-fill"></i>
                     Projects
                 </a>
-                <a class="btn nav-buttons @(Context.Request.Path == "/Members" ? "nav-btn-active" : "")" asp-controller="Members" asp-action="Index">
-                    <i class="bi bi-briefcase-fill"></i>
-                    Members
-                </a>
+                @if(User.FindFirst(ClaimTypes.Role)?.Value == "Admin"){
+                    <a class="btn nav-buttons @(Context.Request.Path == "/Members" ? "nav-btn-active" : "")" asp-controller="Members" asp-action="Index">
+                        <i class="bi bi-briefcase-fill"></i>
+                        Members
+                    </a>
+                }
                 <a class="btn nav-buttons @(Context.Request.Path == "/Account" ? "nav-btn-active" : "")" asp-controller="Account" asp-action="Index">
                     <i class="bi bi-briefcase-fill"></i>
                     Account
