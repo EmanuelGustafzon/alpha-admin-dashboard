@@ -70,3 +70,10 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 </body>
 </html>
+
+<script>
+    const theme = localStorage.getItem('theme');
+    document.body.dataset.theme = theme;
+    const themebox = document.getElementById("theme-checkbox");
+    if(theme === 'dark') themebox.checked = true
+</script>

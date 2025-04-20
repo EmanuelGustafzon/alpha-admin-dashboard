@@ -13,16 +13,22 @@
     <button class="btn btn-primary" data-targetId="#edit-account" data-openModal>
         Edit Profile
     </button>
-    <button class="btn btn-primary">Edit Password</button>
+    @if (@Model.CurrentUserHasExternalprovider == false)
+    {
+        <button data-targetId="#change-password" data-openModal class="btn btn-primary">Edit Password</button>
+    }
     <button onclick="deleteAccount('@Model.CurrentUserAccount.Id')" class="btn btn-danger">Delete Account</button>
 </div>
 
 @await Html.PartialAsync("PartialViews/_EditAccount", Model)
+@await Html.PartialAsync("PartialViews/_ChangePassword", Model)
 
 <script>
     async function deleteAccount(id) {
         const url = `https://localhost:8081/deleteAccount/${id}`;
         var result = await deleteData(url);
+        if(result === false) return;
+
         window.location.href = "/auth/signout";
     }
 </script>

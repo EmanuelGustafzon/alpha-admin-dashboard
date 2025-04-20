@@ -202,9 +202,11 @@ async function deleteData(url) {
             method: 'DELETE',
         });
         if (!response.ok) {
-            throw new Error(`Response status: ${response.status} ${response.errorMessage}`);
+            console.error(`Response status: ${response.status} ${response.errorMessage}`);
+            return false;
         }
         window.location.reload();
+        return true;
     } catch (error) {
         console.error(error.message);
     }
@@ -218,11 +220,17 @@ async function sendDataAsQuery(url) {
                 'Content-Type': 'application/json' 
             }
         });
-        if (!response.ok) {
-            console.error(`Response status: ${response.status} ${response.errorMessage}`);
-            return new Error(response.errorMessage)
+        if (!response.noContent) {
+            const alert = document.querySelector("#alert");
+            const alertText = alert?.querySelector("#alert-text");
+            if (alert && alertText) {
+                alertText.innerText = 'Failed to delete item';
+                alert.classList.remove('d-none');
+            }
+            return false
         }
         window.location.reload();
+        return true;
     } catch (error) {
         console.error(error.message);
     }

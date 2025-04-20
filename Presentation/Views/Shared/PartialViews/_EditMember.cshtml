@@ -90,10 +90,12 @@
         form.querySelector('input[name="MemberWithRoleForm.FirstName"]').value = data['firstName'];
         form.querySelector('input[name="MemberWithRoleForm.LastName"]').value = data['lastName'];
         const email = form.querySelector('input[name="MemberWithRoleForm.Email"]')
-        if(memberUseExternalProvider.message = true) {
+        if(memberUseExternalProvider.message === true) {
             email.parentNode.hidden = true
+            
         } else {
             email.value = data['email'];
+            email.parentNode.hidden = false
         }
         form.querySelector('input[name="MemberWithRoleForm.PhoneNumber"]').value = data['phoneNumber'];
         form.querySelector('input[name="MemberWithRoleForm.JobTitle"]').value = data['jobTitle'];

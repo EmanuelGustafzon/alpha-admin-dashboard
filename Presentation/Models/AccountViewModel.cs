@@ -9,5 +9,7 @@ public class AccountViewModel
 
     public Member CurrentUserAccount { get; set; } = new();
 
+    public ChangePasswordForm ChangePasswordForm { get; set; } = new();
+
     public bool CurrentUserHasExternalprovider { get; set; } = true;
 }
