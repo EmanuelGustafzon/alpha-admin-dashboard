@@ -20,7 +20,7 @@
     });
 
     async function getMembers(query = "") {
-        const url = `https://localhost:8081/members/allMembers?query=${query}`;
+        const url = `/members/allMembers?query=${query}`;
         const data = await fetchData(url)
 
         const membersView = document.getElementById('members-view')

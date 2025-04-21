@@ -85,7 +85,7 @@
 
 <script>
     async function fetchPopulateProject(projectId) {
-        const url = `https://localhost:8081/project/${projectId}`
+        const url = `/project/${projectId}`
         const data = await fetchData(url);
         populateProjectForm(data)
     }

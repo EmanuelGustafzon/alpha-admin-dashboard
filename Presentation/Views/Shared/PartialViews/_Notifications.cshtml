@@ -1,22 +1,86 @@
-﻿<div class="popover-container">
+﻿@{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+}
+
+<div class="popover-container">
     <button data-open-pop-over data-targetId="#notifications-popover" class="bell btn-clean ">
-        <div class="new-notification"></div>
+        <div id="has-notifications" class=""></div>
         <i class="bi bi-bell-fill"></i>
     </button>
     <div id="notifications-popover" class="popover popover-wide d-none">
         <div class="border-bottom flex space-between">
             <h4>Notifications</h4>
-            <p class="notification-count">0</p>
+            <p id="notification-count" class="notification-count">0</p>
         </div>
-        <div>
-            <div class="notification" data-id="">
-                <img class="profile-img" src="/images/default-profile-picture.png"/>
-                <div>
-                    <p class="message">Emanuel Gustafzon forgot password</p>
-                    <p class="time">1 h ago</p>
-                </div>
-                <button class="btn btn-clean">X</button>
-            </div>
-        </div>
+        <div id="notifications"></div>
     </div>
 </div>
+
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/notificationHub")
+        .build();
+
+    connection.on("generalNotifications", (notification) => {
+        updateNotificationList(notification)
+    })
+    connection.start().catch(error => console.log(error));
+
+    function updateNotificationList(notification) {
+        const notificationsList = document.querySelector('#notifications');
+        const item = notificationItem(notification.id, notification.icon, notification.message, notification.created)
+        notificationsList.insertAdjacentHTML('beforeend', item)
+    }
+    function hasNotificatons(memberHasNotification) {
+        const redCircle = document.querySelector('#has-notifications');
+        if(memberHasNotification) {
+            redCircle.classList.add("new-notification")
+        } else {
+            redCircle.classList.remove("new-notification")
+        } 
+    }
+    function incramentNotificationCount() {
+        let count = document.querySelector('#notification-count');
+        let intCount = parseInt(count.innerText)
+        count.innerText = ++intCount
+    }
+    function decramentNotificationCount() {
+        let count = document.querySelector('#notification-count');
+        let intCount = parseInt(count.innerText)
+        count.innerText = --intCount
+    }
+    async function getNotifications() {
+        const data = await fetchData("/api/notifications")
+        if(data.length != 0) hasNotificatons(true)
+        data.forEach(notification =>{
+            updateNotificationList(notification)
+            incramentNotificationCount()
+        })
+    }
+    async function dismissNotification(id) {
+        const result = await sendDataAsQuery(`/api/notifications/dissmiss/${id}`, false);
+        if(result === false) return;
+        decramentNotificationCount()
+        removeNotification(id)
+    }
+    function removeNotification(id) {
+        const item = document.querySelector(`[data-id="${id}"]`)
+        item.remove()
+    }
+    function notificationItem(id, image, message, createdAt, action = null)
+    {
+        return `
+            <div class="notification" data-id="${id}">
+                <img class="profile-img" src="${image}"/>
+                <div>
+                    <p class="message">${message}</p>
+                    <p class="time" data-created="${new Date(createdAt).toISOString()}">${createdAt.split("T")[0]}</p>
+                </div>
+                <button onclick="dismissNotification('${id}')" class="btn btn-clean">X</button>
+            </div>
+        `;
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+        getNotifications();
+    })
+</script>

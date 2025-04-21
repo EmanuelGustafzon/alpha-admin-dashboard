@@ -2,16 +2,20 @@
 using Business.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Presentation.Hubs;
 using Presentation.Models;
 using System.Diagnostics;
 
 namespace Presentation.Controllers;
 
 [Authorize]
-public class HomeController(IMemberService memberService, IProjectService projectService) : Controller
+public class HomeController(IMemberService memberService, IProjectService projectService, INotificationService notificationService, IHubContext<NotificationHub> hub) : Controller
 {
     private readonly IMemberService _memberService = memberService;
     private readonly IProjectService _projectService = projectService;
+    private readonly INotificationService _notificationService = notificationService;
+    private readonly IHubContext<NotificationHub> _hub = hub;
     public async Task<IActionResult> Index()
     {
         var projectResult = await _projectService.GetProjectsAsync();
@@ -39,6 +43,13 @@ public class HomeController(IMemberService memberService, IProjectService projec
         var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         var result = await _projectService.CreateProjectAsync(form, userId);
         if(result.Data is null || result.Success is false) return StatusCode(500, "Failed to Adding projects.");
+
+        NotificationForm notificationForm = new NotificationForm { Icon = result.Data.ImageUrl, Message = "project Created"};
+        var notisResult = await _notificationService.AddNotficationAsync(notificationForm);
+        if(notisResult.Data is not null)
+        {
+            await _hub.Clients.All.SendAsync("generalNotifications", notisResult.Data);
+        }
 
         return Ok(new { success = true});
     }

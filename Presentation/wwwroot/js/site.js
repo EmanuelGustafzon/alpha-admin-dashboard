@@ -212,7 +212,7 @@ async function deleteData(url) {
     }
 }
 
-async function sendDataAsQuery(url) {
+async function sendDataAsQuery(url, reload) {
     try {
         const response = await fetch(url, {
             method: 'POST',
@@ -220,16 +220,18 @@ async function sendDataAsQuery(url) {
                 'Content-Type': 'application/json' 
             }
         });
-        if (!response.noContent) {
+        if (!response.ok) {
             const alert = document.querySelector("#alert");
             const alertText = alert?.querySelector("#alert-text");
             if (alert && alertText) {
-                alertText.innerText = 'Failed to delete item';
+                alertText.innerText = 'Failed to post item';
                 alert.classList.remove('d-none');
             }
             return false
         }
-        window.location.reload();
+        if (relaod) {
+            window.location.reload();
+        }
         return true;
     } catch (error) {
         console.error(error.message);

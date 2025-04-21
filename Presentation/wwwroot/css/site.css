@@ -305,6 +305,9 @@ a {
     height: 8px;
     border-radius: 50%;
 }
+.time {
+    color: var(--text-color-light)
+}
 /*notifications*/
 .notification {
     border-radius: 8px;

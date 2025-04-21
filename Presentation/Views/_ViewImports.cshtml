@@ -4,7 +4,9 @@
 @using Data.Entities
 @using Business.Models
 @using Business.Interfaces
+@using System.Security.Claims
 @inject SignInManager<MemberEntity> signInManager
 @inject UserManager<MemberEntity> userManager
 @inject IMemberService memberService
+@inject INotificationService notificationService
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

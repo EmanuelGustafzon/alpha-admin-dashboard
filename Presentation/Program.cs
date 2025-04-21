@@ -6,6 +6,7 @@ using Data.Interfaces;
 using Data.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Presentation.Hubs;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +36,9 @@ builder.Services.AddAuthentication()
         options.ClientSecret = builder.Configuration["GoogleAuth:ClientSecret"];
         options.CallbackPath = "/signin-google";
     });
+
+builder.Services.AddSignalR();
+
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
@@ -43,6 +47,10 @@ builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IUploadFile, UploadFile>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<INotificationDissmissRepository, NotificationDissmissRepository>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
 
 var app = builder.Build();
 
@@ -94,5 +102,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
+
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.Run();

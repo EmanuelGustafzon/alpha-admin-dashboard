@@ -44,7 +44,7 @@ public class AccountController(IMemberService memberService) : Controller
         var result = await _memberService.UpdateMemberAsync(form, userId);
         if (!result.Success) return StatusCode(result.StatusCode, $"Something went wrong, {result.ErrorMessage}");
 
-        return Ok();
+        return Ok(new {success = true});
     }
 
     [HttpPost]

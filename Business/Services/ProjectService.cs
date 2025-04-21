@@ -5,6 +5,7 @@ using Data.Interfaces;
 using Domain.Enums;
 using Domain.Extensions;
 using Domain.Models;
+using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;
 
 namespace Business.Services;
