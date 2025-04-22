@@ -74,7 +74,7 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
                 var project = x.MapTo<Project>();
 
                 if (project.Status == ProjectStatuses.Completed) project.CalculatedTimeDiff = "Completed";
-                else project.CalculatedTimeDiff = ProjectDateCalculator.GetTimeDiffFromToday(project.StartDate, project.EndDate);
+                else project.CalculatedTimeDiff = DateCalculator.GetTimeDiffFromToday(project.StartDate, project.EndDate);
 
                 List<Member> members = x.MemberProjects.Select(x => x.Member.MapTo<Member>()).ToList();
                 project.Members = members;

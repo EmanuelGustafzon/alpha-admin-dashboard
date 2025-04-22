@@ -15,7 +15,7 @@ public class NotificationService(INotificationRepository notificationRepository,
     {
         var entity = form.MapTo<NotificationEntity>();
         var result = await _notificationRepository.CreateAsync(entity);
-        if (result.Result is null) return ServiceResult<Notification>.Error("");
+        if (result.Result is null) return ServiceResult<Notification>.Error("Failed to create notification");
 
         return ServiceResult<Notification>.Created(result.Result.MapTo<Notification>());
     }

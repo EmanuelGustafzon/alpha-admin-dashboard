@@ -1,7 +1,7 @@
 ﻿
 namespace Business.Services;
 
-public static class ProjectDateCalculator
+public static class DateCalculator
 {
     public static string GetTimeDiffFromToday(DateTime startDate, DateTime endDate)
     {
@@ -39,5 +39,4 @@ public static class ProjectDateCalculator
         return $"{months} month{(months != 1 ? "s" : "")} {suffix}";
 
     }
-
 }

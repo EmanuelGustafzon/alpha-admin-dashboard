@@ -3,6 +3,7 @@ using Business.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Models;
+using System.Security.Claims;
 
 namespace Presentation.Controllers;
 
@@ -13,7 +14,9 @@ public class AccountController(IMemberService memberService) : Controller
     public async Task<IActionResult> Index()
     {
         var model = new AccountViewModel();
-        var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+        if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
         var result = await _memberService.GetMemberByIdAsync(userId);
         if(result.Data != null)
         {

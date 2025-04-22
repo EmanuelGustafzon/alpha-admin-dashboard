@@ -11,7 +11,7 @@ public class NotificationEntity
 
     [Column(TypeName = "varchar(400)")]
 
-    public string Icon { get; set; } = null!;
+    public string? Icon { get; set; }
 
 
     [Column(TypeName = "varchar(100)")]
@@ -23,7 +23,7 @@ public class NotificationEntity
 
     public string? Action { get; set; }
 
-    public DateTime Created { get; set; } = DateTime.Now;
+    public DateTime Created { get; set; } = DateTime.UtcNow;
 
     public ICollection<NotificationDissmissEntity> DissmissedNotifications { get; set; } = [];
 }

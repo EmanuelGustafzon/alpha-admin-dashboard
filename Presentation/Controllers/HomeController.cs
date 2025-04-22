@@ -1,4 +1,5 @@
-﻿using Business.Interfaces;
+﻿using Business.Factories;
+using Business.Interfaces;
 using Business.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.SignalR;
 using Presentation.Hubs;
 using Presentation.Models;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace Presentation.Controllers;
 
@@ -40,15 +42,17 @@ public class HomeController(IMemberService memberService, IProjectService projec
                 );
             return BadRequest(new { success = false, errors });
         }
-        var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+        if (string.IsNullOrEmpty(userId)) return Unauthorized(new {success = false});
+
         var result = await _projectService.CreateProjectAsync(form, userId);
         if(result.Data is null || result.Success is false) return StatusCode(500, "Failed to Adding projects.");
 
-        NotificationForm notificationForm = new NotificationForm { Icon = result.Data.ImageUrl, Message = "project Created"};
-        var notisResult = await _notificationService.AddNotficationAsync(notificationForm);
-        if(notisResult.Data is not null)
+        NotificationForm notificationForm = NotificationFactory.CreateForm($"{result.Data.ProjectName} Added", result.Data.ImageUrl);
+        var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
+        if(notificationResult.Data is not null)
         {
-            await _hub.Clients.All.SendAsync("generalNotifications", notisResult.Data);
+            await _hub.Clients.All.SendAsync("generalNotifications", notificationResult.Data);
         }
 
         return Ok(new { success = true});
@@ -109,6 +113,12 @@ public class HomeController(IMemberService memberService, IProjectService projec
             var result = await _projectService.UpdateProjectAsync(form, id);
             if(result.Data is null) return NotFound("No matching projects found.");
 
+            NotificationForm notificationForm = NotificationFactory.CreateForm($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
+            var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
+            if (notificationResult.Data is not null)
+            {
+                await _hub.Clients.All.SendAsync("generalNotifications", notificationResult.Data);
+            }
             return Ok(new {success = true});
         } catch (Exception ex)
         {
@@ -123,7 +133,14 @@ public class HomeController(IMemberService memberService, IProjectService projec
         try
         {
             var result = await _projectService.UpdateStatusAsync(id, status);
-            if(!result.Success) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
+            if(!result.Success || result.Data is null) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
+
+            NotificationForm notificationForm = NotificationFactory.CreateForm($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
+            var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
+            if (notificationResult.Data is not null)
+            {
+                await _hub.Clients.All.SendAsync("generalNotifications", notificationResult.Data);
+            }
 
             return Ok("Successfully updated the status");
 
@@ -140,7 +157,14 @@ public class HomeController(IMemberService memberService, IProjectService projec
         try
         {
             var result = await _projectService.UpdateProjectMembersAsync(form, id);
-            if (!result.Success) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
+            if (!result.Success || result.Data is null) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
+
+            NotificationForm notificationForm = NotificationFactory.CreateForm($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
+            var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
+            if (notificationResult.Data is not null)
+            {
+                await _hub.Clients.All.SendAsync("generalNotifications", notificationResult.Data);
+            }
 
             return Ok(new {success = true});
 
@@ -157,6 +181,7 @@ public class HomeController(IMemberService memberService, IProjectService projec
     {
         var result = await _projectService.DeleteProjectAsync(id);
         if(!result.Success) return StatusCode(result.StatusCode, $"Failed to Delete project :: {result.ErrorMessage}");
+
         return NoContent();     
     }
 }

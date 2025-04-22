@@ -20,6 +20,8 @@ public interface IMemberService
 
     public Task<ServiceResult<Member>> GetMemberByIdAsync(string id);
 
+    public Task<ServiceResult<Member>> GetMemberByEmailAsync(string email);
+
     public Task<ServiceResult<Member>> UpdateMemberAsync(MemberForm form, string id);
 
     public Task<ServiceResult<Member>> UpdateMemberAsync(MemberWithRoleForm form, string id);

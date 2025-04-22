@@ -1,17 +1,21 @@
-﻿using Business.Interfaces;
+﻿using Business.Factories;
+using Business.Interfaces;
 using Business.Models;
-using Business.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Presentation.Hubs;
 using Presentation.Models;
 using System.Diagnostics;
 
 namespace Presentation.Controllers;
 
 [Authorize(Roles = "Admin")]
-public class MembersController(IMemberService memberService) : Controller
+public class MembersController(IMemberService memberService, INotificationService notificationService, IHubContext<NotificationHub> hub) : Controller
 {
     private readonly IMemberService _memberService = memberService;
+    private readonly INotificationService _notificationService = notificationService;
+    private readonly IHubContext<NotificationHub> _hub = hub;
     public async Task<IActionResult> Index()
     {
         var model = new MembersViewModel();
@@ -102,7 +106,18 @@ public class MembersController(IMemberService memberService) : Controller
             return BadRequest(new { success = false, errors });
         }
         var result = await _memberService.CreateMemberAsync(form);
-        if (result.Data is null || result.Success is false) return StatusCode(500, "Failed to add member.");
+        if (result.Data is null) return StatusCode(500, new { message = "Failed to add member." });
+
+        var findMemberResult = await _memberService.GetMemberByEmailAsync(form.Email);
+        if(findMemberResult.Data is not null)
+        {
+            NotificationForm notificationForm = NotificationFactory.CreateForm($"{findMemberResult.Data.FirstName} {findMemberResult.Data.LastName} Added", findMemberResult.Data.ImageUrl);
+            var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
+            if (notificationResult.Data is not null)
+            {
+                await _hub.Clients.All.SendAsync("adminNotifications", notificationResult.Data);
+            }
+        }
 
         ViewBag.GeneratedPassword = $"{result.Data}";
         return Ok(new { success = true, message = $"Send this genereted password {result.Data} to the new memeber and tell the member to change password" });
@@ -117,6 +132,13 @@ public class MembersController(IMemberService memberService) : Controller
             var result = await _memberService.UpdateMemberAsync(form, id);
             if (result.StatusCode == 404) return NotFound(new { success = false, message = $"Member not found" });
             if (result.Data is null) return NotFound(new { success = false, message = $"Something went wrong, {result.ErrorMessage}" });
+
+            NotificationForm notificationForm = NotificationFactory.CreateForm($"{result.Data.FirstName} {result.Data.LastName} Updated", result.Data.ImageUrl);
+            var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
+            if (notificationResult.Data is not null)
+            {
+                await _hub.Clients.All.SendAsync("adminNotifications", notificationResult.Data);
+            }
 
             return Ok(result.Data);
         }

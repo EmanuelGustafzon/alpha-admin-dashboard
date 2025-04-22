@@ -1,5 +1,5 @@
 ﻿@{
-    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+    var userRole = User.FindFirstValue(ClaimTypes.Role) ?? "User";
 }
 
 <div class="popover-container">
@@ -47,6 +47,7 @@
     function decramentNotificationCount() {
         let count = document.querySelector('#notification-count');
         let intCount = parseInt(count.innerText)
+        if(count === 1) hasNotificatons(false)
         count.innerText = --intCount
     }
     async function getNotifications() {
@@ -74,7 +75,7 @@
                 <img class="profile-img" src="${image}"/>
                 <div>
                     <p class="message">${message}</p>
-                    <p class="time" data-created="${new Date(createdAt).toISOString()}">${createdAt.split("T")[0]}</p>
+                    <p class="time" data-created="${new Date(createdAt).toISOString()}"> ${timeAgo(createdAt)} </p>
                 </div>
                 <button onclick="dismissNotification('${id}')" class="btn btn-clean">X</button>
             </div>
@@ -84,3 +85,17 @@
         getNotifications();
     })
 </script>
+
+
+@if (userRole == "Admin")
+{
+    @section Scripts {
+    <script>
+        $(function () {
+            connection.on("adminNotifications", function (notification) {
+                updateNotificationList(notification);
+            });
+        });
+    </script>
+    }
+}

@@ -163,6 +163,33 @@ public class MemberService(
             return ServiceResult<Member>.Error("Failed to fetch member");
         }
     }
+
+    public async Task<ServiceResult<Member>> GetMemberByEmailAsync(string email)
+    {
+        try
+        {
+            var result = await _memberRepository.GetAsync(
+                entity => entity.Email == email,
+                joins: join => join.Address
+                );
+
+            var memberEntity = result.Result;
+
+            if (memberEntity == null)
+                return ServiceResult<Member>.NotFound("Could not find member");
+
+            var member = memberEntity.MapTo<Member>();
+            var roles = await _userManager.GetRolesAsync(memberEntity);
+            member.Role = roles[0];
+
+            return ServiceResult<Member>.Ok(member);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return ServiceResult<Member>.Error("Failed to fetch member");
+        }
+    }
     public async Task<ServiceResult<Member>> UpdateMemberAsync(MemberForm form, string id)
     {
         try
