@@ -4,6 +4,7 @@ using Data.Entities;
 using Data.Interfaces;
 using Domain.Extensions;
 using Domain.Models;
+using System.Diagnostics;
 
 namespace Business.Services;
 
@@ -24,13 +25,13 @@ public class NotificationService(INotificationRepository notificationRepository,
     {
         var dissmissResult = await _notificationDissmissRepository.GetAllAsync(filterBy: x => x.MemberId == memberId);
 
-        if (dissmissResult.Result is null) return ServiceResult<IEnumerable<Notification>>.Error("");
+        if (dissmissResult.Result is null) return ServiceResult<IEnumerable<Notification>>.Error("Failed to fetch notifications");
 
         var list = dissmissResult.Result.Select(x => x.NotificationId).ToList();
 
         
         var notificationResult = await _notificationRepository.GetAllAsync(filterBy: x => !list.Contains(x.Id));
-        if(notificationResult.Result is null) return ServiceResult<IEnumerable<Notification>>.Error("");
+        if(notificationResult.Result is null) return ServiceResult<IEnumerable<Notification>>.Error("Failed to fecth notifications");
 
         var notifications = notificationResult.Result.Select(x => x.MapTo<Notification>());
         return ServiceResult<IEnumerable<Notification>>.Ok(notifications);
@@ -39,9 +40,9 @@ public class NotificationService(INotificationRepository notificationRepository,
     public async Task<ServiceResult<bool>> DissmissNotification(string memberId, string notificationId)
     {
         var alreadyDissmissedResult = await _notificationDissmissRepository.GetAllAsync(filterBy: x => x.NotificationId == notificationId && x.MemberId == memberId);
-        if (alreadyDissmissedResult.Result is null) return ServiceResult<bool>.Error("");
+        if (alreadyDissmissedResult.Result is null) return ServiceResult<bool>.Error("Failed to fetch dissmissed notifications");
 
-        if (alreadyDissmissedResult.Result.Any()) return ServiceResult<bool>.BadRequest("");
+        if (alreadyDissmissedResult.Result.Any()) return ServiceResult<bool>.BadRequest("You have already dissmissed this notification");
 
         var dismiss = new NotificationDissmissEntity
             {
@@ -49,8 +50,28 @@ public class NotificationService(INotificationRepository notificationRepository,
                 NotificationId = notificationId
             };
         var result = await _notificationDissmissRepository.CreateAsync(dismiss);
-        if(result.Result is null) return ServiceResult<bool>.Error("");
+        if(result.Result is null) return ServiceResult<bool>.Error("Failed to created notification dissmissal");
+
+        await DeleteIfAllDissmissed(notificationId);
 
         return ServiceResult<bool>.Ok(true);
+    }
+
+    private async Task DeleteIfAllDissmissed(string notificationId)
+    {
+        try
+        {
+            var dissmissedEntitiesResult = await _notificationDissmissRepository.GetAllAsync(filterBy: x => x.NotificationId == notificationId);
+            if (!dissmissedEntitiesResult.Succeeded) return;
+
+            if(dissmissedEntitiesResult.Result is IEnumerable<NotificationDissmissEntity> && dissmissedEntitiesResult.Result.Count() == 0)
+            {
+                await _notificationRepository.DeleteAsync(x => x.Id  == notificationId);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+        }
     }
 }

@@ -19,7 +19,7 @@ public class NotificationEntity
     public string Message { get; set; } = null!;
 
 
-    [Column(TypeName = "varchar(100)")]
+    [Column(TypeName = "varchar(500)")]
 
     public string? Action { get; set; }
 

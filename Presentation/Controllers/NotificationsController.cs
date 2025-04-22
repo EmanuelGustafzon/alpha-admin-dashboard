@@ -1,7 +1,9 @@
-﻿using Business.Interfaces;
+﻿using Business.Factories;
+using Business.Interfaces;
 using Business.Models;
 using Domain.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Presentation.Hubs;
@@ -21,7 +23,7 @@ public class NotificationsController(IHubContext<NotificationHub> hubContext, IN
     public async Task<IActionResult> AddNotification(NotificationForm form)
     {
         var result = await _notificationService.AddNotficationAsync(form);
-        if(result.Data == null) return StatusCode(500, "");
+        if(result.Data == null) return StatusCode(500, new { success = false });
 
         await _notificationHub.Clients.All.SendAsync("generalNotifications", result.Data);
         return Ok(new {success = true});
@@ -34,7 +36,7 @@ public class NotificationsController(IHubContext<NotificationHub> hubContext, IN
         if(string.IsNullOrEmpty(userId)) return Unauthorized();
 
         var result = await _notificationService.GetNotificationsAsync(userId);
-        if(result.Data == null) return StatusCode(500, "failed");
+        if(result.Data == null) return StatusCode(500, new {success = false});
 
         return Ok(result.Data);
     }
@@ -46,7 +48,7 @@ public class NotificationsController(IHubContext<NotificationHub> hubContext, IN
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
         var result = await _notificationService.DissmissNotification(userId, id);
-        if(!result.Success) return StatusCode(500, "");
+        if(!result.Success) return StatusCode(500, new {success = false});
         await _notificationHub.Clients.User(userId).SendAsync("NotificationDissmissed", id);
         return Ok();
     }

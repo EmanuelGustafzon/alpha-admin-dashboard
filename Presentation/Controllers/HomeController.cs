@@ -6,8 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Presentation.Hubs;
 using Presentation.Models;
+using System;
 using System.Diagnostics;
 using System.Security.Claims;
+using System.Threading.Channels;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Presentation.Controllers;
 
@@ -48,12 +51,7 @@ public class HomeController(IMemberService memberService, IProjectService projec
         var result = await _projectService.CreateProjectAsync(form, userId);
         if(result.Data is null || result.Success is false) return StatusCode(500, "Failed to Adding projects.");
 
-        NotificationForm notificationForm = NotificationFactory.CreateForm($"{result.Data.ProjectName} Added", result.Data.ImageUrl);
-        var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
-        if(notificationResult.Data is not null)
-        {
-            await _hub.Clients.All.SendAsync("generalNotifications", notificationResult.Data);
-        }
+        await SendMessage($"{result.Data.ProjectName} Added", result.Data.ImageUrl);
 
         return Ok(new { success = true});
     }
@@ -113,12 +111,8 @@ public class HomeController(IMemberService memberService, IProjectService projec
             var result = await _projectService.UpdateProjectAsync(form, id);
             if(result.Data is null) return NotFound("No matching projects found.");
 
-            NotificationForm notificationForm = NotificationFactory.CreateForm($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
-            var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
-            if (notificationResult.Data is not null)
-            {
-                await _hub.Clients.All.SendAsync("generalNotifications", notificationResult.Data);
-            }
+            await SendMessage($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
+
             return Ok(new {success = true});
         } catch (Exception ex)
         {
@@ -135,12 +129,7 @@ public class HomeController(IMemberService memberService, IProjectService projec
             var result = await _projectService.UpdateStatusAsync(id, status);
             if(!result.Success || result.Data is null) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
 
-            NotificationForm notificationForm = NotificationFactory.CreateForm($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
-            var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
-            if (notificationResult.Data is not null)
-            {
-                await _hub.Clients.All.SendAsync("generalNotifications", notificationResult.Data);
-            }
+            await SendMessage($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
 
             return Ok("Successfully updated the status");
 
@@ -159,12 +148,7 @@ public class HomeController(IMemberService memberService, IProjectService projec
             var result = await _projectService.UpdateProjectMembersAsync(form, id);
             if (!result.Success || result.Data is null) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
 
-            NotificationForm notificationForm = NotificationFactory.CreateForm($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
-            var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
-            if (notificationResult.Data is not null)
-            {
-                await _hub.Clients.All.SendAsync("generalNotifications", notificationResult.Data);
-            }
+            await SendMessage($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
 
             return Ok(new {success = true});
 
@@ -183,5 +167,16 @@ public class HomeController(IMemberService memberService, IProjectService projec
         if(!result.Success) return StatusCode(result.StatusCode, $"Failed to Delete project :: {result.ErrorMessage}");
 
         return NoContent();     
+    }
+    private async Task<bool> SendMessage(string message, string? icon)
+    {
+        NotificationForm notificationForm = NotificationFactory.CreateForm(message, icon);
+        var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
+        if (notificationResult.Data is not null)
+        {
+            await _hub.Clients.All.SendAsync("generalNotifications", notificationResult.Data);
+            return true;
+        }
+        return false;
     }
 }

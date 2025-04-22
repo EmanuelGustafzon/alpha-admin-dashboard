@@ -28,7 +28,7 @@
 
     function updateNotificationList(notification) {
         const notificationsList = document.querySelector('#notifications');
-        const item = notificationItem(notification.id, notification.icon, notification.message, notification.created)
+        const item = notificationItem(notification.id, notification.icon, notification.message, notification.created, notification.action)
         notificationsList.insertAdjacentHTML('beforeend', item)
     }
     function hasNotificatons(memberHasNotification) {
@@ -53,7 +53,7 @@
     async function getNotifications() {
         const data = await fetchData("/api/notifications")
         if(data.length != 0) hasNotificatons(true)
-        data.forEach(notification =>{
+        data.forEach(notification => {
             updateNotificationList(notification)
             incramentNotificationCount()
         })
@@ -75,6 +75,7 @@
                 <img class="profile-img" src="${image}"/>
                 <div>
                     <p class="message">${message}</p>
+                    ${action ? `<a href="${action}">Click here!</a>` : ''}
                     <p class="time" data-created="${new Date(createdAt).toISOString()}"> ${timeAgo(createdAt)} </p>
                 </div>
                 <button onclick="dismissNotification('${id}')" class="btn btn-clean">X</button>

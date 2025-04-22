@@ -111,12 +111,7 @@ public class MembersController(IMemberService memberService, INotificationServic
         var findMemberResult = await _memberService.GetMemberByEmailAsync(form.Email);
         if(findMemberResult.Data is not null)
         {
-            NotificationForm notificationForm = NotificationFactory.CreateForm($"{findMemberResult.Data.FirstName} {findMemberResult.Data.LastName} Added", findMemberResult.Data.ImageUrl);
-            var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
-            if (notificationResult.Data is not null)
-            {
-                await _hub.Clients.All.SendAsync("adminNotifications", notificationResult.Data);
-            }
+            await SendMessage($"{findMemberResult.Data.FirstName} {findMemberResult.Data.LastName} Added", findMemberResult.Data.ImageUrl);
         }
 
         ViewBag.GeneratedPassword = $"{result.Data}";
@@ -133,12 +128,7 @@ public class MembersController(IMemberService memberService, INotificationServic
             if (result.StatusCode == 404) return NotFound(new { success = false, message = $"Member not found" });
             if (result.Data is null) return NotFound(new { success = false, message = $"Something went wrong, {result.ErrorMessage}" });
 
-            NotificationForm notificationForm = NotificationFactory.CreateForm($"{result.Data.FirstName} {result.Data.LastName} Updated", result.Data.ImageUrl);
-            var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
-            if (notificationResult.Data is not null)
-            {
-                await _hub.Clients.All.SendAsync("adminNotifications", notificationResult.Data);
-            }
+            await SendMessage($"{result.Data.FirstName} {result.Data.LastName} Updated", result.Data.ImageUrl);
 
             return Ok(result.Data);
         }
@@ -155,5 +145,17 @@ public class MembersController(IMemberService memberService, INotificationServic
         var result = await _memberService.DeleteMemberAsync(id);
         if (!result.Success) return StatusCode(result.StatusCode, $"Something went wrong {result.ErrorMessage}");
         return NoContent();
+    }
+
+    private async Task<bool> SendMessage(string message, string? icon)
+    {
+        NotificationForm notificationForm = NotificationFactory.CreateForm(message, icon);
+        var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
+        if (notificationResult.Data is not null)
+        {
+            await _hub.Clients.All.SendAsync("adminNotifications", notificationResult.Data);
+            return true;
+        }
+        return false;
     }
 }
