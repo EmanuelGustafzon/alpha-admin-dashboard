@@ -8,7 +8,7 @@ public interface INotificationService
 {
     public Task<ServiceResult<Notification>> AddNotficationAsync(NotificationForm form);
 
-    public Task<ServiceResult<IEnumerable<Notification>>> GetNotificationsAsync(string memberId);
+    public Task<ServiceResult<IEnumerable<Notification>>> GetNotificationsAsync(string memberId, string target = "All");
 
     public Task<ServiceResult<bool>> DissmissNotification(string memberId, string notificationId);
 }

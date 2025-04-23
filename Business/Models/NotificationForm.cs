@@ -7,4 +7,5 @@ public class NotificationForm
     public string Message { get; set; } = null!;
 
     public string? Action { get; set; }
+    public string Target { get; set; } = "All";
 }

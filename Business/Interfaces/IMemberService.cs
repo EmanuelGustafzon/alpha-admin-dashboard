@@ -33,4 +33,8 @@ public interface IMemberService
     public Task<bool> MemberUseExternalProvider(MemberEntity member);
 
     public Task<bool?> MemberUseExternalProvider(string memberId);
+
+    public Task<ServiceResult<IEnumerable<Member>>> GetAllAdminsAsync();
+
+    public Task<ServiceResult<IEnumerable<string>>> GetMemeberRoles(string memberId);
 }

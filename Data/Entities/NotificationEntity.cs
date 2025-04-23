@@ -18,6 +18,8 @@ public class NotificationEntity
 
     public string Message { get; set; } = null!;
 
+    [Column(TypeName = "varchar(100)")]
+    public string Target { get; set; } = "All";
 
     [Column(TypeName = "varchar(500)")]
 

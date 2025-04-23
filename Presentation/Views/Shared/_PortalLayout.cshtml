@@ -24,9 +24,7 @@
             </div>
             <div class="bottom-border">
                 <div class="top-bar">
-                    <button class="burger-menu">
-                        <i class="bi bi-list"></i>
-                    </button>
+                    @await Html.PartialAsync("PartialViews/_MobileNav")
                     <div class="search">
                         <i class="bi bi-search"></i>
                         <input id="search-field" class="search-field" type="text" placeholder="search anything...">

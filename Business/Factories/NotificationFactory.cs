@@ -4,13 +4,14 @@ namespace Business.Factories
 {
     public static class NotificationFactory
     {
-        public static NotificationForm CreateForm(string message, string? icon = null, string? action = null)
+        public static NotificationForm CreateForm(string message, string target = "All", string? icon = null, string? action = null)
         {
             return new NotificationForm
             {
                 Icon = icon,
                 Message = message,
-                Action = action
+                Action = action,
+                Target = target
             };
         }
     }

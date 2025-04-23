@@ -149,11 +149,18 @@ public class MembersController(IMemberService memberService, INotificationServic
 
     private async Task<bool> SendMessage(string message, string? icon)
     {
-        NotificationForm notificationForm = NotificationFactory.CreateForm(message, icon);
+        NotificationForm notificationForm = NotificationFactory.CreateForm(message, "Admin", icon);
         var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
         if (notificationResult.Data is not null)
         {
-            await _hub.Clients.All.SendAsync("adminNotifications", notificationResult.Data);
+            var adminsResult = await _memberService.GetAllAdminsAsync();
+            if (adminsResult.Data is not null)
+            {
+                foreach (var admin in adminsResult.Data)
+                {
+                    await _hub.Clients.User(admin.Id).SendAsync("adminNotifications", notificationResult.Data);
+                }
+            }
             return true;
         }
         return false;

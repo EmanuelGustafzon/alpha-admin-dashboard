@@ -6,6 +6,9 @@ using Data.Interfaces;
 using Domain.Extensions;
 using Domain.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System.Collections;
+using System.Data;
 using System.Diagnostics;
 
 namespace Business.Services;
@@ -380,4 +383,47 @@ public class MemberService(
         }
         return false;
     }
+
+    public async Task<ServiceResult<IEnumerable<Member>>> GetAllAdminsAsync()
+    {
+        try
+        {
+            var members = await _userManager.Users.ToListAsync();
+            var adminMembers = new List<Member>();
+
+            foreach (var member in members)
+            {
+                var roles = await _userManager.GetRolesAsync(member);
+                if (roles.Contains("Admin"))
+                {
+                        adminMembers.Add(member.MapTo<Member>());
+                }
+            }
+
+            return ServiceResult<IEnumerable<Member>>.Ok(adminMembers);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return ServiceResult<IEnumerable<Member>>.Error("Failed to fetch admins");
+        }
+    }
+
+    public async Task<ServiceResult<IEnumerable<string>>> GetMemeberRoles(string memberId)
+    {
+        try
+        {
+            var memberResult = await _memberRepository.GetAsync(x => x.Id == memberId);
+            if(memberResult.Result is null) return ServiceResult<IEnumerable<string>>.NotFound("Could not find member");
+            IEnumerable<string> roles = await _userManager.GetRolesAsync(memberResult.Result);
+
+            return ServiceResult<IEnumerable<string>>.Ok(roles);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return ServiceResult<IEnumerable<string>>.Error("Failed to fetch roles");
+        }
+    }
+
 }

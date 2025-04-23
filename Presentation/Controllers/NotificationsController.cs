@@ -34,8 +34,9 @@ public class NotificationsController(IHubContext<NotificationHub> hubContext, IN
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
         if(string.IsNullOrEmpty(userId)) return Unauthorized();
+        var userRole = User.FindFirstValue(ClaimTypes.Role) ?? "User";
 
-        var result = await _notificationService.GetNotificationsAsync(userId);
+        var result = await _notificationService.GetNotificationsAsync(userId, userRole);
         if(result.Data == null) return StatusCode(500, new {success = false});
 
         return Ok(result.Data);

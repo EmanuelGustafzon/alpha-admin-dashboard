@@ -1,0 +1,25 @@
+﻿
+<div class="popover-container">
+    <button data-open-pop-over data-targetId="#mobile-nav-popover" class="burger-menu">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <div id="mobile-nav-popover" class="popover popover-right d-none">
+        <a class="btn nav-buttons @(Context.Request.Path == "/" ?  "nav-btn-active" : "")" asp-controller="Home" asp-action="Index">
+            <i class="bi bi-briefcase-fill"></i>
+            Projects
+        </a>
+        @if (User.FindFirst(ClaimTypes.Role)?.Value == "Admin")
+        {
+            <a class="btn nav-buttons @(Context.Request.Path == "/Members" ? "nav-btn-active" : "")" asp-controller="Members" asp-action="Index">
+                <i class="bi bi-briefcase-fill"></i>
+                Members
+            </a>
+        }
+        <a class="btn nav-buttons @(Context.Request.Path == "/Account" ? "nav-btn-active" : "")" asp-controller="Account" asp-action="Index">
+            <i class="bi bi-briefcase-fill"></i>
+            Account
+        </a>
+    </div>
+</div>
+

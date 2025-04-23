@@ -390,7 +390,7 @@ a {
     }
 
 
-    /* project card */
+/* project card */
 
 .project-card {
     margin: 12px;
@@ -475,7 +475,7 @@ a {
     border-color: var(--border-300);
 }
 .popover-wide {
-    min-width: 25em;
+    min-width: 22em;
 }
 
 .popover-down {
@@ -487,6 +487,10 @@ a {
     padding: 10px;
     border-radius: 12px;
     border-color: var(--border-300);
+}
+.popover-right {
+    background-color: var(--surface);
+    transform: translateX(0);
 }
 .popover div {
     margin-top: 4px;
@@ -628,26 +632,6 @@ a {
     display: flex;
     column-gap: 8px;
 }
-@media (max-width: 720px) {
-    .layout {
-        display: grid;
-        grid-template-columns: 1fr;
-        grid-template-rows: 60px auto;
-    }
-
-    .side-border {
-        display: none;
-    }
-
-    .burger-menu {
-        display: block;
-        background-color: transparent;
-        border: none;
-        font-size: large;
-        margin: 0;
-        padding: 0;
-    }
-}
 .login-form-container {
     width: 370px;
     background: var(--surface);
@@ -761,3 +745,24 @@ a {
     border: none;
 }
 
+
+@media (max-width: 720px) {
+    .layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 60px auto;
+    }
+
+    .side-border {
+        display: none;
+    }
+
+    .burger-menu {
+        display: block;
+        background-color: transparent;
+        border: none;
+        font-size: large;
+        margin: 0;
+        padding: 0;
+    }
+}

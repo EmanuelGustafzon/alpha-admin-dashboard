@@ -181,11 +181,18 @@ public class AuthController(IAuthService authService, IMemberService memberServi
 
         var callback = Url.Action(nameof(ResetPassword), "Auth", new { token, email = form.Email }, Request.Scheme);
 
-        NotificationForm notificationForm = NotificationFactory.CreateForm($"{memberResult.Data.FirstName} {memberResult.Data.LastName} wants to reset password", memberResult.Data.ImageUrl ?? "/images/default-profile-picture.png", callback);
+        NotificationForm notificationForm = NotificationFactory.CreateForm($"{memberResult.Data.FirstName} {memberResult.Data.LastName} wants to reset password", "Admin", memberResult.Data.ImageUrl ?? "/images/default-profile-picture.png", callback);
         var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
         if (notificationResult.Data is not null)
         {
-            await _hub.Clients.All.SendAsync("adminNotifications", notificationResult.Data);
+            var adminsResult = await _memberService.GetAllAdminsAsync();
+            if(adminsResult.Data is not null)
+            {
+                foreach (var admin in adminsResult.Data)
+                {
+                    await _hub.Clients.User(admin.Id).SendAsync("adminNotifications", notificationResult.Data);
+                }
+            }
         }
 
         return RedirectToAction(nameof(ForgotPasswordConfirmation));

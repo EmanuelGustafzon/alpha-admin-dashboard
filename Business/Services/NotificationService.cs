@@ -21,7 +21,7 @@ public class NotificationService(INotificationRepository notificationRepository,
         return ServiceResult<Notification>.Created(result.Result.MapTo<Notification>());
     }
 
-    public async Task<ServiceResult<IEnumerable<Notification>>> GetNotificationsAsync(string memberId)
+    public async Task<ServiceResult<IEnumerable<Notification>>> GetNotificationsAsync(string memberId, string target = "All")
     {
         var dissmissResult = await _notificationDissmissRepository.GetAllAsync(filterBy: x => x.MemberId == memberId);
 
@@ -30,7 +30,7 @@ public class NotificationService(INotificationRepository notificationRepository,
         var list = dissmissResult.Result.Select(x => x.NotificationId).ToList();
 
         
-        var notificationResult = await _notificationRepository.GetAllAsync(filterBy: x => !list.Contains(x.Id));
+        var notificationResult = await _notificationRepository.GetAllAsync(filterBy: x => !list.Contains(x.Id) && (x.Target == target || x.Target == "All"));
         if(notificationResult.Result is null) return ServiceResult<IEnumerable<Notification>>.Error("Failed to fecth notifications");
 
         var notifications = notificationResult.Result.Select(x => x.MapTo<Notification>());

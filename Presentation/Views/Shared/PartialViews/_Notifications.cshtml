@@ -24,12 +24,19 @@
     connection.on("generalNotifications", (notification) => {
         updateNotificationList(notification)
     })
+
+    connection.on("adminNotifications", (notification) => {
+        updateNotificationList(notification)
+    });
+
     connection.start().catch(error => console.log(error));
 
     function updateNotificationList(notification) {
         const notificationsList = document.querySelector('#notifications');
         const item = notificationItem(notification.id, notification.icon, notification.message, notification.created, notification.action)
         notificationsList.insertAdjacentHTML('beforeend', item)
+        incramentNotificationCount()
+        hasNotificatons(true)
     }
     function hasNotificatons(memberHasNotification) {
         const redCircle = document.querySelector('#has-notifications');
@@ -47,8 +54,8 @@
     function decramentNotificationCount() {
         let count = document.querySelector('#notification-count');
         let intCount = parseInt(count.innerText)
-        if(count === 1) hasNotificatons(false)
         count.innerText = --intCount
+        if(intCount === 0) hasNotificatons(false)
     }
     async function getNotifications() {
         const data = await fetchData("/api/notifications")
@@ -87,16 +94,3 @@
     })
 </script>
 
-
-@if (userRole == "Admin")
-{
-    @section Scripts {
-    <script>
-        $(function () {
-            connection.on("adminNotifications", function (notification) {
-                updateNotificationList(notification);
-            });
-        });
-    </script>
-    }
-}

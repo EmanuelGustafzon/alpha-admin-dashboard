@@ -170,7 +170,7 @@ public class HomeController(IMemberService memberService, IProjectService projec
     }
     private async Task<bool> SendMessage(string message, string? icon)
     {
-        NotificationForm notificationForm = NotificationFactory.CreateForm(message, icon);
+        NotificationForm notificationForm = NotificationFactory.CreateForm(message, "All", icon);
         var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
         if (notificationResult.Data is not null)
         {
