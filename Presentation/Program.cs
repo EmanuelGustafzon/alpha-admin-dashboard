@@ -22,13 +22,19 @@ builder.Services.AddIdentity<MemberEntity, IdentityRole>(options => options.Sign
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.CheckConsentNeeded = context => !context.Request.Cookies.ContainsKey("coockieConsent");
+    options.MinimumSameSitePolicy = SameSiteMode.Lax;
+});
+
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
    opt.TokenLifespan = TimeSpan.FromHours(3));
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Auth/SignIn";
-    options.AccessDeniedPath = ""; // add here 
+    options.AccessDeniedPath = "/Auth/UnAuthorized";
     options.SlidingExpiration = true;
     options.ExpireTimeSpan = TimeSpan.FromDays(1);
     options.Cookie.HttpOnly = true;
@@ -99,6 +105,8 @@ using (var scope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+//app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapStaticAssets();
