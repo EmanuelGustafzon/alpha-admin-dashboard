@@ -49,12 +49,12 @@
                 </a>
                 @if(User.FindFirst(ClaimTypes.Role)?.Value == "Admin"){
                     <a class="btn nav-buttons @(Context.Request.Path == "/Members" ? "nav-btn-active" : "")" asp-controller="Members" asp-action="Index">
-                        <i class="bi bi-briefcase-fill"></i>
+                        <i class="bi bi-people"></i>
                         Members
                     </a>
                 }
                 <a class="btn nav-buttons @(Context.Request.Path == "/Account" ? "nav-btn-active" : "")" asp-controller="Account" asp-action="Index">
-                    <i class="bi bi-briefcase-fill"></i>
+                    <i class="bi bi-person-gear"></i>
                     Account
                 </a>
             </div>
@@ -62,6 +62,10 @@
                 @RenderBody()
             </div>
         </div>
+
+        <button class="btn btn-clean open-cookie-consent" data-targetId="#cookie-consent" data-openModal><i class="bi bi-cookie"></i></button>
+        @await Html.PartialAsync("PartialViews/_CookieConsent")
+
     </main>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>

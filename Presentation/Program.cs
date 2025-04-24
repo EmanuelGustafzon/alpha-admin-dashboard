@@ -37,7 +37,6 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Auth/UnAuthorized";
     options.SlidingExpiration = true;
     options.ExpireTimeSpan = TimeSpan.FromDays(1);
-    options.Cookie.HttpOnly = true;
 });
 builder.Services.AddAuthentication()
     .AddGoogleOpenIdConnect(options =>

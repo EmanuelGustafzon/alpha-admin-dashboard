@@ -1,5 +1,5 @@
 ﻿
-<div class="popover-container">
+<div class="popover-container burger-container">
     <button data-open-pop-over data-targetId="#mobile-nav-popover" class="burger-menu">
         <i class="bi bi-list"></i>
     </button>
@@ -12,12 +12,12 @@
         @if (User.FindFirst(ClaimTypes.Role)?.Value == "Admin")
         {
             <a class="btn nav-buttons @(Context.Request.Path == "/Members" ? "nav-btn-active" : "")" asp-controller="Members" asp-action="Index">
-                <i class="bi bi-briefcase-fill"></i>
+                <i class="bi bi-people"></i>
                 Members
             </a>
         }
         <a class="btn nav-buttons @(Context.Request.Path == "/Account" ? "nav-btn-active" : "")" asp-controller="Account" asp-action="Index">
-            <i class="bi bi-briefcase-fill"></i>
+            <i class="bi bi-person-gear"></i>
             Account
         </a>
     </div>
