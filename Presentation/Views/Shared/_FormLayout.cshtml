@@ -15,6 +15,11 @@
         <div class="center-screen">
             @RenderBody()
         </div>
+        @await Html.PartialAsync("PartialViews/_CookieConsent")
+        <button class="btn btn-clean open-cookie-consent" onclick="showCookieModal()" ><i class="bi bi-cookie"></i></button>
     </main>
+
+    <script src="~/js/cookieManagement.js" asp-append-version="true"></script>
+    <script src="~/js/validateField.js" asp-append-version="true"></script>
 </body>
 </html>

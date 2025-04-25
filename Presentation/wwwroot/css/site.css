@@ -23,7 +23,7 @@
     --accent-10: rgba(45, 153, 255, 0.1);
     --red: #FF6640;
     --dark-red: #E94D3F;
-    --green: #88E397;
+    --green: #51a94f;
     --background: var(--gray-100);
     --surface: #fff;
     --label: var(--gray-100);
@@ -68,6 +68,9 @@ html, body {
 .bg-accent {
     background-color: var(--accent);
     border-radius: 8px;
+}
+.color-accent {
+    color: var(--accent);
 }
 .form-control {
     background-color: var(--label);
@@ -237,7 +240,10 @@ a {
     grid-template-rows: 60px auto;
 }
 
-.burger-menu, .burger-container {
+.burger-menu {
+    display: none;
+}
+.burger-container {
     display: none;
 }
 

@@ -24,7 +24,7 @@ public class MemberForm
 
     [DataType(DataType.Upload)]
     public IFormFile? Image { get; set; }
-    public string? ImageUrl { get; set; }
+    public string ImageUrl { get; set; } = "/images/default-profile-picture.png";
 
     [Display(Name = "Job Title")]
     public string? JobTitle { get; set; }

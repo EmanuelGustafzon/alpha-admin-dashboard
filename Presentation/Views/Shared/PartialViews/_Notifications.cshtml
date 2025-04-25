@@ -46,19 +46,31 @@
             redCircle.classList.remove("new-notification")
         } 
     }
+
+    let notificationCount = 0;
+
+    function setNotificationCountToZero() {
+        let count = document.querySelector('#notification-count');
+        count.innerText = "0";  
+        notificationCount = 0;  
+    }
+
     function incramentNotificationCount() {
         let count = document.querySelector('#notification-count');
-        let intCount = parseInt(count.innerText)
-        count.innerText = ++intCount
+        notificationCount++; 
+        count.innerText = notificationCount; 
     }
+
     function decramentNotificationCount() {
         let count = document.querySelector('#notification-count');
-        let intCount = parseInt(count.innerText)
-        count.innerText = --intCount
-        if(intCount === 0) hasNotificatons(false)
+        notificationCount--;  
+        count.innerText = notificationCount; 
+        if (notificationCount === 0) hasNotificatons(false);
     }
+
     async function getNotifications() {
         const data = await fetchData("/api/notifications")
+        setNotificationCountToZero()
         if(data.length != 0) hasNotificatons(true)
         data.forEach(notification => {
             updateNotificationList(notification)

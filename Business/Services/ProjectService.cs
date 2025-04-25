@@ -16,7 +16,7 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
     private readonly IMemberService _memberService = memberService;
     private readonly IClientService _clientService = clientService;
     private readonly IUploadFile _uploadFile = uploadFile;
-    public async Task<ServiceResult<Project>> CreateProjectAsync(ProjectForm projectForm, string memberId)
+    public async Task<ServiceResult<Project>> CreateProjectAsync(ProjectForm projectForm)
     {
         try
         {
@@ -36,7 +36,7 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
                 projectEntity.ClientId = clientResult.Data.Id;
             }
 
-            projectEntity.Owner = memberId;
+            projectEntity.Owner = projectForm.CurrentUserId;
 
             if (projectForm.Image != null && projectForm.Image.Length != 0)
             {
@@ -142,10 +142,14 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
     {
         try
         {
+            
             var findProjectResult = await _projectRepository.GetAsync(findBy: x => x.Id == id, joins: join => join.Client);
             if (findProjectResult.StatusCode == 404) return ServiceResult<Project>.NotFound($"project with id {id} not found");
-            if(!findProjectResult.Succeeded && findProjectResult.Result is null) return ServiceResult<Project>.Error($"Could not get project :: {findProjectResult.ErrorMessage}");
-            
+            if(!findProjectResult.Succeeded || findProjectResult.Result is null) return ServiceResult<Project>.Error($"Could not get project :: {findProjectResult.ErrorMessage}");
+
+            var permission = UserHasPermission(findProjectResult.Result.Owner, form.CurrentUserId);
+            if(permission == false) return ServiceResult<Project>.Unauthorized($"You are not the owner of this post");
+
             var project = findProjectResult.Result!;
 
             project.ProjectName = form.ProjectName;
@@ -277,5 +281,10 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
             Debug.Write(ex.Message);
             return ServiceResult<bool>.Error("Failed to delete project");
         }
+    }
+
+    private bool UserHasPermission(string projectOwnerId, string loggedInUserId)
+    {
+        return projectOwnerId == loggedInUserId;
     }
 }

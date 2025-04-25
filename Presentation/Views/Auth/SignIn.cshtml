@@ -44,9 +44,9 @@
                 <input asp-for="SignInForm.RememberMe" type="checkbox" />
                 <label asp-for="SignInForm.RememberMe"></label>
             </div>
-            <a asp-controller="Auth" asp-action="ForgotPassword">Forgot Password?</a>
+            <a class="color-accent" asp-controller="Auth" asp-action="ForgotPassword">Forgot Password?</a>
         </div>
         <button class="btn btn-primary" type="submit">Log In</button>
     </form>
-    <p>Don't have an account? <a>Sign Up</a></p>
+    <p>Don't have an account? <a class="color-accent" asp-controller="Auth" asp-action="SignUp">Sign Up</a></p>
 </div>

@@ -24,8 +24,8 @@ builder.Services.AddIdentity<MemberEntity, IdentityRole>(options => options.Sign
 
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
-    options.CheckConsentNeeded = context => !context.Request.Cookies.ContainsKey("coockieConsent");
-    options.MinimumSameSitePolicy = SameSiteMode.Lax;
+    options.CheckConsentNeeded = context => !context.Request.Cookies.ContainsKey("cookieConsent");
+    options.MinimumSameSitePolicy = SameSiteMode.None;
 });
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
@@ -38,6 +38,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
     options.ExpireTimeSpan = TimeSpan.FromDays(1);
 });
+
 builder.Services.AddAuthentication()
     .AddGoogleOpenIdConnect(options =>
     {
@@ -105,7 +106,7 @@ using (var scope = app.Services.CreateScope())
 app.UseHttpsRedirection();
 app.UseRouting();
 
-//app.UseCookiePolicy();
+app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapStaticAssets();

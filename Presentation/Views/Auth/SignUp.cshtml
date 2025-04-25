@@ -3,22 +3,27 @@
 }
 @model AuthViewModel
 
-<div>
+<div class="login-form-container">
     @if (Model.ExternalLogins != null && Model.ExternalLogins.Any())
     {
-        <form method="post" asp-action="ExternalLogin" asp-controller="Auth">
+        <form class="external-login-form" method="post" asp-action="ExternalLogin" asp-controller="Auth">
             <div>
-                <p>Or sign up using:</p>
                 @foreach (var provider in Model.ExternalLogins)
                 {
-                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name">
-                        Sign in with @provider.DisplayName
+                    string providerName = provider.DisplayName.Split(" ")[0];
+
+                    <button type="submit" class="btn btn-secondary" name="provider" value="@provider.Name">
+                        <i class="bi bi-@(providerName.ToLower())"></i>
+                        <span>Login with @providerName</span>
                     </button>
                 }
             </div>
         </form>
     }
-    <form method="post" asp-controller="Auth" asp-action="SignUp" novalidate>
+    <div class="separator">
+        <span>or</span>
+    </div>
+    <form class="login-form" method="post" asp-controller="Auth" asp-action="SignUp" novalidate>
 
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
         <p>@ViewBag.ErrorMessage</p>
@@ -48,6 +53,7 @@
             <input asp-for="SignUpForm.ConfirmPassword" class="form-control"/>
             <span asp-validation-for="SignUpForm.ConfirmPassword" class="text-error"></span>
         </div>
-        <button type="submit">Register</button>
+        <button class="btn btn-primary" type="submit">Register</button>
     </form>
+    <p>Already have an account? <a class="color-accent" asp-controller="Auth" asp-action="SignIn">Sign In</a></p>
 </div>

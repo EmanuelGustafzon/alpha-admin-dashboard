@@ -63,20 +63,16 @@
             </div>
         </div>
 
-        <button class="btn btn-clean open-cookie-consent" data-targetId="#cookie-consent" data-openModal><i class="bi bi-cookie"></i></button>
         @await Html.PartialAsync("PartialViews/_CookieConsent")
+        <button class="btn btn-clean open-cookie-consent" onclick="showCookieModal()" ><i class="bi bi-cookie"></i></button>
+        
 
     </main>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
     <script src="~/searchable-multiselect-plugin/script.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/cookieManagement.js" asp-append-version="true"></script>
+    <script src="~/js/validateField.js" asp-append-version="true"></script>
 </body>
 </html>
-
-<script>
-    const theme = localStorage.getItem('theme');
-    document.body.dataset.theme = theme;
-    const themebox = document.getElementById("theme-checkbox");
-    if(theme === 'dark') themebox.checked = true
-</script>

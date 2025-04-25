@@ -6,11 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Presentation.Hubs;
 using Presentation.Models;
-using System;
 using System.Diagnostics;
 using System.Security.Claims;
-using System.Threading.Channels;
-using static System.Collections.Specialized.BitVector32;
 
 namespace Presentation.Controllers;
 
@@ -45,10 +42,8 @@ public class HomeController(IMemberService memberService, IProjectService projec
                 );
             return BadRequest(new { success = false, errors });
         }
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
-        if (string.IsNullOrEmpty(userId)) return Unauthorized(new {success = false});
 
-        var result = await _projectService.CreateProjectAsync(form, userId);
+        var result = await _projectService.CreateProjectAsync(form);
         if(result.Data is null || result.Success is false) return StatusCode(500, "Failed to Adding projects.");
 
         await SendMessage($"{result.Data.ProjectName} Added", result.Data.ImageUrl);
