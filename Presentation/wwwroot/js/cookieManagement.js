@@ -61,6 +61,11 @@ async function acceptSelectedCookies() {
     }
     setCookie("cookieConsent", JSON.stringify(consent), 90)
     await handleConsent(consent)
+
+    if (!consent.functional) {
+        deleteCookie("ThemeCookie");
+    }
+
     hideCookieModal()
 }
 async function handleConsent(consent) {
@@ -95,8 +100,11 @@ async function setFunctionalCookie(name, value, days) {
         console.error(`Failed to set functional cookie :: ${error}`)
     }
 }
+function deleteCookie(name) {
+    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+}
 
-async function removeCookie(name) {
+async function deleteCookieServer(name) {
     try {
         const res = await fetch(`/cookies/deleteCookie?name=${name}`, {
             method: 'POST',

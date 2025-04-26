@@ -121,7 +121,9 @@ public class HomeController(IMemberService memberService, IProjectService projec
     {
         try
         {
-            var result = await _projectService.UpdateStatusAsync(id, status);
+            var memberId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+
+            var result = await _projectService.UpdateStatusAsync(id, memberId, status);
             if(!result.Success || result.Data is null) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
 
             await SendMessage($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
@@ -158,7 +160,8 @@ public class HomeController(IMemberService memberService, IProjectService projec
     [HttpDelete("deleteProject/{id}")]
     public async Task<IActionResult> DeleteProject(string id)
     {
-        var result = await _projectService.DeleteProjectAsync(id);
+        var memberId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+        var result = await _projectService.DeleteProjectAsync(id, memberId);
         if(!result.Success) return StatusCode(result.StatusCode, $"Failed to Delete project :: {result.ErrorMessage}");
 
         return NoContent();     

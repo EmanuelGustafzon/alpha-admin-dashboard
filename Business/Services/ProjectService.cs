@@ -147,7 +147,8 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
             if (findProjectResult.StatusCode == 404) return ServiceResult<Project>.NotFound($"project with id {id} not found");
             if(!findProjectResult.Succeeded || findProjectResult.Result is null) return ServiceResult<Project>.Error($"Could not get project :: {findProjectResult.ErrorMessage}");
 
-            var permission = UserHasPermission(findProjectResult.Result.Owner, form.CurrentUserId);
+            var memberIds = findProjectResult.Result.MemberProjects.Select(x => x.MemberId).ToList();
+            var permission = await UserHasPermission(form.CurrentUserId, findProjectResult.Result.Owner, memberIds);
             if(permission == false) return ServiceResult<Project>.Unauthorized($"You are not the owner of this post");
 
             var project = findProjectResult.Result!;
@@ -210,6 +211,10 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
 
             var project = findProjectResult.Result!;
 
+            var memberIds = project.MemberProjects.Select(x => x.MemberId).ToList();
+            var permission = await UserHasPermission(form.CurrentUserId, project.Owner, memberIds);
+            if (permission == false) return ServiceResult<Project>.Unauthorized($"You do not have persmission to update this project");
+
             var membersToRemove = project.MemberProjects.Where(mp => form.MemberIds.Contains(mp.MemberId) == false).ToList();
             foreach (var item in membersToRemove)
             {
@@ -240,7 +245,39 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
         }
     }
 
-    public async Task<ServiceResult<Project>> UpdateStatusAsync(string id, string status)
+    public async Task<ServiceResult<Project>> UpdateStatusAsync(string id, string memberId, string status)
+    {
+        try
+        {
+            var result = await _projectRepository.GetAsync(x => x.Id == id);
+            if (result.Result is null)
+                return ServiceResult<Project>.Error("Failed to fetch the project to update status");
+
+            var project = result.Result;
+
+            var memberIds = project.MemberProjects.Select(x => x.MemberId).ToList();
+            var permission = await UserHasPermission(memberId, project.Owner, memberIds);
+            if (permission == false) return ServiceResult<Project>.Unauthorized($"You do not have persmission to update this project");
+
+            if (!Enum.TryParse(status, true, out ProjectStatuses convertedStatus))
+                return ServiceResult<Project>.Error("The status was not of the right enum type");
+
+            project.Status = convertedStatus;
+
+            var updateResult = await _projectRepository.UpdateAsync(project);
+            if (updateResult.Result is null)
+                return ServiceResult<Project>.Error("Failed to update project status");
+
+            return ServiceResult<Project>.Ok(project.MapTo<Project>());
+        }
+        catch (Exception ex)
+        {
+            Debug.Write(ex.Message);
+            return ServiceResult<Project>.Error("Failed to update project status");
+        }
+    }
+
+    private async Task<ServiceResult<Project>> UpdateStatusAsync(string id, string status)
     {
         try
         {
@@ -269,12 +306,20 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
     }
 
 
-    public async Task<ServiceResult<bool>> DeleteProjectAsync(string projectId)
+    public async Task<ServiceResult<bool>> DeleteProjectAsync(string projectId, string memberId)
     {
         try
         {
+            var findProjectResult = await _projectRepository.GetAsync(x =>  x.Id == projectId);
+            if(findProjectResult.Result is null) return ServiceResult<bool>.NotFound($"Project not found :: {findProjectResult.ErrorMessage}");
+
+            var memberIds = findProjectResult.Result.MemberProjects.Select(x => x.MemberId).ToList();
+            var permission = await UserHasPermission(memberId, findProjectResult.Result.Owner, memberIds);
+            if (permission == false) return ServiceResult<bool>.Unauthorized($"You do not have persmission to delete this project");
+
             var result = await _projectRepository.DeleteAsync(x => x.Id == projectId);
             if(!result.Succeeded) return ServiceResult<bool>.Error($"Failed to delete project :: {result.ErrorMessage}");
+
             return ServiceResult<bool>.NoContent();
         } catch (Exception ex) 
         { 
@@ -283,8 +328,15 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
         }
     }
 
-    private bool UserHasPermission(string projectOwnerId, string loggedInUserId)
+    private async Task<bool> UserHasPermission(string loggedInUserId, string projectOwnerId, List<string> memberIds)
     {
-        return projectOwnerId == loggedInUserId;
+        var roles = await _memberService.GetMemeberRoles(loggedInUserId);
+        if (roles.Data != null && roles.Data.Contains("admin")) return true;
+        if(projectOwnerId == loggedInUserId) return true;
+        foreach(var memberId in memberIds)
+        {
+            if (memberId == loggedInUserId) return true;
+        }
+        return false;
     }
 }

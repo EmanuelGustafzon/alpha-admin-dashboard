@@ -11,6 +11,7 @@
     <form asp-action="AddProject" method="post" enctype="multipart/form-data" novalidate>
 
         <input hidden asp-for="@Model.ProjectForm.CurrentUserId" value="@userId">
+
             <div class="img-preview-container square">
                 <img src="" class="img-preview" />
                 <input asp-for="@Model.ProjectForm.Image" accept="image/*" class="d-none" />
