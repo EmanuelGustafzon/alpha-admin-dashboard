@@ -1,4 +1,7 @@
 ﻿@model ProjectViewModel
+@{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+}
 
 <div id="add-members" class="form-modal d-none">
     <div class="flex space-between">
@@ -6,6 +9,9 @@
         <button data-closeModal class="btn-clean">x</button>
     </div>
     <form id="add-members-form">
+
+        <input hidden asp-for="@Model.ProjectForm.CurrentUserId" value="@userId">
+
         <div class="multiselect-plugin-container">
             <select asp-for="@Model.ProjectMembersForm.MemberIds" multiple data-multi-select-plugin>
                 @foreach (var member in Model.Members)

@@ -7,7 +7,7 @@ namespace Business.Models
     public class ProjectForm
     {
         public IFormFile? Image { get; set; }
-        public string? ImageUrl { get; set; }
+        public string ImageUrl { get; set; } = "/images/default-project-image.png";
 
         [Required]
         [Display(Name = "project Name")]
@@ -26,6 +26,9 @@ namespace Business.Models
 
         [DataType(DataType.Date)]
         public DateTime EndDate { get; set; } = DateTime.Now;
+
+        [Required]
+        public string CurrentUserId { get; set; } = null!;
 
         [Display(Name = "Members")]
         public List<string> MemberIds { get; set; } = [];

@@ -1,17 +1,23 @@
-﻿using Business.Interfaces;
+﻿using Business.Factories;
+using Business.Interfaces;
 using Business.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Presentation.Hubs;
 using Presentation.Models;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace Presentation.Controllers;
 
 [Authorize]
-public class HomeController(IMemberService memberService, IProjectService projectService) : Controller
+public class HomeController(IMemberService memberService, IProjectService projectService, INotificationService notificationService, IHubContext<NotificationHub> hub) : Controller
 {
     private readonly IMemberService _memberService = memberService;
     private readonly IProjectService _projectService = projectService;
+    private readonly INotificationService _notificationService = notificationService;
+    private readonly IHubContext<NotificationHub> _hub = hub;
     public async Task<IActionResult> Index()
     {
         var projectResult = await _projectService.GetProjectsAsync();
@@ -36,9 +42,11 @@ public class HomeController(IMemberService memberService, IProjectService projec
                 );
             return BadRequest(new { success = false, errors });
         }
-        var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        var result = await _projectService.CreateProjectAsync(form, userId);
+
+        var result = await _projectService.CreateProjectAsync(form);
         if(result.Data is null || result.Success is false) return StatusCode(500, "Failed to Adding projects.");
+
+        await SendMessage($"{result.Data.ProjectName} Added", result.Data.ImageUrl);
 
         return Ok(new { success = true});
     }
@@ -98,6 +106,8 @@ public class HomeController(IMemberService memberService, IProjectService projec
             var result = await _projectService.UpdateProjectAsync(form, id);
             if(result.Data is null) return NotFound("No matching projects found.");
 
+            await SendMessage($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
+
             return Ok(new {success = true});
         } catch (Exception ex)
         {
@@ -111,8 +121,12 @@ public class HomeController(IMemberService memberService, IProjectService projec
     {
         try
         {
-            var result = await _projectService.UpdateStatusAsync(id, status);
-            if(!result.Success) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
+            var memberId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+
+            var result = await _projectService.UpdateStatusAsync(id, memberId, status);
+            if(!result.Success || result.Data is null) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
+
+            await SendMessage($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
 
             return Ok("Successfully updated the status");
 
@@ -129,7 +143,9 @@ public class HomeController(IMemberService memberService, IProjectService projec
         try
         {
             var result = await _projectService.UpdateProjectMembersAsync(form, id);
-            if (!result.Success) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
+            if (!result.Success || result.Data is null) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
+
+            await SendMessage($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
 
             return Ok(new {success = true});
 
@@ -144,8 +160,21 @@ public class HomeController(IMemberService memberService, IProjectService projec
     [HttpDelete("deleteProject/{id}")]
     public async Task<IActionResult> DeleteProject(string id)
     {
-        var result = await _projectService.DeleteProjectAsync(id);
+        var memberId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+        var result = await _projectService.DeleteProjectAsync(id, memberId);
         if(!result.Success) return StatusCode(result.StatusCode, $"Failed to Delete project :: {result.ErrorMessage}");
+
         return NoContent();     
+    }
+    private async Task<bool> SendMessage(string message, string? icon)
+    {
+        NotificationForm notificationForm = NotificationFactory.CreateForm(message, "All", icon);
+        var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
+        if (notificationResult.Data is not null)
+        {
+            await _hub.Clients.All.SendAsync("generalNotifications", notificationResult.Data);
+            return true;
+        }
+        return false;
     }
 }

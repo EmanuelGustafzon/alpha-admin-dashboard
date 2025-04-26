@@ -20,6 +20,8 @@ public interface IMemberService
 
     public Task<ServiceResult<Member>> GetMemberByIdAsync(string id);
 
+    public Task<ServiceResult<Member>> GetMemberByEmailAsync(string email);
+
     public Task<ServiceResult<Member>> UpdateMemberAsync(MemberForm form, string id);
 
     public Task<ServiceResult<Member>> UpdateMemberAsync(MemberWithRoleForm form, string id);
@@ -31,4 +33,8 @@ public interface IMemberService
     public Task<bool> MemberUseExternalProvider(MemberEntity member);
 
     public Task<bool?> MemberUseExternalProvider(string memberId);
+
+    public Task<ServiceResult<IEnumerable<Member>>> GetAllAdminsAsync();
+
+    public Task<ServiceResult<IEnumerable<string>>> GetMemeberRoles(string memberId);
 }

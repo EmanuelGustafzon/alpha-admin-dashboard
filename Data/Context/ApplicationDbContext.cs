@@ -14,6 +14,8 @@ public class ApplicationDbContext : IdentityDbContext<MemberEntity>
     public DbSet<ClientEntity> Clients { get; set; } = null!;
     public DbSet<ProjectEntity> Projects { get; set; } = null!;
     public DbSet<MemberProjectEntity> MemberProjects { get; set; } = null!;
+    public DbSet<NotificationEntity> Notifications { get; set; } = null!;
+    public DbSet<NotificationDissmissEntity> DissmissedNotifications { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

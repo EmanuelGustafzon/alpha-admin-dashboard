@@ -8,13 +8,17 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="~/Presentation.styles.css" asp-append-version="true" />
 </head>
 <body data-theme="light">
     <main>
         <div class="center-screen">
             @RenderBody()
         </div>
+        @await Html.PartialAsync("PartialViews/_CookieConsent")
+        <button class="btn btn-clean open-cookie-consent" onclick="showCookieModal()" ><i class="bi bi-cookie"></i></button>
     </main>
+
+    <script src="~/js/cookieManagement.js" asp-append-version="true"></script>
+    <script src="~/js/validateField.js" asp-append-version="true"></script>
 </body>
 </html>

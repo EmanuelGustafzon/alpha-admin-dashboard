@@ -33,16 +33,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    const themeCheckbox = document.getElementById("theme-checkbox");
-    themeCheckbox.addEventListener("change", () => {
-        if(themeCheckbox.checked) {
-            document.body.dataset.theme = "dark" 
-            localStorage.setItem('theme', 'dark')
-        } else {
-            document.body.dataset.theme = "light"
-            localStorage.setItem('theme', 'light')
-        }
-    })
-</script>

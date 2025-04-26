@@ -28,4 +28,6 @@ public class MemberEntity : IdentityUser
     public MemberAddressEntity? Address { get; set; }
 
     public ICollection<MemberProjectEntity>? MemberProjects { get; set; }
+
+    public ICollection<NotificationDissmissEntity> DissmissedNotifications = [];
 }

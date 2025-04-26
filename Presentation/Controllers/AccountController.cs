@@ -2,7 +2,9 @@
 using Business.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using Presentation.Models;
+using System.Security.Claims;
 
 namespace Presentation.Controllers;
 
@@ -13,7 +15,9 @@ public class AccountController(IMemberService memberService) : Controller
     public async Task<IActionResult> Index()
     {
         var model = new AccountViewModel();
-        var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+        if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
         var result = await _memberService.GetMemberByIdAsync(userId);
         if(result.Data != null)
         {
@@ -44,7 +48,7 @@ public class AccountController(IMemberService memberService) : Controller
         var result = await _memberService.UpdateMemberAsync(form, userId);
         if (!result.Success) return StatusCode(result.StatusCode, $"Something went wrong, {result.ErrorMessage}");
 
-        return Ok();
+        return Ok(new {success = true});
     }
 
     [HttpPost]

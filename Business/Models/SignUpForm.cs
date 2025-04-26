@@ -6,6 +6,7 @@ public class SignUpForm
 {
     [Required]
     [EmailAddress]
+    [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$")]
     [Display(Name = "Email")]
     public string Email { get; set; } = null!;
 

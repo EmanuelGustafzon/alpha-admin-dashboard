@@ -5,7 +5,7 @@ namespace Business.Interfaces;
 
 public interface IProjectService
 {
-    public Task<ServiceResult<Project>> CreateProjectAsync(ProjectForm projectForm, string memberId);
+    public Task<ServiceResult<Project>> CreateProjectAsync(ProjectForm projectForm);
 
     public Task<ServiceResult<IEnumerable<Project>>> GetProjectsAsync();
 
@@ -17,7 +17,7 @@ public interface IProjectService
 
     public Task<ServiceResult<Project>> UpdateProjectMembersAsync(ProjectMembersForm form, string projectId);
 
-    public Task<ServiceResult<Project>> UpdateStatusAsync(string id, string status);
+    public Task<ServiceResult<Project>> UpdateStatusAsync(string id, string memberId, string status);
 
-    public Task<ServiceResult<bool>> DeleteProjectAsync(string projectId);
+    public Task<ServiceResult<bool>> DeleteProjectAsync(string projectId, string memberId);
 }

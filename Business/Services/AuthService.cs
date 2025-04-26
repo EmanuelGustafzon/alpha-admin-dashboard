@@ -1,8 +1,12 @@
-﻿using Business.Interfaces;
+﻿using Azure.Core;
+using Business.Interfaces;
 using Business.Models;
 using Data.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -134,5 +138,32 @@ public class AuthService(
     public async Task<IList<AuthenticationScheme>> GetExternalLogins()
     {
         return (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+    }
+
+    public async Task<string?> GeneratePasswordResetTokenAsync(string email)
+    {
+        MemberEntity? memberResult = await _userManager.FindByEmailAsync(email);
+        if (memberResult is null) return null;
+        var token = await _userManager.GeneratePasswordResetTokenAsync(memberResult);
+        return token;
+    }
+
+    public async Task<bool> RestorePasswordAsync(string email, string token, string password)
+    {
+        try
+        {
+            var member = await _userManager.FindByEmailAsync(email);
+            if(member is null) return false;
+
+            var resetPassResult = await _userManager.ResetPasswordAsync(member, token, password);
+            if (!resetPassResult.Succeeded) return false;
+
+            return true;
+
+        } catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return false;
+        }
     }
 }

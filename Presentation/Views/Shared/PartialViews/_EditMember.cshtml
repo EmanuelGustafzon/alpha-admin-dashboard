@@ -73,7 +73,7 @@
 
 <script>
         async function fetchPopulateMember(memberId) {
-        const url = `https://localhost:8081/member/${memberId}`
+        const url = `/member/${memberId}`
         const data = await fetchData(url);
         populateMemberForm(data)
     }
@@ -83,7 +83,7 @@
 
         form.action = `updateMember/${data.id}`
 
-        const memberUseExternalProvider = await fetchData(`https://localhost:8081/memberUseExternalProvider/${data.id}`)
+        const memberUseExternalProvider = await fetchData(`/memberUseExternalProvider/${data.id}`)
 
         form.getElementsByTagName('img')[0].src = data['imageUrl']
         form.querySelector('input[name="MemberWithRoleForm.ImageUrl"]').value = data['imageUrl'];
