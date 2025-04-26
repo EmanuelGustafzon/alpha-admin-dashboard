@@ -239,14 +239,6 @@ a {
     grid-template-columns: 150px auto;
     grid-template-rows: 60px auto;
 }
-
-.burger-menu {
-    display: none;
-}
-.burger-container {
-    display: none;
-}
-
 .bottom-border {
     border-bottom: 1.5px solid var(--border-color);
 }
@@ -775,6 +767,15 @@ a {
 .cookie-consent-container .form-group {
     width: 90%;
 } 
+@media (min-width: 720px) {
+    .burger-menu {
+        display: none;
+    }
+
+    .burger-container {
+        display: none;
+    }
+}
 @media (max-width: 720px) {
     .layout {
         display: grid;

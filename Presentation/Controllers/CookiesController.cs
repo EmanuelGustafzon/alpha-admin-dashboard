@@ -17,8 +17,8 @@ public class CookiesController : Controller
             SameSite = SameSiteMode.None,
             Path = "/"
         });
-
-        return Ok();
+        if (consent.Functional == false) DeleteFunctionalCookies();
+        return Ok(new {success = true });
     }
 
     [HttpPost]
@@ -45,7 +45,7 @@ public class CookiesController : Controller
             Path = "/"
         });
 
-        return Ok();
+        return Ok(new { success = true });
     }
 
     [HttpPost]
@@ -53,6 +53,10 @@ public class CookiesController : Controller
     {
         Response.Cookies.Delete(name);
 
-        return Ok();
+        return Ok(new { success = true });
+    }
+    private void DeleteFunctionalCookies()
+    {
+        Response.Cookies.Delete("ThemeCookie");
     }
 }

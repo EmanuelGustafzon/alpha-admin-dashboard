@@ -117,7 +117,7 @@ const theme = getCookie('ThemeCookie');
 document.body.dataset.theme = theme;
 
 const themebox = document.getElementById("theme-checkbox");
-if (theme === 'dark') {
+if (themebox && theme === 'dark') {
     themebox.checked = true;
 }
 
