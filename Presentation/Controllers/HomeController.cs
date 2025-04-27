@@ -104,7 +104,8 @@ public class HomeController(IMemberService memberService, IProjectService projec
         try
         {
             var result = await _projectService.UpdateProjectAsync(form, id);
-            if(result.Data is null) return NotFound("No matching projects found.");
+
+            if (!result.Success || result.Data is null) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
 
             await SendMessage($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
 
@@ -124,7 +125,8 @@ public class HomeController(IMemberService memberService, IProjectService projec
             var memberId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
 
             var result = await _projectService.UpdateStatusAsync(id, memberId, status);
-            if(!result.Success || result.Data is null) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
+
+            if (!result.Success || result.Data is null) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
 
             await SendMessage($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
 

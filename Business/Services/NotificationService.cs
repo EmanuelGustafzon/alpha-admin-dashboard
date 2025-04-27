@@ -30,7 +30,7 @@ public class NotificationService(INotificationRepository notificationRepository,
         var list = dissmissResult.Result.Select(x => x.NotificationId).ToList();
 
         
-        var notificationResult = await _notificationRepository.GetAllAsync(filterBy: x => !list.Contains(x.Id) && (x.Target == target || x.Target == "All"));
+        var notificationResult = await _notificationRepository.GetAllAsync(filterBy: x => !list.Contains(x.Id) && (x.Target == target || x.Target == "All"), orderByDecending: true, sortBy: x => x.Created);
         if(notificationResult.Result is null) return ServiceResult<IEnumerable<Notification>>.Error("Failed to fecth notifications");
 
         var notifications = notificationResult.Result.Select(x => x.MapTo<Notification>());

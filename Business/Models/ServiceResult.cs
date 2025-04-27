@@ -51,7 +51,7 @@ public class ServiceResult<TData>
 
     public static ServiceResult<TData> Unauthorized(string message)
     {
-        return new ServiceResult<TData>(false, 401, default, message);
+        return new ServiceResult<TData>(false, 403, default, message);
     }
 
     public static ServiceResult<TData> Forbidden(string message)

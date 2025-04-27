@@ -64,7 +64,7 @@ public class MembersController(IMemberService memberService, INotificationServic
 
             if (result.Data is null)
             {
-                return NotFound();
+                return NotFound( new {success = false});
             }
 
             return Ok(result.Data);
@@ -130,7 +130,7 @@ public class MembersController(IMemberService memberService, INotificationServic
 
             await SendMessage($"{result.Data.FirstName} {result.Data.LastName} Updated", result.Data.ImageUrl);
 
-            return Ok(result.Data);
+            return Ok(new {success = true });
         }
         catch (Exception ex)
         {
@@ -149,7 +149,7 @@ public class MembersController(IMemberService memberService, INotificationServic
 
     private async Task<bool> SendMessage(string message, string? icon)
     {
-        NotificationForm notificationForm = NotificationFactory.CreateForm(message, "Admin", icon);
+        NotificationForm notificationForm = NotificationFactory.CreateForm(message, "Admin", icon ?? "/images/default-profile-picture.png");
         var notificationResult = await _notificationService.AddNotficationAsync(notificationForm);
         if (notificationResult.Data is not null)
         {
