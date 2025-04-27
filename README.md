@@ -1,8 +1,11 @@
 # Get Started 
 
 ## Use Docker 
-1. Add varible in .env file and name it MSSQL_PASSWORD and add a secure password as value
-2. Add packege.json file with your client id to google
+1. Add varible in .env file and name it MSSQL_PASSWORD and add a secure password as value.
+```
+MSSQL_PASSWORD=<Your-Password>
+```
+3. Add packege.json file with your client id to google
 ```json
    {
   "GoogleAuth": {
