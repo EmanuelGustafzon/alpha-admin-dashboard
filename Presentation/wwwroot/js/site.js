@@ -203,10 +203,20 @@ async function deleteData(url) {
             method: 'DELETE',
         });
         if (!response.ok) {
-            console.error(`Response status: ${response.status} ${response.errorMessage}`);
-            return false;
+            closeAllModals()
+            const data = await response.json();
+            const message = data.message;
+            if (message) {
+                const alert = document.querySelector("#alert");
+                const alertText = alert?.querySelector("#alert-text");
+                if (alert && alertText) {
+                    alertText.innerText = message;
+                    alert.classList.remove('d-none');
+                };
+            }
+        } else {
+            window.location.reload();
         }
-        window.location.reload();
         return true;
     } catch (error) {
         console.error(error.message);
@@ -222,13 +232,20 @@ async function sendDataAsQuery(url, reload) {
             }
         });
         if (!response.ok) {
-            const alert = document.querySelector("#alert");
-            const alertText = alert?.querySelector("#alert-text");
-            if (alert && alertText) {
-                alertText.innerText = 'Failed to post item';
-                alert.classList.remove('d-none');
+            closeAllModals()
+            const data = await response.json();
+            const message = data.message;
+            if (message) {
+                const alert = document.querySelector("#alert");
+                const alertText = alert?.querySelector("#alert-text");
+                if (alert && alertText) {
+                    alertText.innerText = message;
+                    alert.classList.remove('d-none');
+                }
+            } else {
+                if (reload) window.location.reload();
             }
-            return false
+            return false;
         }
         if (reload) {
             window.location.reload();

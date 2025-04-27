@@ -26,7 +26,6 @@
         <span>or</span>
     </div>
     <form class="login-form" method="post" asp-action="SignIn">
-
         <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl">
         <div class="form-group">
             <label asp-for="@Model.SignInForm.Email"></label>

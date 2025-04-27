@@ -34,7 +34,7 @@
     function updateNotificationList(notification) {
         const notificationsList = document.querySelector('#notifications');
         const item = notificationItem(notification.id, notification.icon, notification.message, notification.created, notification.action)
-        notificationsList.insertAdjacentHTML('beforeend', item)
+        notificationsList.insertAdjacentHTML('afterbegin', item)
         incramentNotificationCount()
         hasNotificatons(true)
     }
