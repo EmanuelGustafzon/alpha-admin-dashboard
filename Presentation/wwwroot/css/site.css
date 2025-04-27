@@ -281,6 +281,7 @@ a {
     border: none;
     height: 3em;
     background-color: var(--background);
+    color: var(--text-color);
     min-width: 16em;
 }
 
@@ -767,6 +768,8 @@ a {
 .cookie-consent-container .form-group {
     width: 90%;
 } 
+
+/*media queries */
 @media (min-width: 720px) {
     .burger-menu {
         display: none;

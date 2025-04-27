@@ -84,39 +84,3 @@
         </div>
     </form>
 </div>
-
-
-<script>
-    async function fetchPopulateProject(projectId) {
-        const url = `/project/${projectId}`
-        const data = await fetchData(url);
-        populateProjectForm(data)
-    }
-
-    function populateProjectForm(data) {
-        const form = document.getElementById('edit-project-form');
-        form.action = `updateProject/${data.id}`
-
-        form.getElementsByTagName('img')[0].src = data['imageUrl']
-        form.querySelector('input[name="ProjectForm.ImageUrl"]').value = data['imageUrl'];
-        form.querySelector('input[name="ProjectForm.ProjectName"]').value = data['projectName'];
-        form.querySelector('input[name="ProjectForm.ClientName"]').value = data['client'].clientName;
-        form.querySelector('input[name="ProjectForm.StartDate"]').value = formatDate(data['startDate']);;
-        form.querySelector('input[name="ProjectForm.EndDate"]').value = formatDate(data['endDate']);
-        form.querySelector('input[name="ProjectForm.Budget"]').value = data['budget'];
-
-        initQuill('#edit-project-quill-editor', '#edit-project-quill-toolbar', '#edit-project-textarea', data['description'])
-
-        let members = data['members']
-        const options = form.getElementsByTagName('option')
-        for (let option of options) {
-            for (let member of members) {
-                if (member.id === option.value) {
-                    console.log(member)
-                    option.setAttribute("selected", "");
-                }
-            }
-        }
-        createInitialTokens(form.getElementsByTagName('select')[0])
-    }    
-</script>

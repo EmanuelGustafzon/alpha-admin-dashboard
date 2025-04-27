@@ -308,11 +308,19 @@ public class MemberService(
                 {
                     return ServiceResult<Member>.Error("At least one Admin is Required, now you are trying to remove the only admin in the system");
                 }
-                var roleResult = await _userManager.AddToRoleAsync(memberEntity, form.Role);
-                if (!roleResult.Succeeded)
+                var currentRoles = await _userManager.GetRolesAsync(memberEntity);
+
+                var removeResult = await _userManager.RemoveFromRolesAsync(memberEntity, currentRoles);
+                if (!removeResult.Succeeded)
                 {
                     await _memberRepository.RollbackTransactionAsync();
-                    return ServiceResult<Member>.Error("Failed to update member role");
+                    return ServiceResult<Member>.Error("Failed to remove old roles");
+                }
+                var addResult = await _userManager.AddToRoleAsync(memberEntity, form.Role);
+                if (!addResult.Succeeded)
+                {
+                    await _memberRepository.RollbackTransactionAsync();
+                    return ServiceResult<Member>.Error("Failed to add new role");
                 }
             }
 
