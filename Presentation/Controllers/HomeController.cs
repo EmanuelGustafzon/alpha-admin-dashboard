@@ -44,7 +44,7 @@ public class HomeController(IMemberService memberService, IProjectService projec
         }
 
         var result = await _projectService.CreateProjectAsync(form);
-        if(result.Data is null || result.Success is false) return StatusCode(500, "Failed to Adding projects.");
+        if(result.Data is null || result.Success is false) return StatusCode(500, new { success = false, message = "Failed to Adding projects." });
 
         await SendMessage($"{result.Data.ProjectName} Added", result.Data.ImageUrl);
 

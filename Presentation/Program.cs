@@ -12,7 +12,11 @@ using Presentation.Hubs;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
-var connectionString = Environment.GetEnvironmentVariable("mssqlConnectionString");
+// docker compose 
+//var connectionString = Environment.GetEnvironmentVariable("mssqlConnectionString");
+// localDB
+var connectionString = builder.Configuration.GetConnectionString("LocalDb");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
