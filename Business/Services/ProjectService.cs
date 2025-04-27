@@ -331,7 +331,7 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
     private async Task<bool> UserHasPermission(string loggedInUserId, string projectOwnerId, List<string> memberIds)
     {
         var roles = await _memberService.GetMemeberRoles(loggedInUserId);
-        if (roles.Data != null && roles.Data.Contains("admin")) return true;
+        if (roles.Data != null && roles.Data.Contains("Admin")) return true;
         if(projectOwnerId == loggedInUserId) return true;
         foreach(var memberId in memberIds)
         {

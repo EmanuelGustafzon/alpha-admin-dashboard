@@ -18,6 +18,7 @@ public class SignUpForm
     [Display(Name = "Last Name")]
     public string LastName { get; set; } = null!;
 
+    [RegularExpression(@"^(?=.*[A-Z])(?=.*[\W_])[A-Za-z\d\W_]{6}$", ErrorMessage = "Must be 6 characters with at least one uppercase letter and one special character.")]
     [Display(Name = "Password")]
     [DataType(DataType.Password)]
     public string Password { get; set; } = null!;

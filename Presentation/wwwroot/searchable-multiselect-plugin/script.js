@@ -4,6 +4,7 @@ and then custumized to support:
 1. Queryble content is read from a dataset named data-content so the option value
 and content you search for can be different
 2. each query look for all words in each element with data-content dataset
+3. Possible to add image
 */
 function init(selectElement) {
     // Create div that wroaps all the elements inside (select, elements selected, search div) to put select inside

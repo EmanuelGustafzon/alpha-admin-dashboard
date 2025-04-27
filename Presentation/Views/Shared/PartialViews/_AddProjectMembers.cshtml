@@ -31,28 +31,4 @@
     </form>
 </div>
 
-<script>
-    async function fetchPopulateProjectMembers(projectId) {
-        const url = `https://localhost:8081/project/${projectId}`
-        const data = await fetchData(url);
-        populateProjectMembersForm(data)
-    }
-
-    function populateProjectMembersForm(data) {
-        const form = document.getElementById('add-members-form');
-        form.action = `updateProjectMembers/${data.id}`
-
-        let members = data['members']
-        const options = form.getElementsByTagName('option')
-        for (let option of options) {
-            for (let member of members) {
-                if (member.id === option.value) {
-                    console.log(member)
-                    option.setAttribute("selected", "");
-                }
-            }
-        }
-        createInitialTokens(form.getElementsByTagName('select')[0])
-    }
-</script>
 

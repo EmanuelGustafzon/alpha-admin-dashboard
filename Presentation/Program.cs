@@ -13,9 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // docker compose 
-//var connectionString = Environment.GetEnvironmentVariable("mssqlConnectionString");
+var connectionString = Environment.GetEnvironmentVariable("mssqlConnectionString");
 // localDB
-var connectionString = builder.Configuration.GetConnectionString("LocalDb");
+//var connectionString = builder.Configuration.GetConnectionString("LocalDb");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
