@@ -17,8 +17,8 @@
 
 ## Use localDb
 1. Add packege.json file with your client id to google and your conenction string.
-   ``` 
-   {
+```json
+{
   "GoogleAuth": {
     "ClientId": "",
     "ClientSecret": ""
