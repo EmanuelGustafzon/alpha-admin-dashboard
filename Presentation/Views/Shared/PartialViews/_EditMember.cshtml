@@ -75,6 +75,7 @@
         async function fetchPopulateMember(memberId) {
         const url = `/member/${memberId}`
         const data = await fetchData(url);
+        console.log(data)
         populateMemberForm(data)
     }
 

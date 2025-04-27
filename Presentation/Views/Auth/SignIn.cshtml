@@ -31,15 +31,17 @@
         <div class="form-group">
             <label asp-for="@Model.SignInForm.Email"></label>
             <input asp-for="@Model.SignInForm.Email" class="form-control" />
+            <span asp-validation-for="@Model.SignInForm.Email" class="text-error"></span>
         </div>
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label asp-for="@Model.SignInForm.Password"></label>
             <input asp-for="@Model.SignInForm.Password" class="form-control" />
+            <span asp-validation-for="@Model.SignInForm.Password" class="text-error"></span>
         </div>
         <div class="form-group">
             <span class="text-error" > @ViewBag.ErrorMessage </span>
         </div>
-        <div class="flex space-between form-group">
+        <div class="flex space-between form-group mb-3">
             <div>
                 <input asp-for="SignInForm.RememberMe" type="checkbox" />
                 <label asp-for="SignInForm.RememberMe"></label>
