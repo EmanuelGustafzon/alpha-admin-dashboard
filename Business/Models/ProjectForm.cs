@@ -7,7 +7,7 @@ namespace Business.Models
     public class ProjectForm
     {
         public IFormFile? Image { get; set; }
-        public string ImageUrl { get; set; } = "/images/default-project-image.png";
+        public string? ImageUrl { get; set; } = "/images/default-project-image.png";
 
         [Required]
         [Display(Name = "project Name")]

@@ -149,7 +149,7 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
 
             var memberIds = findProjectResult.Result.MemberProjects.Select(x => x.MemberId).ToList();
             var permission = await UserHasPermission(form.CurrentUserId, findProjectResult.Result.Owner, memberIds);
-            if(permission == false) return ServiceResult<Project>.Unauthorized($"You are not the owner of this post");
+            if(permission == false) return ServiceResult<Project>.Unauthorized($"You are not authorized to edit this project");
 
             var project = findProjectResult.Result!;
 
@@ -186,7 +186,7 @@ public class ProjectService(IProjectRepository projectRepository, IMemberService
             if (form.Image != null && form.Image.Length != 0)
             {
                 string imageUrl = await _uploadFile.UploadFileLocally(form.Image);
-                form.ImageUrl = imageUrl;
+                project.ImageUrl = imageUrl;
             }
 
             var result = await _projectRepository.UpdateAsync(project);

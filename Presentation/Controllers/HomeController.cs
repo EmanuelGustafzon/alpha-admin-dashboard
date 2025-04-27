@@ -105,7 +105,7 @@ public class HomeController(IMemberService memberService, IProjectService projec
         {
             var result = await _projectService.UpdateProjectAsync(form, id);
 
-            if (!result.Success || result.Data is null) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
+            if (!result.Success || result.Data is null) return StatusCode(result.StatusCode, new { success = false, message = $"{result.ErrorMessage}" });
 
             await SendMessage($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
 
@@ -126,7 +126,7 @@ public class HomeController(IMemberService memberService, IProjectService projec
 
             var result = await _projectService.UpdateStatusAsync(id, memberId, status);
 
-            if (!result.Success || result.Data is null) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
+            if (!result.Success || result.Data is null) return StatusCode(result.StatusCode, new { success = false, message = $"{result.ErrorMessage}" });
 
             await SendMessage($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
 
@@ -145,7 +145,7 @@ public class HomeController(IMemberService memberService, IProjectService projec
         try
         {
             var result = await _projectService.UpdateProjectMembersAsync(form, id);
-            if (!result.Success || result.Data is null) return StatusCode(result.StatusCode, $"{result.ErrorMessage}");
+            if (!result.Success || result.Data is null) return StatusCode(result.StatusCode, new { success = false, message = $"{result.ErrorMessage}" });
 
             await SendMessage($"{result.Data.ProjectName} Updated", result.Data.ImageUrl);
 
@@ -164,7 +164,7 @@ public class HomeController(IMemberService memberService, IProjectService projec
     {
         var memberId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
         var result = await _projectService.DeleteProjectAsync(id, memberId);
-        if(!result.Success) return StatusCode(result.StatusCode, $"Failed to Delete project :: {result.ErrorMessage}");
+        if(!result.Success) return StatusCode(result.StatusCode, new { success = false, message = $"{result.ErrorMessage}" });
 
         return NoContent();     
     }

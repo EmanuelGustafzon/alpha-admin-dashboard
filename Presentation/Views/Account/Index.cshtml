@@ -25,7 +25,7 @@
 
 <script>
     async function deleteAccount(id) {
-        const url = `https://localhost:8081/deleteAccount/${id}`;
+        const url = `/deleteAccount/${id}`;
         var result = await deleteData(url);
         if(result === false) return;
 

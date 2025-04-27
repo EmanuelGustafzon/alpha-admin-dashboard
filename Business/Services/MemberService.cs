@@ -38,6 +38,8 @@ public class MemberService(
             var thisIsTheFirstUser = _userManager.Users.Count() == 1;
             if (thisIsTheFirstUser)
                 await _userManager.AddToRoleAsync(member, "Admin");
+            else
+                await _userManager.AddToRoleAsync(member, "User");
 
             return ServiceResult<MemberEntity>.Created(member);
         }
@@ -64,6 +66,8 @@ public class MemberService(
             var thisIsTheFirstUser = _userManager.Users.Count() == 1;
             if (thisIsTheFirstUser)
                 await _userManager.AddToRoleAsync(member, "Admin");
+            else
+                await _userManager.AddToRoleAsync(member, "User");
 
             return ServiceResult<MemberEntity>.Created(member);
         }
@@ -156,7 +160,7 @@ public class MemberService(
 
             var member = memberEntity.MapTo<Member>();
             var roles = await _userManager.GetRolesAsync(memberEntity);
-            member.Role = roles[0];
+            member.Role = roles[0] ?? "User";
 
             return ServiceResult<Member>.Ok(member);
         }

@@ -15,7 +15,7 @@ public class AccountController(IMemberService memberService) : Controller
     public async Task<IActionResult> Index()
     {
         var model = new AccountViewModel();
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
         var result = await _memberService.GetMemberByIdAsync(userId);

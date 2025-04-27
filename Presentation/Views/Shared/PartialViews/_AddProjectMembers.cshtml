@@ -10,7 +10,7 @@
     </div>
     <form id="add-members-form">
 
-        <input hidden asp-for="@Model.ProjectForm.CurrentUserId" value="@userId">
+        <input hidden asp-for="@Model.ProjectMembersForm.CurrentUserId" value="@userId">
 
         <div class="multiselect-plugin-container">
             <select asp-for="@Model.ProjectMembersForm.MemberIds" multiple data-multi-select-plugin>
