@@ -4,15 +4,16 @@
 @model AuthViewModel
 
 <div class="login-form-container">
+    <h1>Create Account</h1>
     @if (Model.ExternalLogins != null && Model.ExternalLogins.Any())
     {
         <form class="external-login-form" method="post" asp-action="ExternalLogin" asp-controller="Auth">
-            <div>
+            <div class="external-auth-btn-container">
                 @foreach (var provider in Model.ExternalLogins)
                 {
                     string providerName = provider.DisplayName.Split(" ")[0];
 
-                    <button type="submit" class="btn btn-secondary" name="provider" value="@provider.Name">
+                    <button type="submit" class="btn btn-secondary external-login-btn" name="provider" value="@provider.Name">
                         <i class="bi bi-@(providerName.ToLower())"></i>
                         <span>Login with @providerName</span>
                     </button>
@@ -52,6 +53,12 @@
             <label asp-for="SignUpForm.ConfirmPassword"></label>
             <input asp-for="SignUpForm.ConfirmPassword" class="form-control"/>
             <span asp-validation-for="SignUpForm.ConfirmPassword" class="text-error"></span>
+        </div>
+        <div class="form-group">
+            <input asp-for="SignUpForm.AcceptTerms" type="checkbox" />
+            <span>I Accept </span>
+            <a class="color-accent" asp-controller="Auth" asp-action="TermsAndConditions">Terms and Conditions</a>
+            <span asp-validation-for="SignUpForm.AcceptTerms" class="text-error"></span>
         </div>
         <button class="btn btn-primary" type="submit">Register</button>
     </form>

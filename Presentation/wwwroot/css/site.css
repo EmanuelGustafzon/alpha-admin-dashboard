@@ -384,9 +384,9 @@ a {
     color: var(--accent);
     font-weight: var(--font-bold);
 }
-    .active-filter button {
-        color: var(--accent);
-    }
+.active-filter button {
+    color: var(--accent);
+}
 
 
 /* project card */
@@ -626,6 +626,7 @@ a {
     border-radius: 50%;
     background: var(--surface);
 }
+/* auth */
 .sign-out-container {
     height: 32px;
     display: flex;
@@ -633,6 +634,9 @@ a {
 }
 .login-form-container {
     width: 370px;
+    margin-top: 100px;
+    margin-bottom: 20px;
+    border-radius: 8px;
     background: var(--surface);
     display: flex;
     flex-direction: column;
@@ -652,6 +656,19 @@ a {
 .login-form button,
 .login-form .form-group {
     width: 100%; 
+}
+.external-auth-btn-container {
+    width: 100%;
+}
+.external-login-btn  {
+    width: 100%;
+    display: flex;
+    position: relative;
+    justify-content: center;
+}
+.external-login-btn i {
+    position: absolute;
+    left: 20px; 
 }
 .login-form button {
     margin-top: 22px;
@@ -768,7 +785,16 @@ a {
 .cookie-consent-container .form-group {
     width: 90%;
 } 
-
+/* terms and conditions */
+.terms-and-conditions {
+    width: 90%;
+    padding-top: 200px;
+    margin-bottom: 200px;
+    color: var(--text-color);
+}
+.terms-and-conditions h3 {
+    font-size: 20px;
+}
 /*media queries */
 @media (min-width: 720px) {
     .burger-menu {

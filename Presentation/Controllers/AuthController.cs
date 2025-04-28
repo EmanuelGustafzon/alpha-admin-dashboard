@@ -30,6 +30,10 @@ public class AuthController(IAuthService authService, IMemberService memberServi
         
         return View(model);
     }
+    public IActionResult TermsAndConditions()
+    {
+        return View();
+    }
 
     [HttpPost]
     public async Task<IActionResult> SignUp([Bind(Prefix = "SignUpForm")] SignUpForm form)

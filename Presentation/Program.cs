@@ -7,14 +7,15 @@ using Data.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Presentation.Hubs;
+using Presentation.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
-// docker compose 
+// docker compose connection string
 var connectionString = Environment.GetEnvironmentVariable("mssqlConnectionString");
-// localDB
+// localDB connection string 
 //var connectionString = builder.Configuration.GetConnectionString("LocalDb");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -70,22 +71,7 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    using (var scope = app.Services.CreateScope())
-    {
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-
-        try
-        {
-            logger.LogInformation("Applying database migrations...");
-            dbContext.Database.Migrate();
-            logger.LogInformation("Database migrations applied successfully.");
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "An error occurred while migrating the database.");
-        }
-    }
+    new Migrate(app.Services).UpdateDatabase();
 }
 else
 {
@@ -93,19 +79,8 @@ else
     app.UseHsts();
 }
 
-using (var scope = app.Services.CreateScope())
-{
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    string[] roles = { "Admin", "User" };
-    foreach (var role in roles)
-    {
-        var roleExist = await roleManager.RoleExistsAsync(role);
-        if(!roleExist)
-        {
-            await roleManager.CreateAsync(new IdentityRole(role));
-        }
-    }
-}
+var seedDb = new SeedDatabase(app.Services);
+await seedDb.SeedRoles(["Admin", "User"]);
 
 app.UseHttpsRedirection();
 app.UseRouting();
