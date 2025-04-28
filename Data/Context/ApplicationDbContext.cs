@@ -1,4 +1,5 @@
 ﻿using Data.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +26,6 @@ public class ApplicationDbContext : IdentityDbContext<MemberEntity>
             .HasOne(m => m.Address) 
             .WithOne(a => a.Member) 
             .HasForeignKey<MemberAddressEntity>(a => a.MemberId)
-            .IsRequired(); 
+            .IsRequired();
     }
 }

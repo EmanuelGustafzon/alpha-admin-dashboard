@@ -300,17 +300,16 @@ public class MemberService(
             if (!identityResult.Succeeded)
                 return ServiceResult<Member>.Error("Failed to update member");
 
-            var currentRole = (await _userManager.GetRolesAsync(memberEntity))[0];
-            if(currentRole != form.Role)
+            var currentRoles = (await _userManager.GetRolesAsync(memberEntity));
+            if(!currentRoles.Contains(form.Role))
             {
                 var totalAdmins = await _userManager.GetUsersInRoleAsync("Admin");
-                if(totalAdmins.Count == 1 && currentRole == "Admin" && form.Role == "User")
+                if(totalAdmins.Count == 1 && currentRoles.Contains("Admin"))
                 {
                     return ServiceResult<Member>.Error("At least one Admin is Required, now you are trying to remove the only admin in the system");
                 }
-                var currentRoles = await _userManager.GetRolesAsync(memberEntity);
 
-                var removeResult = await _userManager.RemoveFromRolesAsync(memberEntity, currentRoles);
+                var removeResult = await _userManager.RemoveFromRoleAsync(memberEntity, currentRoles[0]);
                 if (!removeResult.Succeeded)
                 {
                     await _memberRepository.RollbackTransactionAsync();

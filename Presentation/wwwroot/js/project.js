@@ -143,7 +143,6 @@ function populateProjectForm(data) {
     for (let option of options) {
         for (let member of members) {
             if (member.id === option.value) {
-                console.log(member)
                 option.setAttribute("selected", "");
             }
         }
