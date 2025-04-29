@@ -27,20 +27,21 @@ document.getElementById("search-field").addEventListener("input", (e) => {
 
 async function getProjects(query = "") {
     const url = `/home/projects?query=${query}`;
-const data = await fetchData(url)
+    const data = await fetchData(url)
 
-const statusFilterdData = organizeAndCountProjetAfterStatus(data, showByStatus)
+    const statusFilterdData = organizeAndCountProjetAfterStatus(data, showByStatus)
 
-const projectView = document.getElementById('projects-view')
-projectView.innerHTML = "";
-for(let project of statusFilterdData) {
-
-    let timeDiffClass = 'label'
-        if(Date.now() > new Date(project.endDate).getTime()) timeDiffClass = 'label-red';
-if(project.status === 2) timeDiffClass = 'label-green';
-let card = projectCard(project.id, project.imageUrl, project.projectName, project.client.clientName, project.description, project.members, project.calculatedTimeDiff, timeDiffClass )
-projectView.insertAdjacentHTML('beforeend', card)
-    }
+    const projectView = document.getElementById('projects-view')
+    if (projectView) {
+        projectView.innerHTML = "";
+        for (let project of statusFilterdData) {
+            let timeDiffClass = 'label'
+            if (Date.now() > new Date(project.endDate).getTime()) timeDiffClass = 'label-red';
+            if (project.status === 2) timeDiffClass = 'label-green';
+            let card = projectCard(project.id, project.imageUrl, project.projectName, project.client.clientName, project.description, project.members, project.calculatedTimeDiff, timeDiffClass)
+            projectView.insertAdjacentHTML('beforeend', card)
+        }
+    } 
 }
 
 function projectCard(id, imageUrl, projectName, clientName, description, members, timeDiff, timeDiffClass) {
@@ -98,20 +99,23 @@ function projectCard(id, imageUrl, projectName, clientName, description, members
 
 function organizeAndCountProjetAfterStatus(data, filterBy) {
     let all = document.getElementById('count-all')
-let started = document.getElementById('count-started')
-let completed = document.getElementById('count-completed')
+    let started = document.getElementById('count-started')
+    let completed = document.getElementById('count-completed')
 
-all.innerText = data.length;
+    if(!all) return
+   
+    all.innerText = data.length;
     const startedProjects = [...data.filter(x => x.status === 1)];
     const completedProjects = [...data.filter(x => x.status === 2)];
 
-started.innerText = startedProjects.length;
-completed.innerText = completedProjects.length
 
-if(filterBy === 'started') return startedProjects;
-if(filterBy === 'completed') return completedProjects;
+    started.innerText = startedProjects.length;
+    completed.innerText = completedProjects.length
 
-return data
+    if(filterBy === 'started') return startedProjects;
+    if(filterBy === 'completed') return completedProjects;
+
+    return data
     }
 
 window.addEventListener('DOMContentLoaded', () => {

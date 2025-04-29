@@ -11,10 +11,12 @@ async function getMembers(query = "") {
     const data = await fetchData(url)
 
     const membersView = document.getElementById('members-view')
-    membersView.innerHTML = "";
-    for (const member of data) {
-        const card = memberCard(member.id, member.imageUrl, member.firstName, member.lastName, member.jobTitle, member.phoneNumber, member.email)
-        membersView.insertAdjacentHTML('beforeend', card)
+    if (membersView) {
+        membersView.innerHTML = "";
+        for (const member of data) {
+            const card = memberCard(member.id, member.imageUrl, member.firstName, member.lastName, member.jobTitle, member.phoneNumber, member.email)
+            membersView.insertAdjacentHTML('beforeend', card)
+        }
     }
 }
 
