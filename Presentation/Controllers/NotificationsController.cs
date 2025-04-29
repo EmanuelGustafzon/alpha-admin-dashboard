@@ -1,19 +1,16 @@
-﻿using Business.Factories;
-using Business.Interfaces;
+﻿using Business.Interfaces;
 using Business.Models;
-using Domain.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Presentation.Hubs;
-using System.Diagnostics.Contracts;
 using System.Security.Claims;
 
 namespace Presentation.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class NotificationsController(IHubContext<NotificationHub> hubContext, INotificationService notificationService) : ControllerBase
 {
     private readonly IHubContext<NotificationHub> _notificationHub = hubContext;
